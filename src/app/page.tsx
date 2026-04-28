@@ -71,6 +71,14 @@ import {
   Percent,
   Calendar,
   Eye,
+  Wrench,
+  HardHat,
+  Paintbrush,
+  Ruler,
+  Zap,
+  Droplets,
+  TreePine as TreeIcon,
+  MessageSquare,
 } from "lucide-react";
 import MapWrapper from "@/components/map-wrapper";
 import Chatbot from "@/components/chatbot";
@@ -79,6 +87,7 @@ import { useBlogStore, type BlogArticle } from "@/lib/blog-store";
 import { useTestimonialStore, type Testimonial } from "@/lib/testimonial-store";
 import { useGalleryStore, type GalleryItem } from "@/lib/gallery-store";
 import { useBankStore, type BankItem } from "@/lib/bank-store";
+import { useServiceStore, type ServiceItem } from "@/lib/service-store";
 import { useSettingsStore } from "@/lib/settings-store";
 
 /* ─────────────────────────── DATA ─────────────────────────── */
@@ -87,6 +96,7 @@ const NAV_LINKS = [
   { label: "Home", tab: "home" },
   { label: "Tentang Kami", tab: "tentang" },
   { label: "Proyek", tab: "proyek" },
+  { label: "Jasa", tab: "jasa" },
   { label: "Gallery", tab: "gallery" },
   { label: "Blog", tab: "blog" },
   { label: "Kontak", tab: "kontak" },
@@ -1619,6 +1629,7 @@ function PropertyCard({
 /* ─────────────────────────── PAGINATION ─────────────────────────── */
 const PROYEK_PER_PAGE = 9;
 const GALLERY_PER_PAGE = 12;
+const JASA_PER_PAGE = 9;
 
 function Pagination({ currentPage, totalPages, onPageChange }: { currentPage: number; totalPages: number; onPageChange: (p: number) => void }) {
   if (totalPages <= 1) return null;
@@ -4141,6 +4152,434 @@ function GalleryPage() {
   );
 }
 
+/* ─────────────────────────── JASA DATA ─────────────────────────── */
+
+const SERVICE_CATEGORY_LABELS: Record<string, string> = {
+  konstruksi: "Konstruksi Rumah",
+  renovasi: "Renovasi Rumah",
+  desain_arsitektur: "Desain Arsitektur",
+  desain_interior: "Desain Interior",
+  jasa_gambar: "Jasa Gambar / IMB",
+  pengecatan: "Pengecatan",
+  instalasi_listrik: "Instalasi Listrik",
+  instalasi_pipa: "Instalasi Pipa / Sanitasi",
+  taman_landscape: "Taman & Landscape",
+  konsultasi: "Konsultasi Bangunan",
+};
+
+const SERVICE_PRICE_UNIT_MAP: Record<string, string> = {
+  proyek: "Per Proyek",
+  per_m2: "Per m²",
+  per_bulan: "Per Bulan",
+  jam: "Per Jam",
+};
+
+const SERVICE_CATEGORY_ICONS: Record<string, typeof Wrench> = {
+  konstruksi: HardHat,
+  renovasi: Hammer,
+  desain_arsitektur: Ruler,
+  desain_interior: Paintbrush,
+  jasa_gambar: FileText,
+  pengecatan: Paintbrush,
+  instalasi_listrik: Zap,
+  instalasi_pipa: Droplets,
+  taman_landscape: TreeIcon,
+  konsultasi: MessageSquare,
+};
+
+const SERVICE_CATEGORY_GRADIENTS: Record<string, string> = {
+  konstruksi: "from-amber-500 to-orange-600",
+  renovasi: "from-red-500 to-red-600",
+  desain_arsitektur: "from-purple-500 to-indigo-600",
+  desain_interior: "from-pink-500 to-rose-600",
+  jasa_gambar: "from-blue-500 to-cyan-600",
+  pengecatan: "from-yellow-500 to-amber-600",
+  instalasi_listrik: "from-yellow-400 to-orange-500",
+  instalasi_pipa: "from-cyan-500 to-blue-600",
+  taman_landscape: "from-green-500 to-emerald-600",
+  konsultasi: "from-teal-500 to-green-600",
+};
+
+/* ─────────────────────────── JASA PAGE ─────────────────────────── */
+
+function ServiceCard({
+  service,
+  onSelect,
+}: {
+  service: ServiceItem;
+  onSelect: (s: ServiceItem) => void;
+}) {
+  const catLabel = SERVICE_CATEGORY_LABELS[service.category] || service.category;
+  const unitLabel = SERVICE_PRICE_UNIT_MAP[service.priceUnit] || service.priceUnit;
+  const IconComponent = SERVICE_CATEGORY_ICONS[service.category] || Wrench;
+  const gradient = SERVICE_CATEGORY_GRADIENTS[service.category] || "from-red-500 to-red-600";
+
+  return (
+    <FadeIn className="h-full">
+      <Card
+        className="group h-full overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+        onClick={() => onSelect(service)}
+      >
+        {/* Image */}
+        <div className="relative h-48 overflow-hidden bg-gray-200">
+          {service.image ? (
+            <img
+              src={service.image}
+              alt={service.title}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+          ) : (
+            <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center`}>
+              <IconComponent className="w-16 h-16 text-white/30" />
+            </div>
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+          <div className="absolute top-3 left-3 flex gap-1.5">
+            <Badge className="bg-white/90 text-gray-700 border-0 shadow-lg text-xs font-semibold backdrop-blur-sm">
+              {catLabel}
+            </Badge>
+            {service.isFeatured && (
+              <Badge className="bg-yellow-500 text-gray-900 border-0 shadow-lg text-xs font-bold">
+                <Star className="w-3 h-3 mr-1" /> Unggulan
+              </Badge>
+            )}
+          </div>
+          {service.videoUrl && (
+            <div className="absolute top-3 right-3">
+              <span className="text-[9px] font-bold px-2 py-1 rounded-lg bg-red-600/90 text-white backdrop-blur-sm flex items-center gap-1">
+                <Camera className="w-3 h-3" /> Video
+              </span>
+            </div>
+          )}
+        </div>
+        <CardContent className="p-5">
+          {/* Title */}
+          <h3 className="font-bold text-gray-900 text-lg leading-tight mb-2 group-hover:text-red-600 transition-colors">
+            {service.title}
+          </h3>
+
+          {/* Description snippet */}
+          {service.description && (
+            <p className="text-gray-500 text-sm leading-relaxed mb-3 line-clamp-2">
+              {service.description.replace(/<[^>]*>/g, "")}
+            </p>
+          )}
+
+          {/* Features pills */}
+          {service.features.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mb-3">
+              {service.features.slice(0, 3).map((feat, i) => (
+                <span
+                  key={i}
+                  className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-600"
+                >
+                  {feat}
+                </span>
+              ))}
+              {service.features.length > 3 && (
+                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-400">
+                  +{service.features.length - 3}
+                </span>
+              )}
+            </div>
+          )}
+
+          {/* Price + Duration */}
+          <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+            <div>
+              <span className="text-lg font-extrabold text-red-600">
+                {service.price > 0 ? `Rp ${new Intl.NumberFormat("id-ID").format(service.price)}` : "Hubungi Kami"}
+              </span>
+              {service.price > 0 && (
+                <span className="text-xs text-gray-400 ml-1">/ {unitLabel}</span>
+              )}
+            </div>
+            {service.duration && (
+              <span className="text-xs font-medium text-gray-500 flex items-center gap-1">
+                <Clock className="w-3 h-3" /> {service.duration}
+              </span>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </FadeIn>
+  );
+}
+
+function ServiceDetailDialog({
+  service,
+  open,
+  onClose,
+}: {
+  service: ServiceItem;
+  open: boolean;
+  onClose: () => void;
+}) {
+  const { settings: S } = useSettingsStore();
+  const catLabel = SERVICE_CATEGORY_LABELS[service.category] || service.category;
+  const unitLabel = SERVICE_PRICE_UNIT_MAP[service.priceUnit] || service.priceUnit;
+  const IconComponent = SERVICE_CATEGORY_ICONS[service.category] || Wrench;
+  const gradient = SERVICE_CATEGORY_GRADIENTS[service.category] || "from-red-500 to-red-600";
+  const embedUrl = getYoutubeEmbedUrl(service.videoUrl);
+
+  const waText = encodeURIComponent(
+    `Halo, saya tertarik dengan jasa *${service.title}* (${catLabel}). Mohon info lebih lanjut.`
+  );
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto p-0 gap-0">
+        {/* Hero Image */}
+        <div className="relative h-64 sm:h-80 bg-gray-200">
+          {service.image ? (
+            <img
+              src={service.image}
+              alt={service.title}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center`}>
+              <IconComponent className="w-24 h-24 text-white/20" />
+            </div>
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 p-6">
+            <Badge className="mb-3 bg-white/90 text-gray-700 border-0 shadow-lg text-xs font-semibold">
+              {catLabel}
+            </Badge>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white leading-tight">
+              {service.title}
+            </h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 w-9 h-9 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="p-6 space-y-6">
+          {/* Price + Duration row */}
+          <div className="flex flex-wrap gap-4">
+            <div className="flex-1 min-w-[200px] bg-gradient-to-r from-red-50 to-orange-50 rounded-xl p-4 border border-red-100">
+              <p className="text-xs text-gray-500 mb-1 font-medium">Harga</p>
+              <p className="text-xl font-extrabold text-red-600">
+                {service.price > 0 ? `Rp ${new Intl.NumberFormat("id-ID").format(service.price)}` : "Hubungi Kami"}
+              </p>
+              {service.price > 0 && (
+                <p className="text-xs text-gray-400 mt-0.5">/ {unitLabel}</p>
+              )}
+            </div>
+            {service.duration && (
+              <div className="flex-1 min-w-[200px] bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-4 border border-blue-100">
+                <p className="text-xs text-gray-500 mb-1 font-medium">Estimasi Durasi</p>
+                <p className="text-xl font-extrabold text-blue-600">{service.duration}</p>
+                <p className="text-xs text-gray-400 mt-0.5">Waktu pengerjaan</p>
+              </div>
+            )}
+          </div>
+
+          {/* Description */}
+          {service.description && (
+            <div>
+              <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                <FileText className="w-4 h-4 text-red-500" />
+                Deskripsi
+              </h3>
+              <div
+                className="prose prose-sm max-w-none text-gray-600 leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: service.description }}
+              />
+            </div>
+          )}
+
+          {/* Features */}
+          {service.features.length > 0 && (
+            <div>
+              <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-green-500" />
+                Keunggulan
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {service.features.map((feat, i) => (
+                  <div key={i} className="flex items-start gap-2.5 bg-green-50 rounded-lg p-3">
+                    <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                    <span className="text-sm text-gray-700">{feat}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Video */}
+          {embedUrl && (
+            <div>
+              <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                <Camera className="w-4 h-4 text-red-500" />
+                Video Preview
+              </h3>
+              <div className="aspect-video rounded-xl overflow-hidden shadow-lg">
+                <iframe
+                  src={embedUrl}
+                  title={service.title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* CTA */}
+          <div className="flex flex-col sm:flex-row gap-3 pt-2">
+            <a
+              href={`https://wa.me/${S.contact_wa}?text=${waText}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-green-600 text-white font-bold rounded-xl shadow-lg hover:bg-green-700 transition-all active:scale-95"
+            >
+              <MessageCircle className="w-5 h-5" />
+              Tanya via WhatsApp
+            </a>
+            <a
+              href={`https://wa.me/${S.contact_wa}?text=${waText}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-red-600 text-white font-bold rounded-xl shadow-lg hover:bg-red-700 transition-all active:scale-95"
+            >
+              <Phone className="w-5 h-5" />
+              Hubungi Kami
+            </a>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function JasaListingSection({
+  onSelectService,
+}: {
+  onSelectService: (s: ServiceItem) => void;
+}) {
+  const { services, fetchServices } = useServiceStore();
+  const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [page, setPage] = useState(1);
+  const [prevFilterKey, setPrevFilterKey] = useState(`${activeCategory}`);
+
+  useEffect(() => {
+    fetchServices();
+  }, [fetchServices]);
+
+  if (prevFilterKey !== `${activeCategory}`) {
+    setPrevFilterKey(`${activeCategory}`);
+    setPage(1);
+  }
+
+  const filtered = activeCategory === "all"
+    ? services
+    : services.filter((s) => s.category === activeCategory);
+
+  const totalPages = Math.ceil(filtered.length / JASA_PER_PAGE);
+  const paged = filtered.slice((page - 1) * JASA_PER_PAGE, page * JASA_PER_PAGE);
+
+  return (
+    <section className="py-20 md:py-28 bg-warm-bg">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <FadeIn className="text-center mb-12">
+          <Badge variant="secondary" className="mb-4 bg-amber-50 text-amber-700 border-amber-200">
+            <HardHat className="w-3.5 h-3.5 mr-1.5" />
+            Layanan Jasa Kami
+          </Badge>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
+            Solusi Bangunan <span className="text-red-600">Profesional</span>
+          </h2>
+          <p className="text-gray-500 max-w-2xl mx-auto text-lg">
+            Dari konstruksi hingga desain interior — semua kebutuhan bangunan Anda
+            ditangani oleh tim berpengalaman.
+          </p>
+        </FadeIn>
+
+        {/* Category Filter */}
+        <FadeIn delay={0.1} className="flex flex-wrap justify-center gap-2 mb-10">
+          <button
+            onClick={() => setActiveCategory("all")}
+            className={`px-4 py-2 text-sm font-semibold rounded-xl transition-all ${
+              activeCategory === "all"
+                ? "bg-red-600 text-white shadow-md shadow-red-200"
+                : "bg-white text-gray-600 border border-gray-200 hover:bg-red-50 hover:text-red-700 hover:border-red-200"
+            }`}
+          >
+            Semua Jasa
+          </button>
+          {Object.entries(SERVICE_CATEGORY_LABELS).map(([key, label]) => {
+            const Icon = SERVICE_CATEGORY_ICONS[key] || Wrench;
+            return (
+              <button
+                key={key}
+                onClick={() => setActiveCategory(key)}
+                className={`px-4 py-2 text-sm font-semibold rounded-xl transition-all flex items-center gap-1.5 ${
+                  activeCategory === key
+                    ? "bg-red-600 text-white shadow-md shadow-red-200"
+                    : "bg-white text-gray-600 border border-gray-200 hover:bg-red-50 hover:text-red-700 hover:border-red-200"
+                }`}
+              >
+                <Icon className="w-3.5 h-3.5" />
+                {label}
+              </button>
+            );
+          })}
+        </FadeIn>
+
+        {/* Grid */}
+        {paged.length > 0 ? (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {paged.map((service) => (
+                <ServiceCard
+                  key={service.id}
+                  service={service}
+                  onSelect={onSelectService}
+                />
+              ))}
+            </div>
+            <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+          </>
+        ) : (
+          <div className="text-center py-20">
+            <Wrench className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-lg font-bold text-gray-400 mb-2">
+              Belum ada jasa tersedia
+            </h3>
+            <p className="text-gray-400 text-sm">
+              Jasa yang dipublikasikan akan muncul di sini.
+            </p>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function JasaPage({
+  onSelectService,
+}: {
+  onSelectService: (s: ServiceItem) => void;
+}) {
+  const { settings: S } = useSettingsStore();
+  return (
+    <>
+      <PageBanner
+        title="Jasa & Layanan"
+        subtitle="Solusi bangunan profesional dari konstruksi hingga desain interior"
+        bgImage={S.page_banner_image}
+      />
+      <JasaListingSection onSelectService={onSelectService} />
+    </>
+  );
+}
+
 /* ─────────────────────────── PROYEK PAGE ─────────────────────────── */
 
 function ProyekPage({
@@ -4304,6 +4743,9 @@ function PageContent() {
   const [selectedProperty, setSelectedProperty] = useState<
     Property | null
   >(null);
+  const [selectedService, setSelectedService] = useState<
+    ServiceItem | null
+  >(null);
 
   useEffect(() => {
     fetchSettings();
@@ -4319,6 +4761,10 @@ function PageContent() {
 
   const handleSelectProperty = useCallback((p: Property) => {
     setSelectedProperty(p);
+  }, []);
+
+  const handleSelectService = useCallback((s: ServiceItem) => {
+    setSelectedService(s);
   }, []);
 
   const renderContent = () => {
@@ -4347,6 +4793,20 @@ function PageContent() {
               property={selectedProperty}
               open={!!selectedProperty}
               onClose={() => setSelectedProperty(null)}
+            />
+            <Footer />
+            <Chatbot />
+          </>
+        );
+      case "jasa":
+        return (
+          <>
+            <Navbar activeTab={tab} />
+            <JasaPage onSelectService={handleSelectService} />
+            <ServiceDetailDialog
+              service={selectedService!}
+              open={!!selectedService}
+              onClose={() => setSelectedService(null)}
             />
             <Footer />
             <Chatbot />
