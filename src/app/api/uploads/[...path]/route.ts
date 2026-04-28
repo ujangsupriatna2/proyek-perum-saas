@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { stat, readFile } from "fs/promises";
 import { join, extname } from "path";
 
-const UPLOAD_DIR = process.env.UPLOAD_DIR || join(process.cwd(), "uploads");
+const UPLOAD_DIR = process.env.UPLOAD_DIR || join(/*turbopackIgnore: true*/ process.cwd(), "uploads");
 
 const FALLBACK_TYPES: Record<string, string> = {
   ".jpg": "image/jpeg",

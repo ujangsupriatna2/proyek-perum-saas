@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import NextAuthProvider from "@/components/next-auth-provider";
 import { db } from "@/lib/db";
 
+export const dynamic = "force-dynamic";
+
 const DEFAULT_COMPANY = "Bandung Raya Residence";
 
 export async function generateMetadata(): Promise<Metadata> {

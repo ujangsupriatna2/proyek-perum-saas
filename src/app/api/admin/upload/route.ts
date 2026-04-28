@@ -6,7 +6,7 @@ import path from "path";
 export const dynamic = "force-dynamic";
 
 const MAX_SIZE = 300 * 1024; // 300KB
-const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(process.cwd(), "uploads");
+const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(/*turbopackIgnore: true*/ process.cwd(), "uploads");
 const ALLOWED_TYPES = [
   "image/jpeg",
   "image/png",
