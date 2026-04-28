@@ -1,17 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import {
   Building2,
   FileText,
   MessageSquare,
   LandPlot,
   Camera,
-  Loader2,
+  Handshake,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useSettingsStore } from "@/lib/settings-store";
+import { isSuperadmin } from "@/lib/permissions";
 
 interface Stats {
   totalProperties: number;
@@ -19,6 +21,7 @@ interface Stats {
   totalTestimonials: number;
   totalBanks: number;
   totalGallery: number;
+  totalMitra?: number;
 }
 
 const STAT_CARDS = [
@@ -27,11 +30,19 @@ const STAT_CARDS = [
   { key: "totalTestimonials" as const, label: "Testimoni", icon: MessageSquare, gradient: "from-emerald-500 to-emerald-600", bg: "bg-emerald-50" },
   { key: "totalBanks" as const, label: "Mitra Bank", icon: LandPlot, gradient: "from-orange-500 to-orange-600", bg: "bg-orange-50" },
   { key: "totalGallery" as const, label: "Gallery", icon: Camera, gradient: "from-teal-500 to-teal-600", bg: "bg-teal-50" },
+  { key: "totalMitra" as const, label: "Mitra", icon: Handshake, gradient: "from-purple-500 to-purple-600", bg: "bg-purple-50", superadminOnly: true },
 ];
 
 export default function DashboardPage() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
+  const { data: session } = useSession();
+  const role = (session?.user as { role?: string })?.role;
+  const mitraName = (session?.user as { mitraName?: string | null })?.mitraName;
+  const superAdmin = isSuperadmin(role);
+  const companyName = useSettingsStore.getState().settings.company_name || "Admin";
+
+  const visibleCards = STAT_CARDS.filter((c) => !c.superadminOnly || superAdmin);
 
   useEffect(() => {
     fetch("/api/admin/stats")
@@ -46,13 +57,18 @@ export default function DashboardPage() {
       {/* Page Title */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-sm text-gray-500 mt-1">Selamat datang di panel admin {useSettingsStore.getState().settings.company_name}</p>
+        <p className="text-sm text-gray-500 mt-1">
+          Selamat datang di panel admin
+          {superAdmin
+            ? companyName
+            : mitraName || companyName}
+        </p>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {loading
-          ? Array.from({ length: 5 }).map((_, i) => (
+          ? Array.from({ length: visibleCards.length }).map((_, i) => (
               <Card key={i} className="border-0 shadow-sm">
                 <CardContent className="p-5">
                   <div className="flex items-center justify-between">
@@ -65,7 +81,7 @@ export default function DashboardPage() {
                 </CardContent>
               </Card>
             ))
-          : STAT_CARDS.map((card) => (
+          : visibleCards.map((card) => (
               <Card key={card.key} className="border-0 shadow-sm hover:shadow-md transition-shadow">
                 <CardContent className="p-5">
                   <div className="flex items-center justify-between">

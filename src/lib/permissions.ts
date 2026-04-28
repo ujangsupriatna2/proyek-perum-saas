@@ -11,12 +11,14 @@ export const ROLES = {
 const SUPERADMIN_ONLY_ROUTES = [
   "/admin/dashboard/users",
   "/admin/dashboard/pengaturan",
+  "/admin/dashboard/mitra",
 ];
 
 // API routes that require superadmin
 const SUPERADMIN_ONLY_API = [
   "/api/admin/users",
   "/api/admin/settings",
+  "/api/admin/mitra",
 ];
 
 export function isSuperadmin(role?: string | null): boolean {
@@ -31,4 +33,16 @@ export function canAccessRoute(role: string | null | undefined, pathname: string
 export function canAccessApi(role: string | null | undefined, pathname: string): boolean {
   if (isSuperadmin(role)) return true;
   return !SUPERADMIN_ONLY_API.some((r) => pathname.startsWith(r));
+}
+
+/**
+ * Returns a Prisma `where` clause to filter records by mitra.
+ * - If mitraId is provided (regular admin): returns `{ mitraId }` to scope data to their mitra.
+ * - If mitraId is null/undefined (superadmin): returns `{}` to allow access to all records.
+ */
+export function getMitraFilter(mitraId?: string | null): Record<string, string> {
+  if (mitraId) {
+    return { mitraId };
+  }
+  return {};
 }

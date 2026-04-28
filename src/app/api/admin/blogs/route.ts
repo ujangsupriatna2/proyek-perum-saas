@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { getMitraFilter } from "@/lib/permissions";
 
 /** Clean Quill HTML: replace &nbsp; with normal spaces so text wraps properly */
 function cleanHtml(html: string): string {
@@ -17,13 +18,16 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const mitraId = (session.user as { mitraId?: string | null })?.mitraId;
+    const mitraFilter = getMitraFilter(mitraId);
+
     const { searchParams } = new URL(req.url);
     const search = searchParams.get("search") || "";
     const category = searchParams.get("category") || "";
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "50");
 
-    const where: Record<string, unknown> = {};
+    const where: Record<string, unknown> = { ...mitraFilter };
     if (search) {
       where.OR = [
         { title: { contains: search } },
@@ -55,6 +59,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const mitraId = (session.user as { mitraId?: string | null })?.mitraId;
+
     const body = await req.json();
     const { title, slug, excerpt, content, category, author, image, published, readTime } = body;
 
@@ -62,13 +68,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Title and slug are required" }, { status: 400 });
     }
 
-    const slugExists = await db.blogPost.findUnique({ where: { slug } });
+    // Check slug uniqueness within mitra scope
+    const slugWhere: Record<string, unknown> = { slug };
+    if (mitraId) slugWhere.mitraId = mitraId;
+    const slugExists = await db.blogPost.findFirst({ where: slugWhere });
     if (slugExists) {
       return NextResponse.json({ error: "Slug sudah digunakan" }, { status: 409 });
     }
 
     const blog = await db.blogPost.create({
       data: {
+        mitraId: mitraId || null,
         title: cleanHtml(title),
         slug,
         excerpt: cleanHtml(excerpt || ""),

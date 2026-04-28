@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { isSuperadmin } from "@/lib/permissions";
 
 /** Clean Quill HTML: replace &nbsp; with normal spaces so text wraps properly */
 function cleanHtml(html: string): string {
@@ -27,6 +28,13 @@ export async function GET(
       return NextResponse.json({ error: "Blog not found" }, { status: 404 });
     }
 
+    // Non-superadmin can only view their own mitra's blog
+    const role = (session.user as { role?: string })?.role;
+    const mitraId = (session.user as { mitraId?: string | null })?.mitraId;
+    if (!isSuperadmin(role) && blog.mitraId && blog.mitraId !== mitraId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     return NextResponse.json(blog);
   } catch {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
@@ -43,6 +51,9 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const role = (session.user as { role?: string })?.role;
+    const mitraId = (session.user as { mitraId?: string | null })?.mitraId;
+
     const { id } = await params;
     const body = await req.json();
 
@@ -51,8 +62,15 @@ export async function PUT(
       return NextResponse.json({ error: "Blog not found" }, { status: 404 });
     }
 
+    // Non-superadmin can only update their own mitra's blog
+    if (!isSuperadmin(role) && existing.mitraId && existing.mitraId !== mitraId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     if (body.slug && body.slug !== existing.slug) {
-      const slugExists = await db.blogPost.findUnique({ where: { slug: body.slug } });
+      const slugWhere: Record<string, unknown> = { slug: body.slug };
+      if (existing.mitraId) slugWhere.mitraId = existing.mitraId;
+      const slugExists = await db.blogPost.findFirst({ where: slugWhere });
       if (slugExists) {
         return NextResponse.json({ error: "Slug sudah digunakan" }, { status: 409 });
       }
@@ -93,10 +111,18 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const role = (session.user as { role?: string })?.role;
+    const mitraId = (session.user as { mitraId?: string | null })?.mitraId;
+
     const { id } = await params;
     const existing = await db.blogPost.findUnique({ where: { id } });
     if (!existing) {
       return NextResponse.json({ error: "Blog not found" }, { status: 404 });
+    }
+
+    // Non-superadmin can only delete their own mitra's blog
+    if (!isSuperadmin(role) && existing.mitraId && existing.mitraId !== mitraId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     await db.blogPost.delete({ where: { id } });

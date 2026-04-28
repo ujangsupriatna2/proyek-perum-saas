@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { isSuperadmin } from "@/lib/permissions";
+import { isSuperadmin, getMitraFilter } from "@/lib/permissions";
 
 export async function GET() {
   try {
@@ -10,11 +10,18 @@ export async function GET() {
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    if (!isSuperadmin((session.user as { role?: string })?.role)) {
+
+    const role = (session.user as { role?: string })?.role;
+    const mitraId = (session.user as { mitraId?: string | null })?.mitraId;
+
+    // Superadmin only endpoint
+    if (!isSuperadmin(role)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const settings = await db.setting.findMany();
+    const mitraFilter = getMitraFilter(mitraId);
+
+    const settings = await db.setting.findMany({ where: mitraFilter });
     const settingsMap: Record<string, string> = {};
     settings.forEach((s) => {
       settingsMap[s.key] = s.value;
@@ -32,7 +39,12 @@ export async function PUT(req: Request) {
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    if (!isSuperadmin((session.user as { role?: string })?.role)) {
+
+    const role = (session.user as { role?: string })?.role;
+    const mitraId = (session.user as { mitraId?: string | null })?.mitraId;
+
+    // Superadmin only endpoint
+    if (!isSuperadmin(role)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
@@ -44,10 +56,21 @@ export async function PUT(req: Request) {
     }
 
     for (const item of items) {
+      // Upsert with mitra scope
       await db.setting.upsert({
-        where: { key: item.key },
-        update: { value: item.value, ...(item.label !== undefined && { label: item.label }), ...(item.group !== undefined && { group: item.group }) },
+        where: {
+          key_mitraId: {
+            key: item.key,
+            mitraId: mitraId ?? null,
+          },
+        },
+        update: {
+          value: item.value,
+          ...(item.label !== undefined && { label: item.label }),
+          ...(item.group !== undefined && { group: item.group }),
+        },
         create: {
+          mitraId: mitraId || null,
           key: item.key,
           value: item.value,
           label: item.label || item.key,

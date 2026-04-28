@@ -18,6 +18,7 @@ export const authOptions: NextAuthOptions = {
 
         const admin = await db.admin.findUnique({
           where: { email: credentials.email },
+          include: { mitra: { select: { id: true, name: true, slug: true } } },
         });
 
         if (!admin) {
@@ -35,6 +36,9 @@ export const authOptions: NextAuthOptions = {
           name: admin.name,
           email: admin.email,
           role: admin.role,
+          mitraId: admin.mitraId,
+          mitraName: admin.mitra?.name ?? null,
+          mitraSlug: admin.mitra?.slug ?? null,
         };
       },
     }),
@@ -47,6 +51,9 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token.role = (user as { role?: string }).role;
+        token.mitraId = (user as { mitraId?: string }).mitraId ?? null;
+        token.mitraName = (user as { mitraName?: string | null }).mitraName ?? null;
+        token.mitraSlug = (user as { mitraSlug?: string | null }).mitraSlug ?? null;
       }
       return token;
     },
@@ -54,6 +61,9 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         (session.user as { id?: string }).id = token.id as string;
         (session.user as { role?: string }).role = token.role as string;
+        (session.user as { mitraId?: string | null }).mitraId = token.mitraId as string | null;
+        (session.user as { mitraName?: string | null }).mitraName = token.mitraName as string | null;
+        (session.user as { mitraSlug?: string | null }).mitraSlug = token.mitraSlug as string | null;
       }
       return session;
     },

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { getMitraFilter } from "@/lib/permissions";
 
 export async function GET(req: Request) {
   try {
@@ -10,17 +11,21 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const mitraId = (session.user as { mitraId?: string | null })?.mitraId;
+    const mitraFilter = getMitraFilter(mitraId);
+
     const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "50");
 
     const [items, total] = await Promise.all([
       db.bank.findMany({
+        where: mitraFilter,
         orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
         skip: (page - 1) * limit,
         take: limit,
       }),
-      db.bank.count(),
+      db.bank.count({ where: mitraFilter }),
     ]);
 
     return NextResponse.json({ items, total, page, limit });
@@ -36,6 +41,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const mitraId = (session.user as { mitraId?: string | null })?.mitraId;
+
     const body = await req.json();
     const { name, description, image, sortOrder, isActive } = body;
 
@@ -45,6 +52,7 @@ export async function POST(req: Request) {
 
     const item = await db.bank.create({
       data: {
+        mitraId: mitraId || null,
         name,
         description: description || "",
         image: image || "",

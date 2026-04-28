@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { getMitraFilter } from "@/lib/permissions";
 
 export async function GET(req: Request) {
   try {
@@ -10,12 +11,15 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const mitraId = (session.user as { mitraId?: string | null })?.mitraId;
+    const mitraFilter = getMitraFilter(mitraId);
+
     const { searchParams } = new URL(req.url);
     const category = searchParams.get("category") || "";
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "50");
 
-    const where: Record<string, unknown> = {};
+    const where: Record<string, unknown> = { ...mitraFilter };
     if (category) where.category = category;
 
     const [items, total] = await Promise.all([
@@ -41,6 +45,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const mitraId = (session.user as { mitraId?: string | null })?.mitraId;
+
     const body = await req.json();
     const { title, category, image, description, sortOrder, videoUrl } = body;
 
@@ -55,6 +61,7 @@ export async function POST(req: Request) {
 
     const item = await db.galleryItem.create({
       data: {
+        mitraId: mitraId || null,
         title,
         category: category || "",
         image: image || "",

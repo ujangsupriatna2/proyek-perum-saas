@@ -15,15 +15,24 @@ export async function GET() {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
+    // Superadmin can see all admins
     const admins = await db.admin.findMany({
       select: {
         id: true,
         name: true,
         email: true,
         role: true,
+        mitraId: true,
         avatar: true,
         createdAt: true,
         updatedAt: true,
+        mitra: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
       },
       orderBy: { createdAt: "desc" },
     });
@@ -45,7 +54,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { name, email, password, role } = body;
+    const { name, email, password, role, mitraId } = body;
 
     if (!name || !email || !password) {
       return NextResponse.json({ error: "Name, email, and password are required" }, { status: 400 });
@@ -61,6 +70,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Email already exists" }, { status: 400 });
     }
 
+    // If mitraId is provided, verify it exists
+    if (mitraId) {
+      const mitra = await db.mitra.findUnique({ where: { id: mitraId } });
+      if (!mitra) {
+        return NextResponse.json({ error: "Mitra tidak ditemukan" }, { status: 400 });
+      }
+    }
+
     const hashedPassword = await hash(password, 12);
 
     const admin = await db.admin.create({
@@ -69,14 +86,23 @@ export async function POST(req: Request) {
         email,
         password: hashedPassword,
         role: role || "admin",
+        mitraId: mitraId || null,
       },
       select: {
         id: true,
         name: true,
         email: true,
         role: true,
+        mitraId: true,
         avatar: true,
         createdAt: true,
+        mitra: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
       },
     });
 

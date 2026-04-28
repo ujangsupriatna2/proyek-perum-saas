@@ -4,25 +4,172 @@ import { hash } from "bcryptjs";
 const db = new PrismaClient();
 
 // ════════════════════════════════════════════════════════════
-//  DATA
+//  TYPES
 // ════════════════════════════════════════════════════════════
 
-const SUPERADMIN = {
-  name: "Super Admin",
-  email: "admin@brr.co.id",
-  password: "admin123",
-  role: "superadmin" as const,
-};
+type AdminRole = "superadmin" | "admin";
 
-const ADMIN_USER = {
-  name: "Marketing BRR",
-  email: "marketing@brr.co.id",
-  password: "marketing123",
-  role: "admin" as const,
-};
+interface AdminSeed {
+  name: string;
+  email: string;
+  password: string;
+  role: AdminRole;
+  mitraSlug?: string; // link to a mitra; omit = null (superadmin)
+}
 
-// ──── Properties (8 unit) ────
-const PROPERTIES_DATA = [
+interface PropertySeed {
+  mitraSlug: string;
+  name: string;
+  slug: string;
+  type: string;
+  category: string;
+  price: number;
+  location: string;
+  bedrooms: number;
+  bathrooms: number;
+  landArea: number;
+  buildingArea: number;
+  status: string;
+  description: string;
+  features: string;
+  images: string;
+  tag: string;
+  financingTypes: string;
+  dpOptions: string;
+  tenorOptions: string;
+  installments: string;
+  syariahMargin: number;
+  kprDpOptions: string;
+  kprTenorOptions: string;
+  kprInstallments: string;
+  kprInterestRate: number;
+  kprInterestType: string;
+  videoUrl: string;
+  isFeatured: boolean;
+}
+
+interface TestimonialSeed {
+  mitraSlug: string;
+  name: string;
+  role: string;
+  text: string;
+  rating: number;
+}
+
+interface BlogPostSeed {
+  mitraSlug: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  category: string;
+  author: string;
+  published: boolean;
+  readTime: string;
+}
+
+interface GalleryItemSeed {
+  mitraSlug: string;
+  title: string;
+  category: string;
+  image: string;
+  description: string;
+  sortOrder: number;
+}
+
+interface BankSeed {
+  mitraSlug: string;
+  name: string;
+  description: string;
+  image: string;
+  sortOrder: number;
+  isActive: boolean;
+}
+
+interface SettingSeed {
+  mitraSlug: string;
+  key: string;
+  value: string;
+  label: string;
+  group: string;
+}
+
+// ════════════════════════════════════════════════════════════
+//  MITRA DATA
+// ════════════════════════════════════════════════════════════
+
+const MITRA_DATA = [
+  {
+    name: "Bandung Raya Residence",
+    slug: "bandung-raya-residence",
+    subdomain: "brr",
+    logo: "/images/logo-brr.png",
+    description:
+      "Perumahan modern terkemuka di kawasan Bandung dengan konsep hunian asri, aman, dan terjangkau. Menyediakan berbagai tipe rumah dari tipe 21 hingga tipe 45 dengan pembiayaan syariah dan KPR.",
+    address: "Bandung, Jawa Barat",
+    phone: "0812-8965-6707",
+    email: "info@brr.co.id",
+    isActive: true,
+  },
+  {
+    name: "Cimahi Green Valley",
+    slug: "cimahi-green-valley",
+    subdomain: "cgv",
+    logo: "/images/logo-cgv.png",
+    description:
+      "Kawasan hunian hijau di Cimahi dengan konsep eco-living. Lingkungan asri dikelilingi pepohonan dan taman, cocok untuk keluarga yang mendambakan keseimbangan hidup dengan alam.",
+    address: "Cimahi, Jawa Barat",
+    phone: "0813-1234-5678",
+    email: "info@cgv.co.id",
+    isActive: true,
+  },
+  {
+    name: "Sumedang Hills",
+    slug: "sumedang-hills",
+    subdomain: "sh",
+    logo: "/images/logo-sh.png",
+    description:
+      "Perumahan premium di kawasan pegunungan Sumedang dengan pemandangan indah dan udara segar. Ideal untuk investasi maupun hunian keluarga.",
+    address: "Sumedang, Jawa Barat",
+    phone: "0821-9876-5432",
+    email: "info@sumedanghills.co.id",
+    isActive: true,
+  },
+];
+
+// ════════════════════════════════════════════════════════════
+//  ADMIN DATA
+// ════════════════════════════════════════════════════════════
+
+const ADMINS_DATA: AdminSeed[] = [
+  {
+    name: "Super Admin",
+    email: "admin@brr.co.id",
+    password: "admin123",
+    role: "superadmin",
+    // mitraSlug omitted → mitraId = null (can access all)
+  },
+  {
+    name: "Marketing BRR",
+    email: "marketing@brr.co.id",
+    password: "marketing123",
+    role: "admin",
+    mitraSlug: "bandung-raya-residence",
+  },
+  {
+    name: "Admin CGV",
+    email: "admin@cgv.co.id",
+    password: "admin123",
+    role: "admin",
+    mitraSlug: "cimahi-green-valley",
+  },
+];
+
+// ════════════════════════════════════════════════════════════
+//  PROPERTIES — Bandung Raya Residence (8 units)
+// ════════════════════════════════════════════════════════════
+
+const BRR_PROPERTIES: Omit<PropertySeed, "mitraSlug">[] = [
   {
     name: "Tipe 21 Majapahit",
     slug: "tipe-21-majapahit",
@@ -420,8 +567,117 @@ const PROPERTIES_DATA = [
   },
 ];
 
-// ──── Testimonials (20) ────
-const TESTIMONIALS_DATA = [
+// ──── Properties — Cimahi Green Valley (2 units) ────
+
+const CGV_PROPERTIES: Omit<PropertySeed, "mitraSlug">[] = [
+  {
+    name: "Tipe 38 Green A1",
+    slug: "tipe-38-green-a1",
+    type: "Type 38/72",
+    category: "siap_huni",
+    price: 285000000,
+    location: "Cimahi Green Valley",
+    bedrooms: 2,
+    bathrooms: 1,
+    landArea: 72,
+    buildingArea: 38,
+    status: "available",
+    description:
+      "Rumah tipe 38 dengan konsep eco-living. Desain tropis modern dengan ventilasi silang yang optimal. Taman hijau di depan dan belakang rumah. Lingkungan asri dikelilingi pepohonan rindang. Ideal untuk keluarga yang mendambakan hidup harmonis dengan alam.",
+    features: '["2 Kamar Tidur","Carport","Taman Depan & Belakang","Kitchen Set","Instalasi AC","Listrik 2200W","Air PDAM","Ventilasi Silang","Lantai Granit 60x60","Plafon Gypsum","Pintu Panel","Jendela Aluminium","Solar Water Heater"]',
+    images: '["/images/properties/type-38-green.png","/images/properties/green-a1.png","/images/properties/green-a1_detail.png"]',
+    tag: "Eco Living",
+    financingTypes: '["syariah","kpr"]',
+    dpOptions: "[30,35,40,45,50]",
+    tenorOptions: "[1,2,3,5,7,10,15]",
+    installments: JSON.stringify({
+      "30|1": 21700000,
+      "30|3": 7800000,
+      "30|5": 5100000,
+      "30|7": 3900000,
+      "30|10": 2900000,
+      "30|15": 2100000,
+      "40|1": 18600000,
+      "40|3": 6700000,
+      "40|5": 4400000,
+      "50|1": 15500000,
+      "50|3": 5600000,
+      "50|5": 3600000,
+    }),
+    syariahMargin: 14,
+    kprDpOptions: "[0,10,15,20,25,30]",
+    kprTenorOptions: "[5,10,15,20,25]",
+    kprInstallments: JSON.stringify({
+      "0|5": 6000000,
+      "0|10": 3500000,
+      "10|10": 3100000,
+      "20|10": 2600000,
+      "30|10": 2100000,
+    }),
+    kprInterestRate: 7.5,
+    kprInterestType: "annuity",
+    videoUrl: "",
+    isFeatured: true,
+  },
+  {
+    name: "Tipe 50 Valley B2",
+    slug: "tipe-50-valley-b2",
+    type: "Type 50/100",
+    category: "inden",
+    price: 480000000,
+    location: "Cimahi Green Valley",
+    bedrooms: 3,
+    bathrooms: 2,
+    landArea: 100,
+    buildingArea: 50,
+    status: "available",
+    description:
+      "Rumah tipe 50 premium di kawasan valley dengan pemandangan perbukitan. 3 kamar tidur dan 2 kamar mandi. Desain kontemporer dengan material ramah lingkungan. Rooftop garden dan ruang keluarga luas. Sertifikat SHM pecah per unit.",
+    features: '["3 Kamar Tidur","2 Kamar Mandi","Carport 2 Mobil","Taman Luas","Rooftop Garden","Ruang Keluarga Luas","Kitchen Set Premium","Instalasi AC 3 Unit","Listrik 3500W","Air PDAM","Dinding Double Brick","Lantai Granit 60x60","Plafon Gypsum Board","Pintu Panel Solid","Jendela Aluminium Expansi","Smart Home System"]',
+    images: '["/images/properties/type-50-valley.png","/images/properties/valley-b2.png","/images/properties/valley-b2_detail.png"]',
+    tag: "Premium Valley",
+    financingTypes: '["syariah","kpr"]',
+    dpOptions: "[30,35,40,45,50]",
+    tenorOptions: "[1,2,3,5,7,10,15,20]",
+    installments: JSON.stringify({
+      "30|1": 36500000,
+      "30|3": 13100000,
+      "30|5": 8500000,
+      "30|7": 6600000,
+      "30|10": 4900000,
+      "30|15": 3550000,
+      "30|20": 2850000,
+      "40|1": 31300000,
+      "40|3": 11300000,
+      "40|5": 7300000,
+      "50|1": 26000000,
+      "50|3": 9400000,
+      "50|5": 6100000,
+    }),
+    syariahMargin: 14,
+    kprDpOptions: "[0,10,15,20,25,30]",
+    kprTenorOptions: "[5,10,15,20,25]",
+    kprInstallments: JSON.stringify({
+      "0|5": 10000000,
+      "0|10": 5900000,
+      "10|10": 5200000,
+      "20|10": 4400000,
+      "20|15": 3300000,
+      "30|10": 3600000,
+      "30|15": 2700000,
+    }),
+    kprInterestRate: 7.5,
+    kprInterestType: "annuity",
+    videoUrl: "",
+    isFeatured: true,
+  },
+];
+
+// ════════════════════════════════════════════════════════════
+//  TESTIMONIALS — Bandung Raya Residence (20)
+// ════════════════════════════════════════════════════════════
+
+const BRR_TESTIMONIALS: Omit<TestimonialSeed, "mitraSlug">[] = [
   { name: "Ahmad Fauzi", role: "Penghuni Tipe Anggrek A1", text: "Proses pembelian rumah sangat mudah dan transparan. Tim marketing ramah dan selalu siap membantu. Cicilan syariah membuat hati tenang tanpa riba.", rating: 5 },
   { name: "Siti Nurhaliza", role: "Penghuni Tipe Melati B3", text: "Lingkungan yang asri dan aman untuk keluarga. Anak-anak bisa bermain dengan nyaman. Sangat puas dengan kualitas bangunan rumah.", rating: 5 },
   { name: "Budi Santoso", role: "Penghuni Type Mawar C2", text: "Harga sangat kompetitif dibanding perumahan lain di sekitar Bandung. DP ringan dan proses KPR syariah cepat. Recommended!", rating: 5 },
@@ -444,8 +700,19 @@ const TESTIMONIALS_DATA = [
   { name: "Ratna Sari", role: "Penghuni Tipe Dahlia B1", text: "Perumahan yang benar-benar mengutamakan kenyamanan penghuni. Taman bermain anak, masjid, dan lapangan olahraga tersedia lengkap.", rating: 5 },
 ];
 
-// ──── Blog Posts (5) ────
-const BLOGS_DATA = [
+// ──── Testimonials — Cimahi Green Valley (3) ────
+
+const CGV_TESTIMONIALS: Omit<TestimonialSeed, "mitraSlug">[] = [
+  { name: "Dina Permata", role: "Penghuni Tipe 38 Green A1", text: "Konsep eco-living benar-benar terasa. Udara segar, banyak pohon, dan suara burung setiap pagi. Anak-anak jadi lebih sehat dan aktif bermain di luar.", rating: 5 },
+  { name: "Ridwan Kamil", role: "Penghuni Tipe 50 Valley B2", text: "Lokasi di Cimahi sangat strategis, dekat akses tol dan pusat kota. Rumah dengan desain tropis yang sejuk. Cicilan syariah sangat membantu.", rating: 5 },
+  { name: "Tina Susanti", role: "Calon Penghuni", text: "Sudah survei beberapa lokasi, dan Cimahi Green Valley paling cocok. Lingkungan hijau, keamanan baik, dan developer responsif.", rating: 4 },
+];
+
+// ════════════════════════════════════════════════════════════
+//  BLOG POSTS — Bandung Raya Residence (5)
+// ════════════════════════════════════════════════════════════
+
+const BRR_BLOGS: Omit<BlogPostSeed, "mitraSlug">[] = [
   {
     title: "Tips Memilih Rumah Pertama untuk Keluarga Muda",
     slug: "tips-memilih-rumah-pertama",
@@ -602,8 +869,44 @@ const BLOGS_DATA = [
   },
 ];
 
-// ──── Gallery Items ────
-const GALLERY_DATA = [
+// ──── Blog Posts — Cimahi Green Valley (1) ────
+
+const CGV_BLOGS: Omit<BlogPostSeed, "mitraSlug">[] = [
+  {
+    title: "Mengapa Cimahi Green Valley Cocok untuk Keluarga Hijau?",
+    slug: "mengapa-cgv-cocok-untuk-keluarga",
+    excerpt: "Konsep eco-living yang diusung Cimahi Green Valley menjadikannya pilihan ideal bagi keluarga yang peduli lingkungan dan kesehatan.",
+    content: `<h2>Konsep Eco-Living</h2>
+<p>Cimahi Green Valley menghadirkan konsep hunian yang selaras dengan alam. Setiap unit dirancang dengan ventilasi silang optimal, taman hijau, dan material ramah lingkungan.</p>
+
+<h2>Udara Segar Setiap Hari</h2>
+<p>Kawasan ini dikelilingi oleh ratusan pohon dan taman yang terawat. Udara di sini jauh lebih bersih dibanding kawasan perkotaan, cocok untuk tumbuh kembang anak.</p>
+
+<h2>Fasilitas Hijau</h2>
+<ul>
+<li>Community garden untuk urban farming</li>
+<li>Jogging track di antara pohon-pohon</li>
+<li>Taman bermain anak dengan lantai rumput alami</li>
+<li>Area composting terpadu</li>
+</ul>
+
+<h2>Investasi Masa Depan</h2>
+<p>Tren hunian hijau terus meningkat. Investasi di Cimahi Green Valley bukan hanya untuk tempat tinggal, tetapi juga untuk masa depan yang lebih baik bagi generasi berikutnya.</p>
+
+<h2>Kesimpulan</h2>
+<p>Cimahi Green Valley adalah jawaban bagi keluarga yang ingin hidup lebih sehat dan bertanggung jawab terhadap lingkungan, tanpa mengorbankan kenyamanan modern.</p>`,
+    category: "Tips Properti",
+    author: "Admin CGV",
+    published: true,
+    readTime: "4 menit",
+  },
+];
+
+// ════════════════════════════════════════════════════════════
+//  GALLERY — Bandung Raya Residence (19)
+// ════════════════════════════════════════════════════════════
+
+const BRR_GALLERY: Omit<GalleryItemSeed, "mitraSlug">[] = [
   { title: "Gerbang Utama Bandung Raya Residence", category: "Fasilitas", image: "/images/properties/hero_cover.png", description: "Gerbang utama perumahan dengan keamanan 24 jam", sortOrder: 1 },
   { title: "Tipe 21 Majapahit - Tampak Depan", category: "Tipe 21", image: "/images/properties/type-21.png", description: "Desain modern minimalis untuk keluarga muda", sortOrder: 2 },
   { title: "Tipe 21 Majapahit - Interior", category: "Tipe 21", image: "/images/properties/majapahit.png", description: "Interior rumah tipe 21 yang fungsional", sortOrder: 3 },
@@ -625,8 +928,19 @@ const GALLERY_DATA = [
   { title: "Tipe 30 D39 - Detail", category: "Tipe 30", image: "/images/properties/d39_detail.png", description: "Detail rumah tipe 30 D39", sortOrder: 19 },
 ];
 
-// ──── Banks ────
-const BANKS_DATA = [
+// ──── Gallery — Cimahi Green Valley (3) ────
+
+const CGV_GALLERY: Omit<GalleryItemSeed, "mitraSlug">[] = [
+  { title: "Gerbang Utama Cimahi Green Valley", category: "Fasilitas", image: "/images/properties/hero_cover.png", description: "Gerbang utama kawasan eco-living dengan konsep hijau", sortOrder: 1 },
+  { title: "Tipe 38 Green A1 - Tampak Depan", category: "Tipe 38", image: "/images/properties/type-38-green.png", description: "Rumah tropis modern dengan taman hijau", sortOrder: 2 },
+  { title: "Tipe 50 Valley B2 - Tampak Depan", category: "Tipe 50", image: "/images/properties/type-50-valley.png", description: "Rumah premium dengan pemandangan perbukitan", sortOrder: 3 },
+];
+
+// ════════════════════════════════════════════════════════════
+//  BANKS — Bandung Raya Residence (5)
+// ════════════════════════════════════════════════════════════
+
+const BRR_BANKS: Omit<BankSeed, "mitraSlug">[] = [
   { name: "Bank Syariah Indonesia (BSI)", description: "Bank syariah terbesar di Indonesia dengan produk KPR Syariah yang fleksibel.", image: "", sortOrder: 1, isActive: true },
   { name: "Bank Muamalat Indonesia", description: "Bank syariah pertama di Indonesia dengan layanan KPR iB Hasanah.", image: "", sortOrder: 2, isActive: true },
   { name: "Bank BCA Syariah", description: "Anak usaha BCA dengan produk KPR Syariah yang terpercaya.", image: "", sortOrder: 3, isActive: true },
@@ -634,8 +948,18 @@ const BANKS_DATA = [
   { name: "BTN Syariah", description: "Bank Tabungan Negara Syariah, spesialis pembiayaan perumahan.", image: "", sortOrder: 5, isActive: true },
 ];
 
-// ──── Settings ────
-const SETTINGS_DATA = [
+// ──── Banks — Cimahi Green Valley (2) ────
+
+const CGV_BANKS: Omit<BankSeed, "mitraSlug">[] = [
+  { name: "Bank Syariah Indonesia (BSI)", description: "Bank syariah terbesar di Indonesia. Mitra utama pembiayaan Cimahi Green Valley.", image: "", sortOrder: 1, isActive: true },
+  { name: "Bank BCA Syariah", description: "Anak usaha BCA dengan produk KPR Syariah yang terpercaya dan proses cepat.", image: "", sortOrder: 2, isActive: true },
+];
+
+// ════════════════════════════════════════════════════════════
+//  SETTINGS — Bandung Raya Residence
+// ════════════════════════════════════════════════════════════
+
+const BRR_SETTINGS: Omit<SettingSeed, "mitraSlug">[] = [
   { key: "company_name", value: "Bandung Raya Residence", label: "Nama Perusahaan", group: "company" },
   { key: "company_legal_name", value: "PT Bumi Sanggar Meubel", label: "Nama Legal Perusahaan", group: "company" },
   { key: "total_units_sold", value: "500", label: "Total Unit Terjual", group: "company" },
@@ -657,121 +981,314 @@ const SETTINGS_DATA = [
   { key: "social_tiktok", value: "", label: "TikTok", group: "social" },
 ];
 
+// ──── Settings — Cimahi Green Valley ────
+
+const CGV_SETTINGS: Omit<SettingSeed, "mitraSlug">[] = [
+  { key: "company_name", value: "Cimahi Green Valley", label: "Nama Perusahaan", group: "company" },
+  { key: "company_legal_name", value: "PT Cimahi Green Development", label: "Nama Legal Perusahaan", group: "company" },
+  { key: "total_units_sold", value: "120", label: "Total Unit Terjual", group: "company" },
+  { key: "logo_url", value: "/images/logo-cgv.png", label: "URL Logo", group: "company" },
+  { key: "hero_bg_image", value: "/images/properties/hero_cover.png", label: "Background Hero", group: "company" },
+  { key: "location_bg_image", value: "/images/location.png", label: "Background Lokasi", group: "company" },
+  { key: "page_banner_image", value: "/images/properties/hero_cover.png", label: "Banner Halaman", group: "company" },
+  { key: "tentangkami_image", value: "/images/properties/hero_cover.png", label: "Gambar Tentang Kami", group: "company" },
+  { key: "contact_phone", value: "0813-1234-5678", label: "Telepon", group: "contact" },
+  { key: "contact_email", value: "info@cgv.co.id", label: "Email", group: "contact" },
+  { key: "contact_wa", value: "6281312345678", label: "WhatsApp", group: "contact" },
+  { key: "contact_address", value: "Cimahi, Jawa Barat", label: "Alamat", group: "contact" },
+  { key: "contact_person", value: "Rina CGV", label: "Contact Person", group: "contact" },
+  { key: "map_latitude", value: "-6.8736", label: "Latitude Peta", group: "map" },
+  { key: "map_longitude", value: "107.5434", label: "Longitude Peta", group: "map" },
+  { key: "social_instagram", value: "cimahigreenvalley", label: "Instagram", group: "social" },
+  { key: "social_facebook", value: "CimahiGreenValley", label: "Facebook", group: "social" },
+  { key: "social_youtube", value: "", label: "YouTube", group: "social" },
+  { key: "social_tiktok", value: "cimahigreenvalley", label: "TikTok", group: "social" },
+];
+
+// ════════════════════════════════════════════════════════════
+//  HELPERS
+// ════════════════════════════════════════════════════════════
+
+/** Lookup map: slug → mitra ID */
+type MitraMap = Record<string, string>;
+
+async function buildMitraMap(): Promise<MitraMap> {
+  const mitras = await db.mitra.findMany({ select: { id: true, slug: true } });
+  const map: MitraMap = {};
+  for (const m of mitras) {
+    map[m.slug] = m.id;
+  }
+  return map;
+}
+
+/** Strip mitraId from property data before passing to Prisma */
+function propertyPayload(p: Omit<PropertySeed, "mitraSlug">, mitraId: string) {
+  return { ...p, mitraId };
+}
+
 // ════════════════════════════════════════════════════════════
 //  SEED FUNCTIONS
 // ════════════════════════════════════════════════════════════
 
+async function seedMitra() {
+  console.log("\n━━━ Seeding Mitra (Partners) ━━━");
+
+  const existingCount = await db.mitra.count();
+  if (existingCount > 0) {
+    console.log(`  [SKIP] Sudah ada ${existingCount} mitra`);
+    return;
+  }
+
+  for (const m of MITRA_DATA) {
+    await db.mitra.create({ data: m });
+    console.log(`  [OK] ${m.name} (${m.subdomain})`);
+  }
+  console.log(`  [SUM] ${MITRA_DATA.length} mitra berhasil dibuat`);
+}
+
 async function seedAdmins() {
   console.log("\n━━━ Seeding Admins ━━━");
 
-  for (const admin of [SUPERADMIN, ADMIN_USER]) {
+  const mitraMap = await buildMitraMap();
+
+  for (const admin of ADMINS_DATA) {
     const existing = await db.admin.findUnique({ where: { email: admin.email } });
     if (existing) {
       console.log(`  [SKIP] ${admin.email} sudah ada`);
-    } else {
-      const hashedPassword = await hash(admin.password, 12);
-      await db.admin.create({
-        data: { name: admin.name, email: admin.email, password: hashedPassword, role: admin.role },
-      });
-      console.log(`  [OK] ${admin.name} (${admin.email}) — role: ${admin.role}`);
-      console.log(`       Password: ${admin.password}`);
+      continue;
     }
+
+    const hashedPassword = await hash(admin.password, 12);
+    const mitraId = admin.mitraSlug ? mitraMap[admin.mitraSlug] ?? null : null;
+
+    await db.admin.create({
+      data: {
+        name: admin.name,
+        email: admin.email,
+        password: hashedPassword,
+        role: admin.role,
+        mitraId,
+      },
+    });
+
+    const mitraLabel = mitraId ? `mitra: ${admin.mitraSlug}` : "SUPERADMIN (akses semua)";
+    console.log(`  [OK] ${admin.name} (${admin.email}) — role: ${admin.role} — ${mitraLabel}`);
+    console.log(`       Password: ${admin.password}`);
   }
 }
 
 async function seedProperties() {
   console.log("\n━━━ Seeding Properties ━━━");
 
-  const count = await db.property.count();
-  if (count > 0) {
-    console.log(`  [SKIP] Sudah ada ${count} properti`);
-    return;
+  const mitraMap = await buildMitraMap();
+
+  // BRR properties
+  const brrId = mitraMap["bandung-raya-residence"];
+  if (brrId) {
+    const existingBrr = await db.property.count({ where: { mitraId: brrId } });
+    if (existingBrr === 0) {
+      for (const p of BRR_PROPERTIES) {
+        await db.property.create({ data: propertyPayload(p, brrId) });
+        console.log(`  [OK] [BRR] ${p.name} — Rp ${p.price.toLocaleString("id-ID")}`);
+      }
+      console.log(`  [SUM] ${BRR_PROPERTIES.length} properti BRR berhasil dibuat`);
+    } else {
+      console.log(`  [SKIP] Sudah ada ${existingBrr} properti BRR`);
+    }
   }
 
-  for (const p of PROPERTIES_DATA) {
-    await db.property.create({ data: p });
-    console.log(`  [OK] ${p.name} — Rp ${p.price.toLocaleString("id-ID")}`);
+  // CGV properties
+  const cgvId = mitraMap["cimahi-green-valley"];
+  if (cgvId) {
+    const existingCgv = await db.property.count({ where: { mitraId: cgvId } });
+    if (existingCgv === 0) {
+      for (const p of CGV_PROPERTIES) {
+        await db.property.create({ data: propertyPayload(p, cgvId) });
+        console.log(`  [OK] [CGV] ${p.name} — Rp ${p.price.toLocaleString("id-ID")}`);
+      }
+      console.log(`  [SUM] ${CGV_PROPERTIES.length} properti CGV berhasil dibuat`);
+    } else {
+      console.log(`  [SKIP] Sudah ada ${existingCgv} properti CGV`);
+    }
   }
-  console.log(`  [SUM] ${PROPERTIES_DATA.length} properti berhasil dibuat`);
 }
 
 async function seedTestimonials() {
   console.log("\n━━━ Seeding Testimonials ━━━");
 
-  const count = await db.testimonial.count();
-  if (count > 0) {
-    console.log(`  [SKIP] Sudah ada ${count} testimoni`);
-    return;
+  const mitraMap = await buildMitraMap();
+
+  // BRR testimonials
+  const brrId = mitraMap["bandung-raya-residence"];
+  if (brrId) {
+    const existingBrr = await db.testimonial.count({ where: { mitraId: brrId } });
+    if (existingBrr === 0) {
+      for (const t of BRR_TESTIMONIALS) {
+        await db.testimonial.create({
+          data: { ...t, mitraId: brrId, featured: t.rating === 5 },
+        });
+      }
+      console.log(`  [SUM] ${BRR_TESTIMONIALS.length} testimoni BRR berhasil dibuat`);
+    } else {
+      console.log(`  [SKIP] Sudah ada ${existingBrr} testimoni BRR`);
+    }
   }
 
-  for (const t of TESTIMONIALS_DATA) {
-    await db.testimonial.create({
-      data: { name: t.name, role: t.role, text: t.text, rating: t.rating, featured: t.rating === 5 },
-    });
+  // CGV testimonials
+  const cgvId = mitraMap["cimahi-green-valley"];
+  if (cgvId) {
+    const existingCgv = await db.testimonial.count({ where: { mitraId: cgvId } });
+    if (existingCgv === 0) {
+      for (const t of CGV_TESTIMONIALS) {
+        await db.testimonial.create({
+          data: { ...t, mitraId: cgvId, featured: t.rating === 5 },
+        });
+      }
+      console.log(`  [SUM] ${CGV_TESTIMONIALS.length} testimoni CGV berhasil dibuat`);
+    } else {
+      console.log(`  [SKIP] Sudah ada ${existingCgv} testimoni CGV`);
+    }
   }
-  console.log(`  [SUM] ${TESTIMONIALS_DATA.length} testimoni berhasil dibuat`);
 }
 
 async function seedBlogs() {
   console.log("\n━━━ Seeding Blog Posts ━━━");
 
-  const count = await db.blogPost.count();
-  if (count > 0) {
-    console.log(`  [SKIP] Sudah ada ${count} artikel`);
-    return;
+  const mitraMap = await buildMitraMap();
+
+  // BRR blogs
+  const brrId = mitraMap["bandung-raya-residence"];
+  if (brrId) {
+    const existingBrr = await db.blogPost.count({ where: { mitraId: brrId } });
+    if (existingBrr === 0) {
+      for (const b of BRR_BLOGS) {
+        await db.blogPost.create({ data: { ...b, mitraId: brrId } });
+        console.log(`  [OK] [BRR] "${b.title}" — ${b.published ? "Published" : "Draft"}`);
+      }
+      console.log(`  [SUM] ${BRR_BLOGS.length} artikel BRR berhasil dibuat`);
+    } else {
+      console.log(`  [SKIP] Sudah ada ${existingBrr} artikel BRR`);
+    }
   }
 
-  for (const b of BLOGS_DATA) {
-    await db.blogPost.create({ data: b });
-    console.log(`  [OK] "${b.title}" — ${b.published ? "Published" : "Draft"}`);
+  // CGV blogs
+  const cgvId = mitraMap["cimahi-green-valley"];
+  if (cgvId) {
+    const existingCgv = await db.blogPost.count({ where: { mitraId: cgvId } });
+    if (existingCgv === 0) {
+      for (const b of CGV_BLOGS) {
+        await db.blogPost.create({ data: { ...b, mitraId: cgvId } });
+        console.log(`  [OK] [CGV] "${b.title}" — ${b.published ? "Published" : "Draft"}`);
+      }
+      console.log(`  [SUM] ${CGV_BLOGS.length} artikel CGV berhasil dibuat`);
+    } else {
+      console.log(`  [SKIP] Sudah ada ${existingCgv} artikel CGV`);
+    }
   }
-  console.log(`  [SUM] ${BLOGS_DATA.length} artikel berhasil dibuat`);
 }
 
 async function seedGallery() {
   console.log("\n━━━ Seeding Gallery ━━━");
 
-  const count = await db.galleryItem.count();
-  if (count > 0) {
-    console.log(`  [SKIP] Sudah ada ${count} item galeri`);
-    return;
+  const mitraMap = await buildMitraMap();
+
+  // BRR gallery
+  const brrId = mitraMap["bandung-raya-residence"];
+  if (brrId) {
+    const existingBrr = await db.galleryItem.count({ where: { mitraId: brrId } });
+    if (existingBrr === 0) {
+      for (const g of BRR_GALLERY) {
+        await db.galleryItem.create({ data: { ...g, mitraId: brrId } });
+      }
+      console.log(`  [SUM] ${BRR_GALLERY.length} item galeri BRR berhasil dibuat`);
+    } else {
+      console.log(`  [SKIP] Sudah ada ${existingBrr} item galeri BRR`);
+    }
   }
 
-  for (const g of GALLERY_DATA) {
-    await db.galleryItem.create({ data: g });
+  // CGV gallery
+  const cgvId = mitraMap["cimahi-green-valley"];
+  if (cgvId) {
+    const existingCgv = await db.galleryItem.count({ where: { mitraId: cgvId } });
+    if (existingCgv === 0) {
+      for (const g of CGV_GALLERY) {
+        await db.galleryItem.create({ data: { ...g, mitraId: cgvId } });
+      }
+      console.log(`  [SUM] ${CGV_GALLERY.length} item galeri CGV berhasil dibuat`);
+    } else {
+      console.log(`  [SKIP] Sudah ada ${existingCgv} item galeri CGV`);
+    }
   }
-  console.log(`  [SUM] ${GALLERY_DATA.length} item galeri berhasil dibuat`);
 }
 
 async function seedBanks() {
   console.log("\n━━━ Seeding Banks ━━━");
 
-  const count = await db.bank.count();
-  if (count > 0) {
-    console.log(`  [SKIP] Sudah ada ${count} bank`);
-    return;
+  const mitraMap = await buildMitraMap();
+
+  // BRR banks
+  const brrId = mitraMap["bandung-raya-residence"];
+  if (brrId) {
+    const existingBrr = await db.bank.count({ where: { mitraId: brrId } });
+    if (existingBrr === 0) {
+      for (const b of BRR_BANKS) {
+        await db.bank.create({ data: { ...b, mitraId: brrId } });
+        console.log(`  [OK] [BRR] ${b.name}`);
+      }
+      console.log(`  [SUM] ${BRR_BANKS.length} bank BRR berhasil dibuat`);
+    } else {
+      console.log(`  [SKIP] Sudah ada ${existingBrr} bank BRR`);
+    }
   }
 
-  for (const b of BANKS_DATA) {
-    await db.bank.create({ data: b });
-    console.log(`  [OK] ${b.name}`);
+  // CGV banks
+  const cgvId = mitraMap["cimahi-green-valley"];
+  if (cgvId) {
+    const existingCgv = await db.bank.count({ where: { mitraId: cgvId } });
+    if (existingCgv === 0) {
+      for (const b of CGV_BANKS) {
+        await db.bank.create({ data: { ...b, mitraId: cgvId } });
+        console.log(`  [OK] [CGV] ${b.name}`);
+      }
+      console.log(`  [SUM] ${CGV_BANKS.length} bank CGV berhasil dibuat`);
+    } else {
+      console.log(`  [SKIP] Sudah ada ${existingCgv} bank CGV`);
+    }
   }
-  console.log(`  [SUM] ${BANKS_DATA.length} bank berhasil dibuat`);
 }
 
 async function seedSettings() {
   console.log("\n━━━ Seeding Settings ━━━");
 
-  const count = await db.setting.count();
-  if (count > 0) {
-    console.log(`  [SKIP] Sudah ada ${count} setting`);
-    return;
+  const mitraMap = await buildMitraMap();
+
+  // BRR settings
+  const brrId = mitraMap["bandung-raya-residence"];
+  if (brrId) {
+    const existingBrr = await db.setting.count({ where: { mitraId: brrId } });
+    if (existingBrr === 0) {
+      for (const s of BRR_SETTINGS) {
+        await db.setting.create({ data: { ...s, mitraId: brrId } });
+      }
+      console.log(`  [SUM] ${BRR_SETTINGS.length} setting BRR berhasil dibuat`);
+    } else {
+      console.log(`  [SKIP] Sudah ada ${existingBrr} setting BRR`);
+    }
   }
 
-  for (const s of SETTINGS_DATA) {
-    await db.setting.create({ data: s });
+  // CGV settings
+  const cgvId = mitraMap["cimahi-green-valley"];
+  if (cgvId) {
+    const existingCgv = await db.setting.count({ where: { mitraId: cgvId } });
+    if (existingCgv === 0) {
+      for (const s of CGV_SETTINGS) {
+        await db.setting.create({ data: { ...s, mitraId: cgvId } });
+      }
+      console.log(`  [SUM] ${CGV_SETTINGS.length} setting CGV berhasil dibuat`);
+    } else {
+      console.log(`  [SKIP] Sudah ada ${existingCgv} setting CGV`);
+    }
   }
-  console.log(`  [SUM] ${SETTINGS_DATA.length} setting berhasil dibuat`);
 }
 
 // ════════════════════════════════════════════════════════════
@@ -779,10 +1296,13 @@ async function seedSettings() {
 // ════════════════════════════════════════════════════════════
 
 async function main() {
-  console.log("╔══════════════════════════════════════════════╗");
-  console.log("║   Bandung Raya Residence — Database Seeder    ║");
-  console.log("╚══════════════════════════════════════════════╝");
+  console.log("╔═══════════════════════════════════════════════════╗");
+  console.log("║  Multi-Tenant Property — Database Seeder          ║");
+  console.log("║  Bandung Raya Residence · Cimahi Green Valley     ║");
+  console.log("║  Sumedang Hills                                  ║");
+  console.log("╚═══════════════════════════════════════════════════╝");
 
+  await seedMitra();
   await seedAdmins();
   await seedProperties();
   await seedTestimonials();
@@ -791,15 +1311,27 @@ async function main() {
   await seedBanks();
   await seedSettings();
 
-  console.log("\n╔══════════════════════════════════════════════╗");
-  console.log("║         ✅ Seeding selesai!                  ║");
-  console.log("╚══════════════════════════════════════════════╝");
-  console.log("\n📋 Akun Superadmin:");
+  console.log("\n╔═══════════════════════════════════════════════════╗");
+  console.log("║         ✅ Seeding selesai!                     ║");
+  console.log("╚═══════════════════════════════════════════════════╝");
+
+  console.log("\n📋 Akun Superadmin (akses semua mitra):");
   console.log("   Email    : admin@brr.co.id");
   console.log("   Password : admin123");
-  console.log("\n📋 Akun Admin:");
+
+  console.log("\n📋 Akun Admin — Bandung Raya Residence:");
   console.log("   Email    : marketing@brr.co.id");
   console.log("   Password : marketing123");
+
+  console.log("\n📋 Akun Admin — Cimahi Green Valley:");
+  console.log("   Email    : admin@cgv.co.id");
+  console.log("   Password : admin123");
+
+  console.log("\n🏢 Mitra terdaftar:");
+  console.log("   • Bandung Raya Residence (subdomain: brr)");
+  console.log("   • Cimahi Green Valley (subdomain: cgv)");
+  console.log("   • Sumedang Hills (subdomain: sh)");
+
   console.log("\n🔗 Login di: /admin/login");
 }
 

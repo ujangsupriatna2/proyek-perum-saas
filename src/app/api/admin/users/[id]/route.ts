@@ -26,9 +26,17 @@ export async function GET(
         name: true,
         email: true,
         role: true,
+        mitraId: true,
         avatar: true,
         createdAt: true,
         updatedAt: true,
+        mitra: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
       },
     });
 
@@ -57,7 +65,7 @@ export async function PUT(
 
     const { id } = await params;
     const body = await req.json();
-    const { name, email, password, role, avatar } = body;
+    const { name, email, password, role, avatar, mitraId } = body;
 
     const existing = await db.admin.findUnique({ where: { id } });
     if (!existing) {
@@ -76,11 +84,22 @@ export async function PUT(
       }
     }
 
+    // If mitraId is being changed, verify it exists
+    if (mitraId !== undefined && mitraId !== existing.mitraId) {
+      if (mitraId) {
+        const mitra = await db.mitra.findUnique({ where: { id: mitraId } });
+        if (!mitra) {
+          return NextResponse.json({ error: "Mitra tidak ditemukan" }, { status: 400 });
+        }
+      }
+    }
+
     const updateData: Record<string, unknown> = {};
     if (name) updateData.name = name;
     if (email) updateData.email = email;
     if (role) updateData.role = role;
     if (avatar !== undefined) updateData.avatar = avatar;
+    if (mitraId !== undefined) updateData.mitraId = mitraId || null;
     if (password && password.trim()) {
       updateData.password = await hash(password, 12);
     }
@@ -93,8 +112,16 @@ export async function PUT(
         name: true,
         email: true,
         role: true,
+        mitraId: true,
         avatar: true,
         createdAt: true,
+        mitra: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
       },
     });
 

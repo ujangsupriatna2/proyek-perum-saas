@@ -8,21 +8,62 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ═══════════════════════════════════════════════
+//  MITRA (PARTNER)
+// ═══════════════════════════════════════════════
+
+model Mitra {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  subdomain   String   @unique
+  logo        String   @default("")
+  description String   @default("") @db.Text
+  address     String   @default("")
+  phone       String   @default("")
+  email       String   @default("")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  admins       Admin[]
+  properties   Property[]
+  blogPosts    BlogPost[]
+  testimonials Testimonial[]
+  galleryItems GalleryItem[]
+  banks        Bank[]
+  settings     Setting[]
+}
+
+// ═══════════════════════════════════════════════
+//  ADMIN
+// ═══════════════════════════════════════════════
+
 model Admin {
   id        String   @id @default(cuid())
   name      String
   email     String   @unique
   password  String
   role      String   @default("admin")
+  mitraId   String?
   avatar    String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  // Relations
+  mitra Mitra? @relation(fields: [mitraId], references: [id])
 }
+
+// ═══════════════════════════════════════════════
+//  PROPERTY
+// ═══════════════════════════════════════════════
 
 model Property {
   id               String   @id @default(cuid())
+  mitraId          String?
   name             String
-  slug             String   @unique
+  slug             String
   type             String
   category         String   @default("inden")
   price            Float
@@ -51,26 +92,46 @@ model Property {
   isFeatured       Boolean  @default(false)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+
+  // Relations
+  mitra Mitra? @relation(fields: [mitraId], references: [id])
+
+  @@unique([mitraId, slug])
 }
+
+// ═══════════════════════════════════════════════
+//  BLOG POST
+// ═══════════════════════════════════════════════
 
 model BlogPost {
   id        String   @id @default(cuid())
+  mitraId   String?
   title     String
-  slug      String   @unique
+  slug      String
   excerpt   String   @default("") @db.Text
   content   String   @default("") @db.Text
   category  String
-  author    String   @default("Admin BRR")
+  author    String   @default("Admin")
   image     String   @default("") @db.Text
   published Boolean  @default(false)
   readTime  String   @default("5 menit")
   views     Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  // Relations
+  mitra Mitra? @relation(fields: [mitraId], references: [id])
+
+  @@unique([mitraId, slug])
 }
+
+// ═══════════════════════════════════════════════
+//  TESTIMONIAL
+// ═══════════════════════════════════════════════
 
 model Testimonial {
   id        String   @id @default(cuid())
+  mitraId   String?
   name      String
   role      String
   text      String
@@ -78,10 +139,18 @@ model Testimonial {
   featured  Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  // Relations
+  mitra Mitra? @relation(fields: [mitraId], references: [id])
 }
+
+// ═══════════════════════════════════════════════
+//  GALLERY ITEM
+// ═══════════════════════════════════════════════
 
 model GalleryItem {
   id          String   @id @default(cuid())
+  mitraId     String?
   title       String
   category    String
   image       String   @db.Text
@@ -90,10 +159,18 @@ model GalleryItem {
   sortOrder   Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  // Relations
+  mitra Mitra? @relation(fields: [mitraId], references: [id])
 }
+
+// ═══════════════════════════════════════════════
+//  BANK
+// ═══════════════════════════════════════════════
 
 model Bank {
   id          String   @id @default(cuid())
+  mitraId     String?
   name        String
   description String   @default("") @db.Text
   image       String   @default("") @db.Text
@@ -101,14 +178,27 @@ model Bank {
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  // Relations
+  mitra Mitra? @relation(fields: [mitraId], references: [id])
 }
+
+// ═══════════════════════════════════════════════
+//  SETTING (per mitra)
+// ═══════════════════════════════════════════════
 
 model Setting {
   id        String   @id @default(cuid())
-  key       String   @unique
+  mitraId   String?
+  key       String
   value     String
   label     String   @default("")
   group     String   @default("general")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  // Relations
+  mitra Mitra? @relation(fields: [mitraId], references: [id])
+
+  @@unique([mitraId, key])
 }

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { getMitraFilter } from "@/lib/permissions";
 
 export async function GET(req: Request) {
   try {
@@ -10,6 +11,9 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const mitraId = (session.user as { mitraId?: string | null })?.mitraId;
+    const mitraFilter = getMitraFilter(mitraId);
+
     const { searchParams } = new URL(req.url);
     const search = searchParams.get("search") || "";
     const status = searchParams.get("status") || "";
@@ -17,7 +21,7 @@ export async function GET(req: Request) {
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "50");
 
-    const where: Record<string, unknown> = {};
+    const where: Record<string, unknown> = { ...mitraFilter };
     if (search) {
       where.OR = [
         { name: { contains: search } },
@@ -51,6 +55,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const role = (session.user as { role?: string })?.role;
+    const mitraId = (session.user as { mitraId?: string | null })?.mitraId;
+
     const body = await req.json();
     const {
       name, slug, type, category, price, location,
@@ -71,13 +78,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Type wajib diisi untuk kategori selain kavling" }, { status: 400 });
     }
 
-    const slugExists = await db.property.findUnique({ where: { slug } });
+    // Check slug uniqueness within mitra scope
+    const slugWhere: Record<string, unknown> = { slug };
+    if (mitraId) slugWhere.mitraId = mitraId;
+    const slugExists = await db.property.findFirst({ where: slugWhere });
     if (slugExists) {
       return NextResponse.json({ error: "Slug sudah digunakan" }, { status: 409 });
     }
 
     const property = await db.property.create({
       data: {
+        mitraId: mitraId || null,
         name,
         slug,
         type,

@@ -12,6 +12,7 @@ import {
   Calculator,
   Camera,
   LandPlot,
+  Handshake,
   Settings,
   LogOut,
   Menu,
@@ -37,6 +38,7 @@ import { useSettingsStore } from "@/lib/settings-store";
 // ──── Navigation Config ────
 const NAV_ITEMS = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/admin/dashboard", superadminOnly: false },
+  { label: "Mitra", icon: Handshake, href: "/admin/dashboard/mitra", superadminOnly: true },
   { label: "User", icon: Users, href: "/admin/dashboard/users", superadminOnly: true },
   { label: "Proyek", icon: Building2, href: "/admin/dashboard/proyek", superadminOnly: false },
   { label: "Blog", icon: FileText, href: "/admin/dashboard/blog", superadminOnly: false },
@@ -50,6 +52,7 @@ const NAV_ITEMS = [
 // ──── Breadcrumbs ────
 const BREADCRUMBS: Record<string, string> = {
   "/admin/dashboard": "Dashboard",
+  "/admin/dashboard/mitra": "Mitra",
   "/admin/dashboard/users": "User",
   "/admin/dashboard/proyek": "Proyek",
   "/admin/dashboard/blog": "Blog",
