@@ -3740,45 +3740,6 @@ function TentangKamiPage() {
         </div>
       </section>
 
-      {/* ═══════ TIM ═══════ */}
-      <section className="py-20 md:py-28 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <FadeIn className="text-center mb-16">
-            <Badge variant="secondary" className="mb-4 bg-red-50 text-red-700 border-red-200">
-              <Users className="w-3.5 h-3.5 mr-1.5" />
-              Tim Kami
-            </Badge>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-              Orang-Orang di Balik <span className="text-red-600">{S.company_name}</span>
-            </h2>
-            <p className="text-gray-500 max-w-2xl mx-auto text-lg">
-              Tim profesional yang berdedikasi memastikan setiap proyek dan layanan berjalan optimal.
-            </p>
-          </FadeIn>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { name: "Direktur Utama", role: "Founder & CEO", desc: "Bertanggung jawab atas strategi perusahaan dan pengembangan platform.", initials: "DU", gradient: "from-red-500 to-red-600" },
-              { name: "Direktur Operasional", role: "COO", desc: "Mengawasi operasional harian dan koordinasi seluruh mitra developer.", initials: "DO", gradient: "from-amber-500 to-amber-600" },
-              { name: "Head of Marketing", role: "CMO", desc: "Merancang strategi pemasaran dan branding untuk seluruh proyek.", initials: "MK", gradient: "from-blue-500 to-blue-600" },
-              { name: "Head of Legal", role: "Legal Counsel", desc: "Memastikan seluruh legalitas perusahaan dan mitra developer terpenuhi.", initials: "LG", gradient: "from-green-500 to-green-600" },
-            ].map((member, i) => (
-              <FadeIn key={member.role} delay={i * 0.1}>
-                <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-shadow text-center group">
-                  <CardContent className="p-6">
-                    <div className={`w-20 h-20 mx-auto bg-gradient-to-br ${member.gradient} rounded-full flex items-center justify-center mb-4 shadow-lg group-hover:scale-105 transition-transform`}>
-                      <span className="text-white font-extrabold text-xl">{member.initials}</span>
-                    </div>
-                    <h4 className="font-bold text-gray-900 text-lg mb-1">{member.name}</h4>
-                    <p className="text-red-600 text-sm font-semibold mb-3">{member.role}</p>
-                    <p className="text-gray-500 text-sm leading-relaxed">{member.desc}</p>
-                  </CardContent>
-                </Card>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ═══════ LEGALITAS ═══════ */}
       <section className="py-20 md:py-28 bg-warm-bg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

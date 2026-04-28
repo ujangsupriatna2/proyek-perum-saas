@@ -8,7 +8,7 @@ export async function GET(req: Request) {
     const limit = parseInt(searchParams.get("limit") || "50");
     const featured = searchParams.get("featured");
 
-    const where: Record<string, unknown> = {};
+    const where: Record<string, unknown> = { mitraId: null };
     if (featured === "true") {
       where.featured = true;
     }
