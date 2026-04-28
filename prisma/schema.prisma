@@ -18,8 +18,7 @@ model Mitra {
   slug        String   @unique
   subdomain   String   @unique
   logo        String   @default("") @db.Text
-  description String    @db.Text
-  @default("")
+  description String    @db.Text @default("")
   address     String   @default("")
   phone       String   @default("")
   email       String   @default("")
@@ -75,8 +74,7 @@ model Property {
   landArea         Float    @default(0)
   buildingArea     Float    @default(0)
   status           String   @default("available")
-  description      String    @db.Text
-  @default("")
+  description      String    @db.Text @default("")
   features         String   @default("[]")
   images           String   @default("[]")
   tag              String   @default("")
@@ -91,8 +89,7 @@ model Property {
   kprInstallments  String   @default("{}")
   kprInterestRate  Float    @default(7.5)
   kprInterestType  String   @default("annuity")
-  videoUrl         String    @db.Text
-  @default("")
+  videoUrl         String    @db.Text @default("")
   isFeatured       Boolean  @default(false)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
@@ -112,14 +109,11 @@ model BlogPost {
   mitraId   String?
   title     String
   slug      String
-  excerpt   String    @db.Text
-  @default("")
-  content   String    @db.Text
-  @default("")
+  excerpt   String    @db.Text @default("")
+  content   String    @db.Text @default("")
   category  String
   author    String   @default("Admin")
-  image     String    @db.Text
-  @default("")
+  image     String    @db.Text @default("")
   published Boolean  @default(false)
   readTime  String   @default("5 menit")
   views     Int      @default(0)
@@ -161,10 +155,8 @@ model GalleryItem {
   title       String
   category    String
   image       String
-  description String    @db.Text
-  @default("")
-  videoUrl    String    @db.Text
-  @default("")
+  description String    @db.Text @default("")
+  videoUrl    String    @db.Text @default("")
   sortOrder   Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -181,10 +173,8 @@ model Bank {
   id          String   @id @default(cuid())
   mitraId     String?
   name        String
-  description String    @db.Text
-  @default("")
-  image       String    @db.Text
-  @default("")
+  description String    @db.Text @default("")
+  image       String    @db.Text @default("")
   sortOrder   Int      @default(0)
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
@@ -223,18 +213,15 @@ model Service {
   mitraId     String?
   title       String
   slug        String
-  description String    @db.Text
-  @default("")
+  description String    @db.Text @default("")
   category    String
   price       Float
   priceUnit   String   @default("proyek")
-  image       String    @db.Text
-  @default("")
+  image       String    @db.Text @default("")
   images      String   @default("[]")
   features    String   @default("[]")
   duration    String   @default("")
-  videoUrl    String    @db.Text
-  @default("")
+  videoUrl    String    @db.Text @default("")
   isPublished Boolean  @default(false)
   isFeatured  Boolean  @default(false)
   sortOrder   Int      @default(0)
