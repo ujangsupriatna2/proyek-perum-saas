@@ -220,10 +220,6 @@ const FAQ_ITEMS = [
     a: "DP minimal mulai dari 30% dari harga rumah. Namun kami juga menyediakan opsi DP hingga 50% untuk cicilan yang lebih ringan. DP juga bisa dicicil sesuai kesepakatan.",
   },
   {
-    q: "Berapa lama tenor cicilan yang tersedia?",
-    a: "Tenor cicilan tersedia mulai dari 1 tahun hingga 7 tahun, tergantung tipe rumah. Semua cicilan bersifat flat tanpa perubahan sepanjang tenor.",
-  },
-  {
     q: "Bagaimana proses pembelian rumah?",
     a: "Prosesnya mudah: Konsultasi gratis → Pilih proyek → Hitung cicilan → Booking fee → Akad jual beli → Serah terima kunci. Tim kami akan mendampingi di setiap tahap.",
   },
@@ -232,8 +228,8 @@ const FAQ_ITEMS = [
     a: "Ya, seluruh unit rumah sudah bersertifikat SHM (Sertifikat Hak Milik) dan IMB lengkap. Legalitas dijamin aman dan transparan.",
   },
   {
-    q: "Apakah bisa beli rumah secara cash / tunai keras?",
-    a: "Tentu saja! Kami menerima pembayaran cash keras dengan potongan harga khusus. Hubungi tim marketing kami untuk informasi promo cash terbaru.",
+    q: "Apa saja jasa yang tersedia?",
+    a: "Kami menyediakan berbagai jasa bangunan profesional: konstruksi rumah, renovasi, desain arsitektur & interior, instalasi listrik & pipa, taman & landscape, hingga konsultasi bangunan.",
   },
 ];
 
@@ -1339,6 +1335,139 @@ function CTASection() {
               Cek Unit Tersedia
             </a>
           </div>
+        </FadeIn>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────── JASA PREVIEW (Home) ─────────────────────────── */
+
+function ServicePreviewSection({
+  onSelectService,
+}: {
+  onSelectService: (s: ServiceItem) => void;
+}) {
+  const { services, fetchServices } = useServiceStore();
+  const router = useRouter();
+
+  useEffect(() => {
+    fetchServices();
+  }, [fetchServices]);
+
+  // Show featured first, then newest, max 6
+  const display = services
+    .filter((s) => s.isFeatured)
+    .concat(services.filter((s) => !s.isFeatured))
+    .slice(0, 6);
+
+  if (display.length === 0) return null;
+
+  return (
+    <section className="py-20 md:py-28 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <FadeIn className="text-center mb-12">
+          <Badge variant="secondary" className="mb-4 bg-amber-50 text-amber-700 border-amber-200">
+            <HardHat className="w-3.5 h-3.5 mr-1.5" />
+            Jasa Kami
+          </Badge>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
+            Layanan <span className="text-red-600">Profesional</span>
+          </h2>
+          <p className="text-gray-500 max-w-2xl mx-auto text-lg">
+            Solusi bangunan lengkap — dari konstruksi, renovasi, hingga desain interior.
+          </p>
+        </FadeIn>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {display.map((service) => (
+            <FadeIn key={service.id} className="h-full">
+              <Card
+                className="group h-full overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+                onClick={() => onSelectService(service)}
+              >
+                <div className="relative h-44 overflow-hidden bg-gray-200">
+                  {service.image ? (
+                    <img
+                      src={service.image}
+                      alt={service.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+                      <Wrench className="w-14 h-14 text-white/30" />
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                  <div className="absolute top-3 left-3 flex gap-1.5">
+                    <Badge className="bg-white/90 text-gray-700 border-0 shadow-lg text-[10px] font-semibold backdrop-blur-sm">
+                      {SERVICE_CATEGORY_LABELS[service.category] || service.category}
+                    </Badge>
+                    {service.isFeatured && (
+                      <Badge className="bg-yellow-500 text-gray-900 border-0 shadow-lg text-[10px] font-bold">
+                        <Star className="w-2.5 h-2.5 mr-0.5" /> Unggulan
+                      </Badge>
+                    )}
+                  </div>
+                  {service.videoUrl && (
+                    <div className="absolute top-3 right-3">
+                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-lg bg-red-600/90 text-white backdrop-blur-sm flex items-center gap-0.5">
+                        <Camera className="w-2.5 h-2.5" /> Video
+                      </span>
+                    </div>
+                  )}
+                  <div className="absolute bottom-3 left-3 right-3">
+                    <h3 className="font-bold text-white text-sm leading-tight drop-shadow-lg">
+                      {service.title}
+                    </h3>
+                  </div>
+                </div>
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-base font-extrabold text-red-600">
+                        {service.price > 0 ? `Rp ${new Intl.NumberFormat("id-ID").format(service.price)}` : "Hubungi Kami"}
+                      </span>
+                      {service.price > 0 && (
+                        <span className="text-[10px] text-gray-400 ml-1">
+                          / {SERVICE_PRICE_UNIT_MAP[service.priceUnit] || ""}
+                        </span>
+                      )}
+                    </div>
+                    {service.duration && (
+                      <span className="text-[10px] font-medium text-gray-400 flex items-center gap-1">
+                        <Clock className="w-3 h-3" /> {service.duration}
+                      </span>
+                    )}
+                  </div>
+                  {service.features.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-2.5">
+                      {service.features.slice(0, 2).map((f, i) => (
+                        <span key={i} className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-500">
+                          {f}
+                        </span>
+                      ))}
+                      {service.features.length > 2 && (
+                        <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-400">
+                          +{service.features.length - 2}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </FadeIn>
+          ))}
+        </div>
+
+        <FadeIn className="text-center mt-10">
+          <button
+            onClick={() => router.push("/?tab=jasa")}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-red-50 text-red-700 font-semibold rounded-xl hover:bg-red-100 transition-colors"
+          >
+            Lihat Semua Jasa
+            <ArrowRight className="w-4 h-4" />
+          </button>
         </FadeIn>
       </div>
     </section>
@@ -4845,18 +4974,21 @@ function PageContent() {
             <Navbar activeTab={tab} />
             <Hero />
             <PromoStrip />
-            <FeaturesSection />
             <PropertyPreviewSection onSelectProperty={handleSelectProperty} />
-            <CaraBeliSection />
-            <CalculatorSection />
-            <LocationSection />
+            <ServicePreviewSection onSelectService={handleSelectService} />
+            <TestimonialsSection limit={4} />
+            <BlogPreviewSection />
             <FAQSection />
-            <GalleryPreviewSection />
             <CTASection />
             <PropertyDetailDialog
               property={selectedProperty}
               open={!!selectedProperty}
               onClose={() => setSelectedProperty(null)}
+            />
+            <ServiceDetailDialog
+              service={selectedService!}
+              open={!!selectedService}
+              onClose={() => setSelectedService(null)}
             />
             <Footer />
             <Chatbot />
