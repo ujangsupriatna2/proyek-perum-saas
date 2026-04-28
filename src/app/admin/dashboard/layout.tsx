@@ -2,6 +2,7 @@
 
 import { useState, useEffect, createContext, useContext, useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import {
   LayoutDashboard,
@@ -100,7 +101,7 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
             : pathname.startsWith(item.href);
 
         return (
-          <a
+          <Link
             key={item.href}
             href={item.href}
             onClick={onNavigate}
@@ -114,7 +115,7 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
           >
             <item.icon className={cn("w-5 h-5 shrink-0", isActive && "text-white")} />
             {!collapsed && <span>{item.label}</span>}
-          </a>
+          </Link>
         );
       })}
     </nav>
@@ -236,9 +237,9 @@ function Header() {
         </button>
 
         <div className="flex items-center gap-2 text-sm">
-          <a href="/?tab=home" className="text-gray-400 hover:text-red-600 transition-colors">
+          <Link href="/?tab=home" className="text-gray-400 hover:text-red-600 transition-colors">
             <Home className="w-4 h-4" />
-          </a>
+          </Link>
           <span className="text-gray-300">/</span>
           <span className="font-semibold text-gray-800">{pageName}</span>
         </div>
