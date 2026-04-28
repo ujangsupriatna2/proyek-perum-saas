@@ -85,10 +85,10 @@ export async function POST(req: Request) {
       image,
       features,
       duration,
+      videoUrl,
       isPublished,
       isFeatured,
       sortOrder,
-      mitraId,
     } = body;
 
     if (!title || !category) {
@@ -100,9 +100,8 @@ export async function POST(req: Request) {
 
     const finalSlug = slug || generateSlug(title);
 
-    // Check slug uniqueness within mitra scope
+    // Check slug uniqueness
     const slugWhere: Record<string, unknown> = { slug: finalSlug };
-    if (mitraId) slugWhere.mitraId = mitraId;
     const slugExists = await db.service.findFirst({ where: slugWhere });
     if (slugExists) {
       return NextResponse.json({ error: "Slug sudah digunakan" }, { status: 409 });
@@ -124,7 +123,6 @@ export async function POST(req: Request) {
 
     const service = await db.service.create({
       data: {
-        mitraId: mitraId || null,
         title,
         slug: finalSlug,
         description: description || "",
@@ -135,6 +133,7 @@ export async function POST(req: Request) {
         images: "[]",
         features: featuresJSON,
         duration: duration || "",
+        videoUrl: videoUrl || "",
         isPublished: !!isPublished,
         isFeatured: !!isFeatured,
         sortOrder: parseInt(sortOrder) || 0,

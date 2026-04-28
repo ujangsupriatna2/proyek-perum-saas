@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useSession } from "next-auth/react";
 import {
   Plus,
   Pencil,
@@ -11,15 +10,15 @@ import {
   Loader2,
   ImageIcon,
   AlertCircle,
-  Handshake,
   Star,
+  Video,
 } from "lucide-react";
 import ImageUpload from "@/components/admin/image-upload";
+import RichEditor from "@/components/admin/rich-editor";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
@@ -90,7 +89,6 @@ const STATUS_MAP = {
 // ──── Types ────
 interface Service {
   id: string;
-  mitraId?: string | null;
   title: string;
   slug: string;
   description: string;
@@ -101,11 +99,11 @@ interface Service {
   images: string;
   features: string;
   duration: string;
+  videoUrl: string;
   isPublished: boolean;
   isFeatured: boolean;
   sortOrder: number;
   createdAt: string;
-  mitra?: { name: string } | null;
 }
 
 interface FormState {
@@ -118,10 +116,10 @@ interface FormState {
   image: string;
   features: string;
   duration: string;
+  videoUrl: string;
   isPublished: boolean;
   isFeatured: boolean;
   sortOrder: string;
-  mitraId: string;
 }
 
 const emptyForm: FormState = {
@@ -134,10 +132,10 @@ const emptyForm: FormState = {
   image: "",
   features: "",
   duration: "",
+  videoUrl: "",
   isPublished: false,
   isFeatured: false,
   sortOrder: "0",
-  mitraId: "",
 };
 
 // ──── Helpers ────
@@ -150,8 +148,8 @@ function generateSlug(title: string): string {
     .replace(/^-|-$/g, "");
 }
 
-function formatPrice(price: number): string {
-  return new Intl.NumberFormat("id-ID").format(price);
+function formatRupiah(amount: number): string {
+  return new Intl.NumberFormat("id-ID").format(amount);
 }
 
 function parseFeaturesToCSV(s: string): string {
@@ -179,20 +177,6 @@ export default function JasaPage() {
   const [form, setForm] = useState<FormState>(emptyForm);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-
-  const { data: session } = useSession();
-  const role = (session?.user as { role?: string })?.role;
-  const superAdmin = role === "superadmin";
-  const [mitraList, setMitraList] = useState<{ id: string; name: string }[]>([]);
-
-  // Fetch mitra list (superadmin only)
-  useEffect(() => {
-    if (!superAdmin) return;
-    fetch("/api/admin/mitra")
-      .then((r) => r.json())
-      .then((data) => setMitraList(Array.isArray(data) ? data : []))
-      .catch(() => {});
-  }, [superAdmin]);
 
   const fetchServices = useCallback(async () => {
     try {
@@ -232,10 +216,10 @@ export default function JasaPage() {
       image: s.image || "",
       features: parseFeaturesToCSV(s.features),
       duration: s.duration || "",
+      videoUrl: s.videoUrl || "",
       isPublished: s.isPublished,
       isFeatured: s.isFeatured,
       sortOrder: String(s.sortOrder || 0),
-      mitraId: s.mitraId || "",
     });
     setErrors({});
     setFormOpen(true);
@@ -272,13 +256,11 @@ export default function JasaPage() {
     const newErrors: Record<string, string> = {};
     if (!form.title.trim()) newErrors.title = "Nama jasa wajib diisi";
     if (!form.category) newErrors.category = "Kategori wajib diisi";
-    if (!form.price || Number(form.price) < 0) newErrors.price = "Harga wajib diisi";
 
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
     const slug = form.slug || generateSlug(form.title);
-    // Use first image as the image field (single image)
     const mainImage = form.image ? form.image.split(",").map((s) => s.trim()).filter(Boolean)[0] || "" : "";
 
     setSaving(true);
@@ -293,15 +275,15 @@ export default function JasaPage() {
           slug,
           description: form.description,
           category: form.category,
-          price: form.price,
+          price: form.price || "0",
           priceUnit: form.priceUnit,
           image: mainImage,
           features: form.features,
           duration: form.duration,
+          videoUrl: form.videoUrl,
           isPublished: form.isPublished,
           isFeatured: form.isFeatured,
           sortOrder: form.sortOrder,
-          mitraId: form.mitraId || null,
         }),
       });
       if (!res.ok) {
@@ -405,7 +387,6 @@ export default function JasaPage() {
               <TableHeader className="sticky top-0 z-10 bg-gray-50">
                 <TableRow className="bg-gray-50">
                   <TableHead className="w-12">No</TableHead>
-                  <TableHead>Mitra</TableHead>
                   <TableHead>Nama</TableHead>
                   <TableHead>Kategori</TableHead>
                   <TableHead>Harga</TableHead>
@@ -418,35 +399,18 @@ export default function JasaPage() {
                 {loading
                   ? Array.from({ length: 5 }).map((_, i) => (
                       <TableRow key={i}>
-                        <TableCell>
-                          <Skeleton className="h-4 w-6" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="h-4 w-20" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="h-4 w-40" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="h-4 w-24" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="h-4 w-28" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="h-4 w-20" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="h-5 w-20 rounded-full" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="h-8 w-16 ml-auto" />
-                        </TableCell>
+                        <TableCell><Skeleton className="h-4 w-6" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-40" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-28" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                        <TableCell><Skeleton className="h-5 w-20 rounded-full" /></TableCell>
+                        <TableCell><Skeleton className="h-8 w-16 ml-auto" /></TableCell>
                       </TableRow>
                     ))
                   : services.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={8} className="text-center py-10 text-gray-400">
+                        <TableCell colSpan={7} className="text-center py-10 text-gray-400">
                           <Wrench className="w-10 h-10 mx-auto mb-2 text-gray-300" />
                           {search || categoryFilter
                             ? "Tidak ada hasil"
@@ -465,11 +429,6 @@ export default function JasaPage() {
                               {idx + 1}
                             </TableCell>
                             <TableCell>
-                              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-md">
-                                {s.mitra?.name || "-"}
-                              </span>
-                            </TableCell>
-                            <TableCell>
                               <div className="flex items-center gap-2">
                                 {s.image ? (
                                   <img
@@ -483,13 +442,16 @@ export default function JasaPage() {
                                   </div>
                                 )}
                                 <div>
-                                  <p className="font-medium text-sm">{s.title}</p>
-                                  <div className="flex items-center gap-1.5 mt-0.5">
+                                  <div className="flex items-center gap-1.5">
                                     {s.isFeatured && (
-                                      <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
+                                      <Star className="w-3 h-3 text-amber-500 fill-amber-500 shrink-0" />
                                     )}
-                                    <span className="text-[11px] text-gray-400">{s.slug}</span>
+                                    {s.videoUrl && (
+                                      <Video className="w-3 h-3 text-red-500 shrink-0" />
+                                    )}
+                                    <p className="font-medium text-sm">{s.title}</p>
                                   </div>
+                                  <span className="text-[11px] text-gray-400">{s.slug}</span>
                                 </div>
                               </div>
                             </TableCell>
@@ -501,7 +463,7 @@ export default function JasaPage() {
                             <TableCell>
                               <div>
                                 <p className="font-semibold text-gray-800 text-sm">
-                                  Rp {formatPrice(s.price)} Jt
+                                  Rp {formatRupiah(s.price)}
                                 </p>
                                 <p className="text-[11px] text-gray-400">{unitLabel}</p>
                               </div>
@@ -544,40 +506,12 @@ export default function JasaPage() {
 
       {/* Create/Edit Dialog */}
       <Dialog open={formOpen} onOpenChange={setFormOpen}>
-        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editing ? "Edit Jasa" : "Tambah Jasa Baru"}</DialogTitle>
           </DialogHeader>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-2">
-            {/* Mitra selector — superadmin only */}
-            {superAdmin && (
-              <div className="space-y-2 sm:col-span-2">
-                <Label className="flex items-center gap-1.5">
-                  <Handshake className="w-3.5 h-3.5" />
-                  Mitra
-                </Label>
-                <Select
-                  value={form.mitraId || ""}
-                  onValueChange={(v) => setForm({ ...form, mitraId: v })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Pilih mitra..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {mitraList.map((m) => (
-                      <SelectItem key={m.id} value={m.id}>
-                        {m.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-[11px] text-gray-400">
-                  Pilih mitra untuk jasa ini. Kosongkan jika tanpa mitra.
-                </p>
-              </div>
-            )}
-
             {/* Title */}
             <div className="space-y-2 sm:col-span-2">
               <Label className="flex items-center gap-0.5">
@@ -637,9 +571,7 @@ export default function JasaPage() {
 
             {/* Price + Unit */}
             <div className="space-y-2">
-              <Label className="flex items-center gap-0.5">
-                Harga (Juta Rp) <span className="text-red-500">*</span>
-              </Label>
+              <Label>Harga (Rp)</Label>
               <div className="flex gap-2">
                 <Input
                   type="number"
@@ -648,12 +580,8 @@ export default function JasaPage() {
                     clearFieldError("price");
                     setForm({ ...form, price: e.target.value });
                   }}
-                  placeholder="50"
-                  className={
-                    hasError("price")
-                      ? "border-red-400 focus-visible:ring-red-400"
-                      : ""
-                  }
+                  placeholder="600000"
+                  className="flex-1"
                 />
                 <Select
                   value={form.priceUnit}
@@ -670,13 +598,8 @@ export default function JasaPage() {
                   </SelectContent>
                 </Select>
               </div>
-              {errors.price && (
-                <p className="text-xs text-red-500 flex items-center gap-1">
-                  <AlertCircle className="w-3 h-3" /> {errors.price}
-                </p>
-              )}
               <p className="text-[11px] text-gray-400">
-                Harga dalam juta rupiah (contoh: 50 = Rp 50.000.000)
+                Contoh: 600000 (Rp 600.000) atau 2500000 (Rp 2.500.000)
               </p>
             </div>
 
@@ -693,14 +616,29 @@ export default function JasaPage() {
               </p>
             </div>
 
-            {/* Description */}
+            {/* Video URL */}
+            <div className="space-y-2">
+              <Label className="flex items-center gap-1.5">
+                <Video className="w-3.5 h-3.5" />
+                Link Video YouTube
+              </Label>
+              <Input
+                value={form.videoUrl}
+                onChange={(e) => setForm({ ...form, videoUrl: e.target.value })}
+                placeholder="https://youtube.com/watch?v=..."
+              />
+              <p className="text-[11px] text-gray-400">
+                Paste link YouTube untuk video preview jasa
+              </p>
+            </div>
+
+            {/* Description — Rich Editor */}
             <div className="space-y-2 sm:col-span-2">
               <Label>Deskripsi</Label>
-              <Textarea
+              <RichEditor
                 value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                onChange={(v) => setForm({ ...form, description: v })}
                 placeholder="Deskripsi detail layanan jasa..."
-                rows={3}
               />
             </div>
 
