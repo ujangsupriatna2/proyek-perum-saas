@@ -90,6 +90,7 @@ import { useTestimonialStore, type Testimonial } from "@/lib/testimonial-store";
 import { useGalleryStore, type GalleryItem } from "@/lib/gallery-store";
 import { useBankStore, type BankItem } from "@/lib/bank-store";
 import { useServiceStore, type ServiceItem } from "@/lib/service-store";
+import { useMitraStore, type MitraItem } from "@/lib/mitra-store";
 import { useSettingsStore } from "@/lib/settings-store";
 
 /* ─────────────────────────── DATA ─────────────────────────── */
@@ -99,6 +100,7 @@ const NAV_LINKS = [
   { label: "Tentang Kami", tab: "tentang" },
   { label: "Proyek", tab: "proyek" },
   { label: "Jasa", tab: "jasa" },
+  { label: "Mitra", tab: "mitra" },
   { label: "Gallery", tab: "gallery" },
   { label: "Blog", tab: "blog" },
   { label: "Kontak", tab: "kontak" },
@@ -4811,6 +4813,164 @@ function JasaPage({
   );
 }
 
+/* ─────────────────────────── MITRA PAGE ─────────────────────────── */
+
+function MitraPage() {
+  const { settings: S } = useSettingsStore();
+  const { mitraList, loading, fetchMitraList } = useMitraStore();
+
+  useEffect(() => {
+    fetchMitraList();
+  }, [fetchMitraList]);
+
+  return (
+    <>
+      <PageBanner
+        title="Mitra Developer"
+        subtitle="Developer perumahan terpilih yang bergabung dengan platform kami"
+        bgImage={S.page_banner_image}
+      />
+
+      <section className="py-20 md:py-28 bg-warm-bg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeIn className="text-center mb-16">
+            <Badge variant="secondary" className="mb-4 bg-red-50 text-red-700 border-red-200">
+              <Handshake className="w-3.5 h-3.5 mr-1.5" />
+              Mitra Terpercaya
+            </Badge>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
+              Developer <span className="text-red-600">Terpilih</span> & Terverifikasi
+            </h2>
+            <p className="text-gray-500 max-w-2xl mx-auto text-lg">
+              Setiap mitra developer yang bergabung telah melalui proses kurasi ketat — dari legalitas, kualitas bangunan, hingga track record.
+            </p>
+          </FadeIn>
+
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="bg-white rounded-2xl shadow-lg animate-pulse h-64" />
+              ))}
+            </div>
+          ) : mitraList.length === 0 ? (
+            <div className="text-center py-20">
+              <Building2 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-lg font-bold text-gray-400 mb-2">Belum ada mitra terdaftar</h3>
+              <p className="text-gray-400 text-sm">Developer mitra yang terdaftar akan tampil di sini.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {mitraList.map((mitra, i) => (
+                <FadeIn key={mitra.id} delay={i * 0.08}>
+                  <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group overflow-hidden">
+                    {/* Top accent */}
+                    <div className="h-1.5 bg-gradient-to-r from-red-500 via-amber-500 to-red-500" />
+                    <CardContent className="p-6">
+                      {/* Logo / Initial */}
+                      <div className="flex items-start gap-4 mb-4">
+                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center shadow-lg shrink-0 overflow-hidden group-hover:scale-105 transition-transform">
+                          {mitra.logo ? (
+                            <img src={mitra.logo} alt={mitra.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <span className="text-white font-extrabold text-xl">
+                              {mitra.name.charAt(0).toUpperCase()}
+                            </span>
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <h3 className="text-lg font-bold text-gray-900 truncate">{mitra.name}</h3>
+                          <p className="text-sm text-gray-500 flex items-center gap-1 mt-0.5">
+                            <MapPin className="w-3.5 h-3.5 shrink-0" />
+                            <span className="truncate">{mitra.address || "Indonesia"}</span>
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Description */}
+                      {mitra.description && (
+                        <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3">
+                          {mitra.description}
+                        </p>
+                      )}
+
+                      {/* Stats */}
+                      <div className="flex items-center gap-4 pt-4 border-t border-gray-100">
+                        <div className="flex items-center gap-1.5 text-sm">
+                          <Building2 className="w-4 h-4 text-red-500" />
+                          <span className="font-bold text-gray-900">{mitra.propertyCount}</span>
+                          <span className="text-gray-500">Proyek</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-sm">
+                          <CheckCircle2 className="w-4 h-4 text-green-500" />
+                          <span className="text-gray-500">Terverifikasi</span>
+                        </div>
+                      </div>
+
+                      {/* Contact */}
+                      {(mitra.phone || mitra.email) && (
+                        <div className="flex flex-wrap gap-2 mt-4">
+                          {mitra.phone && (
+                            <a
+                              href={`https://wa.me/${mitra.phone.replace(/^0/, "62")}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-green-50 text-green-700 hover:bg-green-100 transition-colors"
+                            >
+                              <Phone className="w-3 h-3" /> WhatsApp
+                            </a>
+                          )}
+                          {mitra.email && (
+                            <a
+                              href={`mailto:${mitra.email}`}
+                              className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors"
+                            >
+                              <MessageSquare className="w-3 h-3" /> Email
+                            </a>
+                          )}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </FadeIn>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* CTA — Bergabung sebagai Mitra */}
+      <section className="py-20 md:py-28 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-72 h-72 bg-red-500/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl" />
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <FadeIn>
+            <Badge variant="secondary" className="mb-6 bg-white/10 text-amber-300 border-white/20">
+              <Handshake className="w-3.5 h-3.5 mr-1.5" />
+              Bergabunglah
+            </Badge>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">
+              Tertarik Bergabung sebagai <span className="text-amber-300">Mitra Developer</span>?
+            </h2>
+            <p className="text-gray-400 text-lg leading-relaxed mb-8 max-w-2xl mx-auto">
+              Jika Anda adalah developer perumahan dengan legalitas lengkap dan track record baik,
+              bergabunglah dengan {S.company_name} untuk memperluas jangkauan pemasaran Anda.
+            </p>
+            <a
+              href={`https://wa.me/${S.contact_wa}?text=Halo,%20saya%20tertarik%20bergabung%20sebagai%20mitra%20developer`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-amber-500 to-amber-600 text-gray-900 font-bold rounded-2xl shadow-2xl hover:from-amber-600 hover:to-amber-700 transition-all active:scale-95 text-lg"
+            >
+              Hubungi Kami
+              <ArrowRight className="w-5 h-5" />
+            </a>
+          </FadeIn>
+        </div>
+      </section>
+    </>
+  );
+}
+
 /* ─────────────────────────── PROYEK PAGE ─────────────────────────── */
 
 function ProyekPage({
@@ -5039,6 +5199,15 @@ function PageContent() {
               open={!!selectedService}
               onClose={() => setSelectedService(null)}
             />
+            <Footer />
+            <Chatbot />
+          </>
+        );
+      case "mitra":
+        return (
+          <>
+            <Navbar activeTab={tab} />
+            <MitraPage />
             <Footer />
             <Chatbot />
           </>
