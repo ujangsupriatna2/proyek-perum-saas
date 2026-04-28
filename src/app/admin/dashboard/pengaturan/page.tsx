@@ -163,7 +163,7 @@ export default function PengaturanPage() {
   const role = (session?.user as { role?: string })?.role;
   const superAdmin = role === "superadmin";
   const [mitraList, setMitraList] = useState<{ id: string; name: string }[]>([]);
-  const [selectedMitraId, setSelectedMitraId] = useState<string>("");
+  const [selectedMitraId, setSelectedMitraId] = useState<string | null>(null);
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
@@ -183,7 +183,7 @@ export default function PengaturanPage() {
       const q = selectedMitraId ? `?mitraId=${selectedMitraId}` : "";
       const res = await fetch(`/api/admin/settings${q}`);
       const data = await res.json();
-      setSettings(data);
+      setSettings(typeof data === "object" && !Array.isArray(data) ? data : {});
     } catch { /* ignore */ }
     setLoading(false);
   }, [selectedMitraId]);
@@ -239,9 +239,9 @@ export default function PengaturanPage() {
             label: field.label,
             group: group.group,
           };
-          // Superadmin passes mitraId to the API
-          if (superAdmin && selectedMitraId) {
-            item.mitraId = selectedMitraId;
+          // Superadmin passes mitraId to the API (null for global)
+          if (superAdmin) {
+            item.mitraId = selectedMitraId || undefined;
           }
           items.push(item);
         }
@@ -285,14 +285,20 @@ export default function PengaturanPage() {
                 </div>
                 <Label className="text-sm font-medium">Pilih Mitra</Label>
               </div>
-              <Select value={selectedMitraId || ""} onValueChange={(v) => {
-                setSelectedMitraId(v);
+              <Select value={selectedMitraId || "__global__"} onValueChange={(v) => {
+                setSelectedMitraId(v === "__global__" ? null : v);
                 setLoading(true);
               }}>
                 <SelectTrigger className="w-full sm:max-w-xs">
-                  <SelectValue placeholder="⚙️ Pengaturan Global (tanpa mitra)" />
+                  <SelectValue placeholder="Pilih Mitra..." />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="__global__">
+                    <div className="flex items-center gap-2">
+                      <SettingsIcon className="w-3.5 h-3.5 text-gray-400" />
+                      <span>Tanpa Mitra (Global)</span>
+                    </div>
+                  </SelectItem>
                   {mitraList.map(m => (
                     <SelectItem key={m.id} value={m.id}>
                       <div className="flex items-center gap-2">

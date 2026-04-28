@@ -58,8 +58,6 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: "Expected array of settings" }, { status: 400 });
     }
 
-    // Superadmin can specify mitraId per item or via a top-level mitraId
-    // Admin always uses their own mitraId
     for (const item of items) {
       let targetMitraId: string | null = sessionMitraId;
 
@@ -73,30 +71,62 @@ export async function PUT(req: Request) {
         return NextResponse.json({ error: "Admin harus memiliki mitra" }, { status: 400 });
       }
 
-      await db.setting.upsert({
-        where: {
-          key_mitraId: {
-            key: item.key,
-            mitraId: targetMitraId ?? null,
+      if (targetMitraId) {
+        // Non-null mitraId: use upsert with compound unique key
+        await db.setting.upsert({
+          where: {
+            mitraId_key: {
+              mitraId: targetMitraId,
+              key: item.key,
+            },
           },
-        },
-        update: {
-          value: item.value,
-          ...(item.label !== undefined && { label: item.label }),
-          ...(item.group !== undefined && { group: item.group }),
-        },
-        create: {
-          mitraId: targetMitraId || null,
-          key: item.key,
-          value: item.value,
-          label: item.label || item.key,
-          group: item.group || "general",
-        },
-      });
+          update: {
+            value: item.value,
+            ...(item.label !== undefined && { label: item.label }),
+            ...(item.group !== undefined && { group: item.group }),
+          },
+          create: {
+            mitraId: targetMitraId,
+            key: item.key,
+            value: item.value,
+            label: item.label || item.key,
+            group: item.group || "general",
+          },
+        });
+      } else {
+        // Global settings (mitraId = null): cannot use upsert with null in compound key
+        // Prisma's SettingMitraIdKeyCompoundUniqueInput requires mitraId: string
+        // So we use findFirst + update/create instead
+        const existing = await db.setting.findFirst({
+          where: { mitraId: null, key: item.key },
+        });
+
+        if (existing) {
+          await db.setting.update({
+            where: { id: existing.id },
+            data: {
+              value: item.value,
+              ...(item.label !== undefined && { label: item.label }),
+              ...(item.group !== undefined && { group: item.group }),
+            },
+          });
+        } else {
+          await db.setting.create({
+            data: {
+              mitraId: null,
+              key: item.key,
+              value: item.value,
+              label: item.label || item.key,
+              group: item.group || "general",
+            },
+          });
+        }
+      }
     }
 
     return NextResponse.json({ message: "Settings updated successfully" });
-  } catch {
+  } catch (error) {
+    console.error("[PUT /api/admin/settings]", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
