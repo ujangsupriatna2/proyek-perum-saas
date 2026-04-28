@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import { Plus, Pencil, Trash2, Shield, Eye, EyeOff, Loader2, Users, AlertCircle } from "lucide-react";
+import { Plus, Pencil, Trash2, Shield, Eye, EyeOff, Loader2, Users, AlertCircle, Building2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,11 +43,19 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+interface Mitra {
+  id: string;
+  name: string;
+  slug: string;
+}
+
 interface Admin {
   id: string;
   name: string;
   email: string;
   role: string;
+  mitraId?: string | null;
+  mitra?: { id: string; name: string; slug: string } | null;
   avatar?: string;
   createdAt: string;
 }
@@ -56,14 +64,16 @@ interface FormErrors {
   name?: string;
   email?: string;
   password?: string;
+  mitraId?: string;
 }
 
-const emptyForm = { name: "", email: "", password: "", role: "admin" };
+const emptyForm = { name: "", email: "", password: "", role: "admin", mitraId: "" };
 const emptyErrors: FormErrors = {};
 
 export default function UsersPage() {
   const { data: session } = useSession();
   const [admins, setAdmins] = useState<Admin[]>([]);
+  const [mitraList, setMitraList] = useState<Mitra[]>([]);
   const [loading, setLoading] = useState(true);
   const [formOpen, setFormOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -76,6 +86,18 @@ export default function UsersPage() {
   const [showPassword, setShowPassword] = useState(false);
 
   const currentUserId = (session?.user as { id?: string })?.id;
+
+  const fetchMitra = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/mitra");
+      if (res.ok) {
+        const data = await res.json();
+        setMitraList(data);
+      }
+    } catch {
+      // silent fail — mitra dropdown will just be empty
+    }
+  }, []);
 
   const fetchAdmins = useCallback(async () => {
     try {
@@ -92,7 +114,10 @@ export default function UsersPage() {
     setLoading(false);
   }, []);
 
-  useEffect(() => { fetchAdmins(); }, [fetchAdmins]);
+  useEffect(() => {
+    fetchMitra();
+    fetchAdmins();
+  }, [fetchMitra, fetchAdmins]);
 
   const openCreate = () => {
     setEditing(null);
@@ -104,7 +129,13 @@ export default function UsersPage() {
 
   const openEdit = (admin: Admin) => {
     setEditing(admin);
-    setForm({ name: admin.name, email: admin.email, password: "", role: admin.role });
+    setForm({
+      name: admin.name,
+      email: admin.email,
+      password: "",
+      role: admin.role,
+      mitraId: admin.mitraId || "",
+    });
     setErrors(emptyErrors);
     setShowPassword(false);
     setFormOpen(true);
@@ -134,6 +165,11 @@ export default function UsersPage() {
       newErrors.password = "Password minimal 6 karakter";
     }
 
+    // Mitra is required for admin role (not superadmin)
+    if (form.role === "admin" && !form.mitraId) {
+      newErrors.mitraId = "Mitra wajib dipilih untuk role Admin";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -145,8 +181,14 @@ export default function UsersPage() {
     try {
       const url = editing ? `/api/admin/users/${editing.id}` : "/api/admin/users";
       const method = editing ? "PUT" : "POST";
-      const body: Record<string, string> = { name: form.name.trim(), email: form.email.trim(), role: form.role };
+      const body: Record<string, string> = {
+        name: form.name.trim(),
+        email: form.email.trim(),
+        role: form.role,
+      };
       if (form.password) body.password = form.password;
+      // Only send mitraId for admin role; superadmin gets null
+      body.mitraId = form.role === "admin" ? form.mitraId : "";
 
       const res = await fetch(url, {
         method,
@@ -217,9 +259,10 @@ export default function UsersPage() {
             <Table containerClassName="max-h-[calc(100vh-14rem)]">
               <TableHeader className="sticky top-0 z-10 bg-gray-50">
                 <TableRow className="bg-gray-50">
-                  <TableHead className="w-[250px]">Nama</TableHead>
-                  <TableHead className="w-[280px]">Email</TableHead>
-                  <TableHead className="w-[130px]">Role</TableHead>
+                  <TableHead className="w-[220px]">Nama</TableHead>
+                  <TableHead className="w-[250px]">Email</TableHead>
+                  <TableHead className="w-[140px]">Role</TableHead>
+                  <TableHead className="w-[160px]">Mitra</TableHead>
                   <TableHead className="w-[120px]">Bergabung</TableHead>
                   <TableHead className="text-right w-[100px]">Aksi</TableHead>
                 </TableRow>
@@ -231,6 +274,7 @@ export default function UsersPage() {
                         <TableCell><Skeleton className="h-4 w-32" /></TableCell>
                         <TableCell><Skeleton className="h-4 w-40" /></TableCell>
                         <TableCell><Skeleton className="h-5 w-20 rounded-full" /></TableCell>
+                        <TableCell><Skeleton className="h-5 w-24 rounded-full" /></TableCell>
                         <TableCell><Skeleton className="h-4 w-24" /></TableCell>
                         <TableCell><Skeleton className="h-8 w-16 ml-auto" /></TableCell>
                       </TableRow>
@@ -238,7 +282,7 @@ export default function UsersPage() {
                   : admins.length === 0
                   ? (
                       <TableRow>
-                        <TableCell colSpan={5} className="text-center py-12 text-gray-400">
+                        <TableCell colSpan={6} className="text-center py-12 text-gray-400">
                           <Users className="w-12 h-12 mx-auto mb-3 text-gray-300" />
                           <p className="font-medium">Belum ada user</p>
                           <p className="text-sm mt-1">Klik &quot;Tambah User&quot; untuk membuat akun baru</p>
@@ -254,6 +298,16 @@ export default function UsersPage() {
                             <Shield className="w-3 h-3 mr-1" />
                             {a.role === "superadmin" ? "Superadmin" : "Admin"}
                           </Badge>
+                        </TableCell>
+                        <TableCell>
+                          {a.mitra ? (
+                            <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 gap-1">
+                              <Building2 className="w-3 h-3" />
+                              {a.mitra.name}
+                            </Badge>
+                          ) : (
+                            <span className="text-xs text-gray-400">—</span>
+                          )}
                         </TableCell>
                         <TableCell className="text-gray-500 text-sm">{formatDate(a.createdAt)}</TableCell>
                         <TableCell className="text-right">
@@ -280,9 +334,9 @@ export default function UsersPage() {
         </CardContent>
       </Card>
 
-      {/* Create/Edit Dialog — compact with inline validation */}
+      {/* Create/Edit Dialog */}
       <Dialog open={formOpen} onOpenChange={setFormOpen}>
-        <DialogContent className="sm:max-w-[400px] p-5 gap-3">
+        <DialogContent className="sm:max-w-[420px] p-5 gap-3">
           <DialogHeader className="pb-0">
             <DialogTitle className="text-base">
               {editing ? "Edit User" : "Tambah User Baru"}
@@ -365,7 +419,10 @@ export default function UsersPage() {
             {/* Role */}
             <div className="space-y-1.5">
               <Label className="text-xs font-medium">Role</Label>
-              <Select value={form.role} onValueChange={(v) => setForm({ ...form, role: v })}>
+              <Select value={form.role} onValueChange={(v) => {
+                setForm({ ...form, role: v, mitraId: v === "superadmin" ? "" : form.mitraId });
+                setErrors((p) => ({ ...p, mitraId: undefined }));
+              }}>
                 <SelectTrigger className="h-9 text-sm">
                   <SelectValue />
                 </SelectTrigger>
@@ -374,12 +431,62 @@ export default function UsersPage() {
                   <SelectItem value="superadmin">Super Admin</SelectItem>
                 </SelectContent>
               </Select>
+              <p className="text-[11px] text-gray-400">
+                {form.role === "superadmin"
+                  ? "Super Admin dapat mengakses semua data mitra"
+                  : "Admin hanya bisa mengakses data mitra yang dipilih"}
+              </p>
             </div>
+
+            {/* Mitra — only shown for admin role */}
+            {form.role === "admin" && (
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium">
+                  Mitra <span className="text-red-500">*</span>
+                </Label>
+                {mitraList.length === 0 ? (
+                  <div className="rounded-md border border-dashed border-gray-300 px-3 py-6 text-center">
+                    <Building2 className="w-6 h-6 mx-auto text-gray-300 mb-1" />
+                    <p className="text-xs text-gray-400">Belum ada mitra. Tambahkan mitra terlebih dahulu.</p>
+                  </div>
+                ) : (
+                  <>
+                    <Select value={form.mitraId} onValueChange={(v) => {
+                      setForm({ ...form, mitraId: v });
+                      setErrors((p) => ({ ...p, mitraId: undefined }));
+                    }}>
+                      <SelectTrigger className={`h-9 text-sm ${errors.mitraId ? "border-red-400 focus-visible:ring-red-400" : ""}`}>
+                        <SelectValue placeholder="Pilih mitra..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {mitraList.map((m) => (
+                          <SelectItem key={m.id} value={m.id}>
+                            <div className="flex items-center gap-2">
+                              <Building2 className="w-3.5 h-3.5 text-gray-400" />
+                              {m.name}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {errors.mitraId && (
+                      <p className="text-xs text-red-500 flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3" /> {errors.mitraId}
+                      </p>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
           </div>
 
           <DialogFooter className="pt-0 gap-2">
             <Button variant="outline" onClick={() => setFormOpen(false)} className="h-8 text-sm">Batal</Button>
-            <Button onClick={handleSave} disabled={saving} className="bg-red-600 hover:bg-red-700 text-white h-8 text-sm px-4">
+            <Button
+              onClick={handleSave}
+              disabled={saving || (form.role === "admin" && mitraList.length === 0 && !editing)}
+              className="bg-red-600 hover:bg-red-700 text-white h-8 text-sm px-4"
+            >
               {saving && <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />}
               {editing ? "Simpan" : "Tambah"}
             </Button>
