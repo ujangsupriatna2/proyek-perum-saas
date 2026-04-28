@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
-import { Save, Loader2, Settings as SettingsIcon, Phone, Globe, AlertCircle, MapPin, Building2, ImagePlus, X, Upload } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { Save, Loader2, Settings as SettingsIcon, Phone, Globe, AlertCircle, MapPin, Building2, ImagePlus, X, Upload, Handshake } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +11,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const IMAGE_KEYS = ["hero_bg_image", "location_bg_image"];
 
@@ -151,19 +159,34 @@ function ImageUploadField({ fieldKey, label, value, onChange }: {
 }
 
 export default function PengaturanPage() {
+  const { data: session } = useSession();
+  const role = (session?.user as { role?: string })?.role;
+  const superAdmin = role === "superadmin";
+  const [mitraList, setMitraList] = useState<{ id: string; name: string }[]>([]);
+  const [selectedMitraId, setSelectedMitraId] = useState<string>("");
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
+  // Fetch mitra list (superadmin only)
+  useEffect(() => {
+    if (!superAdmin) return;
+    fetch("/api/admin/mitra")
+      .then(r => r.json())
+      .then(data => setMitraList(Array.isArray(data) ? data : []))
+      .catch(() => {});
+  }, [superAdmin]);
+
   const fetchSettings = useCallback(async () => {
     try {
-      const res = await fetch("/api/admin/settings");
+      const q = selectedMitraId ? `?mitraId=${selectedMitraId}` : "";
+      const res = await fetch(`/api/admin/settings${q}`);
       const data = await res.json();
       setSettings(data);
     } catch { /* ignore */ }
     setLoading(false);
-  }, []);
+  }, [selectedMitraId]);
 
   useEffect(() => { fetchSettings(); }, [fetchSettings]);
 
@@ -207,15 +230,20 @@ export default function PengaturanPage() {
     setErrors({});
     setSaving(true);
     try {
-      const items: { key: string; value: string; label: string; group: string }[] = [];
+      const items: { key: string; value: string; label: string; group: string; mitraId?: string }[] = [];
       for (const group of SETTINGS_GROUPS) {
         for (const field of group.fields) {
-          items.push({
+          const item: { key: string; value: string; label: string; group: string; mitraId?: string } = {
             key: field.key,
             value: settings[field.key] || "",
             label: field.label,
             group: group.group,
-          });
+          };
+          // Superadmin passes mitraId to the API
+          if (superAdmin && selectedMitraId) {
+            item.mitraId = selectedMitraId;
+          }
+          items.push(item);
         }
       }
       const res = await fetch("/api/admin/settings", {
@@ -234,13 +262,56 @@ export default function PengaturanPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Pengaturan</h1>
-          <p className="text-sm text-gray-500 mt-1">Konfigurasi website {settings.company_name || "Admin"}</p>
+          <p className="text-sm text-gray-500 mt-1">
+            {superAdmin
+              ? `Konfigurasi website ${selectedMitraId ? "mitra" : "global"}`
+              : `Konfigurasi website ${settings.company_name || "Admin"}`}
+          </p>
         </div>
         <Button onClick={handleSave} disabled={saving} className="bg-red-600 hover:bg-red-700 text-white gap-2">
           {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
           Simpan Pengaturan
         </Button>
       </div>
+
+      {/* Mitra selector — superadmin only */}
+      {superAdmin && (
+        <Card className="border-0 shadow-sm">
+          <CardContent className="p-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+              <div className="flex items-center gap-2 shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
+                  <Handshake className="w-4 h-4 text-purple-600" />
+                </div>
+                <Label className="text-sm font-medium">Pilih Mitra</Label>
+              </div>
+              <Select value={selectedMitraId || ""} onValueChange={(v) => {
+                setSelectedMitraId(v);
+                setLoading(true);
+              }}>
+                <SelectTrigger className="w-full sm:max-w-xs">
+                  <SelectValue placeholder="⚙️ Pengaturan Global (tanpa mitra)" />
+                </SelectTrigger>
+                <SelectContent>
+                  {mitraList.map(m => (
+                    <SelectItem key={m.id} value={m.id}>
+                      <div className="flex items-center gap-2">
+                        <Building2 className="w-3.5 h-3.5 text-gray-400" />
+                        {m.name}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-gray-400">
+                {selectedMitraId
+                  ? "Mengedit pengaturan untuk mitra yang dipilih"
+                  : "Mengedit pengaturan global (tanpa mitra)"}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {loading
         ? Array.from({ length: 3 }).map((_, i) => (

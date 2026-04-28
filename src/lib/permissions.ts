@@ -10,14 +10,12 @@ export const ROLES = {
 // Navigation items that require superadmin
 const SUPERADMIN_ONLY_ROUTES = [
   "/admin/dashboard/users",
-  "/admin/dashboard/pengaturan",
   "/admin/dashboard/mitra",
 ];
 
 // API routes that require superadmin
 const SUPERADMIN_ONLY_API = [
   "/api/admin/users",
-  "/api/admin/settings",
   "/api/admin/mitra",
 ];
 

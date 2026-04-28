@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { getMitraFilter } from "@/lib/permissions";
+import { getMitraFilter, isSuperadmin } from "@/lib/permissions";
 
 export async function GET(req: Request) {
   try {
@@ -56,7 +56,7 @@ export async function POST(req: Request) {
     }
 
     const role = (session.user as { role?: string })?.role;
-    const mitraId = (session.user as { mitraId?: string | null })?.mitraId;
+    const sessionMitraId = (session.user as { mitraId?: string | null })?.mitraId;
 
     const body = await req.json();
     const {
@@ -80,7 +80,7 @@ export async function POST(req: Request) {
 
     // Check slug uniqueness within mitra scope
     const slugWhere: Record<string, unknown> = { slug };
-    if (mitraId) slugWhere.mitraId = mitraId;
+    if (sessionMitraId) slugWhere.mitraId = sessionMitraId;
     const slugExists = await db.property.findFirst({ where: slugWhere });
     if (slugExists) {
       return NextResponse.json({ error: "Slug sudah digunakan" }, { status: 409 });
@@ -88,7 +88,7 @@ export async function POST(req: Request) {
 
     const property = await db.property.create({
       data: {
-        mitraId: mitraId || null,
+        mitraId: (isSuperadmin(role) ? (body.mitraId || sessionMitraId) : sessionMitraId) || null,
         name,
         slug,
         type,

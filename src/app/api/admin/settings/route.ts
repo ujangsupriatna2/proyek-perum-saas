@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { isSuperadmin, getMitraFilter } from "@/lib/permissions";
+import { isSuperadmin } from "@/lib/permissions";
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -12,16 +12,24 @@ export async function GET() {
     }
 
     const role = (session.user as { role?: string })?.role;
-    const mitraId = (session.user as { mitraId?: string | null })?.mitraId;
+    const sessionMitraId = (session.user as { mitraId?: string | null })?.mitraId;
 
-    // Superadmin only endpoint
-    if (!isSuperadmin(role)) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    // Superadmin can pass ?mitraId=xxx to view a specific mitra's settings
+    let mitraId = sessionMitraId;
+    if (isSuperadmin(role)) {
+      const { searchParams } = new URL(req.url);
+      const queryMitraId = searchParams.get("mitraId");
+      if (queryMitraId) mitraId = queryMitraId;
     }
 
-    const mitraFilter = getMitraFilter(mitraId);
+    const where: Record<string, unknown> = {};
+    if (mitraId) {
+      where.mitraId = mitraId;
+    } else {
+      where.mitraId = null;
+    }
 
-    const settings = await db.setting.findMany({ where: mitraFilter });
+    const settings = await db.setting.findMany({ where });
     const settingsMap: Record<string, string> = {};
     settings.forEach((s) => {
       settingsMap[s.key] = s.value;
@@ -41,27 +49,35 @@ export async function PUT(req: Request) {
     }
 
     const role = (session.user as { role?: string })?.role;
-    const mitraId = (session.user as { mitraId?: string | null })?.mitraId;
-
-    // Superadmin only endpoint
-    if (!isSuperadmin(role)) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
+    const sessionMitraId = (session.user as { mitraId?: string | null })?.mitraId;
 
     const body = await req.json();
-    const items: { key: string; value: string; label?: string; group?: string }[] = body;
+    const items: { key: string; value: string; label?: string; group?: string; mitraId?: string }[] = body;
 
     if (!Array.isArray(items)) {
       return NextResponse.json({ error: "Expected array of settings" }, { status: 400 });
     }
 
+    // Superadmin can specify mitraId per item or via a top-level mitraId
+    // Admin always uses their own mitraId
     for (const item of items) {
-      // Upsert with mitra scope
+      let targetMitraId: string | null = sessionMitraId;
+
+      if (isSuperadmin(role)) {
+        // Superadmin: use item's mitraId if provided, otherwise use session mitraId (null for global)
+        targetMitraId = item.mitraId ?? sessionMitraId ?? null;
+      }
+
+      // Admin must have a mitraId
+      if (!isSuperadmin(role) && !targetMitraId) {
+        return NextResponse.json({ error: "Admin harus memiliki mitra" }, { status: 400 });
+      }
+
       await db.setting.upsert({
         where: {
           key_mitraId: {
             key: item.key,
-            mitraId: mitraId ?? null,
+            mitraId: targetMitraId ?? null,
           },
         },
         update: {
@@ -70,7 +86,7 @@ export async function PUT(req: Request) {
           ...(item.group !== undefined && { group: item.group }),
         },
         create: {
-          mitraId: mitraId || null,
+          mitraId: targetMitraId || null,
           key: item.key,
           value: item.value,
           label: item.label || item.key,

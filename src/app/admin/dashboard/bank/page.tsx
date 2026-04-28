@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Plus, Pencil, Trash2, Search, LandPlot, Loader2, AlertCircle, Building2 } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { Plus, Pencil, Trash2, Search, LandPlot, Loader2, AlertCircle, Building2, Handshake } from "lucide-react";
 import ImageUpload from "@/components/admin/image-upload";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -36,6 +37,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface BankItem {
   id: string;
@@ -47,7 +55,7 @@ interface BankItem {
   createdAt: string;
 }
 
-const emptyForm = { name: "", description: "", image: "", sortOrder: "0", isActive: true };
+const emptyForm = { name: "", description: "", image: "", sortOrder: "0", isActive: true, mitraId: "" };
 
 export default function BankPage() {
   const [items, setItems] = useState<BankItem[]>([]);
@@ -60,6 +68,20 @@ export default function BankPage() {
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const { data: session } = useSession();
+  const role = (session?.user as { role?: string })?.role;
+  const superAdmin = role === "superadmin";
+  const [mitraList, setMitraList] = useState<{ id: string; name: string }[]>([]);
+
+  // Fetch mitra list (only for superadmin)
+  useEffect(() => {
+    if (!superAdmin) return;
+    fetch("/api/admin/mitra")
+      .then(r => r.json())
+      .then(data => setMitraList(Array.isArray(data) ? data : []))
+      .catch(() => {});
+  }, [superAdmin]);
 
   const fetchBanks = useCallback(async () => {
     try {
@@ -92,6 +114,7 @@ export default function BankPage() {
       image: b.image,
       sortOrder: String(b.sortOrder),
       isActive: b.isActive,
+      mitraId: (b as any).mitraId || "",
     });
     setErrors({});
     setFormOpen(true);
@@ -258,6 +281,26 @@ export default function BankPage() {
             <DialogTitle>{editing ? "Edit Bank" : "Tambah Bank Baru"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
+            {/* Mitra selector — superadmin only */}
+            {superAdmin && (
+              <div className="space-y-2">
+                <Label className="flex items-center gap-1.5">
+                  <Handshake className="w-3.5 h-3.5" />
+                  Mitra
+                </Label>
+                <Select value={form.mitraId || ""} onValueChange={(v) => setForm({ ...form, mitraId: v })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Pilih mitra..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {mitraList.map(m => (
+                      <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-[11px] text-gray-400">Pilih mitra untuk data ini. Kosongkan jika tanpa mitra.</p>
+              </div>
+            )}
             <div className="space-y-2">
               <Label>
                 Nama Bank <span className="text-red-500">*</span>

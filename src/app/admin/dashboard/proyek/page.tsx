@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useSession } from "next-auth/react";
 import {
   Plus,
   Pencil,
@@ -12,6 +13,7 @@ import {
   AlertCircle,
   X,
   ExternalLink,
+  Handshake,
 } from "lucide-react";
 import ImageUpload from "@/components/admin/image-upload";
 import { toast } from "sonner";
@@ -115,6 +117,7 @@ interface FormState {
   kprInterestType: string;
   videoUrl: string;
   landPricePerSqm: string;
+  mitraId: string;
 }
 
 const emptyForm: FormState = {
@@ -130,6 +133,7 @@ const emptyForm: FormState = {
   kprInterestType: "annuity",
   videoUrl: "",
   landPricePerSqm: "",
+  mitraId: "",
 };
 
 // ──── Helpers ────
@@ -658,6 +662,20 @@ export default function ProyekPage() {
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  const { data: session } = useSession();
+  const role = (session?.user as { role?: string })?.role;
+  const superAdmin = role === "superadmin";
+  const [mitraList, setMitraList] = useState<{ id: string; name: string }[]>([]);
+
+  // Fetch mitra list (only for superadmin)
+  useEffect(() => {
+    if (!superAdmin) return;
+    fetch("/api/admin/mitra")
+      .then(r => r.json())
+      .then(data => setMitraList(Array.isArray(data) ? data : []))
+      .catch(() => {});
+  }, [superAdmin]);
+
   const fetchProperties = useCallback(async () => {
     try {
       const q = search ? `?search=${encodeURIComponent(search)}` : "";
@@ -699,6 +717,7 @@ export default function ProyekPage() {
       kprInterestType: String(p.kprInterestType ?? "annuity"),
       videoUrl: String((p as any).videoUrl ?? ""),
       landPricePerSqm: String((p as any).landPricePerSqm ?? ""),
+      mitraId: (p as any).mitraId || "",
     });
     setErrors({});
     setFormOpen(true);
@@ -943,6 +962,26 @@ export default function ProyekPage() {
             <DialogTitle>{editing ? "Edit Proyek" : "Tambah Proyek Baru"}</DialogTitle>
           </DialogHeader>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-2">
+            {/* Mitra selector — superadmin only */}
+            {superAdmin && (
+              <div className="space-y-2 sm:col-span-2">
+                <Label className="flex items-center gap-1.5">
+                  <Handshake className="w-3.5 h-3.5" />
+                  Mitra
+                </Label>
+                <Select value={form.mitraId || ""} onValueChange={(v) => setForm({ ...form, mitraId: v })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Pilih mitra..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {mitraList.map(m => (
+                      <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-[11px] text-gray-400">Pilih mitra untuk data ini. Kosongkan jika tanpa mitra.</p>
+              </div>
+            )}
             {/* ── Info Dasar ── */}
             <div className="space-y-2">
               <Label className="flex items-center gap-0.5">Nama Proyek <span className="text-red-500">*</span></Label>

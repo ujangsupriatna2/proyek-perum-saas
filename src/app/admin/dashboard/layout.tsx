@@ -46,7 +46,7 @@ const NAV_ITEMS = [
   { label: "Kalkulator", icon: Calculator, href: "/admin/dashboard/kalkulator", superadminOnly: false },
   { label: "Gallery", icon: Camera, href: "/admin/dashboard/gallery", superadminOnly: false },
   { label: "Kerjasama Bank", icon: LandPlot, href: "/admin/dashboard/bank", superadminOnly: false },
-  { label: "Pengaturan", icon: Settings, href: "/admin/dashboard/pengaturan", superadminOnly: true },
+  { label: "Pengaturan", icon: Settings, href: "/admin/dashboard/pengaturan", superadminOnly: false },
 ];
 
 // ──── Breadcrumbs ────

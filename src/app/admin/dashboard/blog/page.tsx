@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Plus, Pencil, Trash2, Search, FileText, Loader2, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { Plus, Pencil, Trash2, Search, FileText, Loader2, Eye, EyeOff, AlertCircle, Handshake } from "lucide-react";
 import ImageUpload from "@/components/admin/image-upload";
 import RichEditor from "@/components/admin/rich-editor";
 import { toast } from "sonner";
@@ -63,6 +64,7 @@ interface BlogPost {
 const emptyForm = {
   title: "", slug: "", excerpt: "", content: "", category: "",
   author: `Admin`, image: "", published: false, readTime: "5 menit",
+  mitraId: "",
 };
 
 function generateSlug(title: string): string {
@@ -80,6 +82,20 @@ export default function BlogPage() {
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const { data: session } = useSession();
+  const role = (session?.user as { role?: string })?.role;
+  const superAdmin = role === "superadmin";
+  const [mitraList, setMitraList] = useState<{ id: string; name: string }[]>([]);
+
+  // Fetch mitra list (only for superadmin)
+  useEffect(() => {
+    if (!superAdmin) return;
+    fetch("/api/admin/mitra")
+      .then(r => r.json())
+      .then(data => setMitraList(Array.isArray(data) ? data : []))
+      .catch(() => {});
+  }, [superAdmin]);
 
   const fetchBlogs = useCallback(async () => {
     try {
@@ -106,6 +122,7 @@ export default function BlogPage() {
       title: b.title, slug: b.slug, excerpt: b.excerpt, content: b.content,
       category: b.category, author: b.author, image: b.image,
       published: b.published, readTime: b.readTime,
+      mitraId: (b as any).mitraId || "",
     });
     setErrors({});
     setFormOpen(true);
@@ -261,6 +278,26 @@ export default function BlogPage() {
             <DialogTitle>{editing ? "Edit Artikel" : "Tambah Artikel Baru"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
+            {/* Mitra selector — superadmin only */}
+            {superAdmin && (
+              <div className="space-y-2">
+                <Label className="flex items-center gap-1.5">
+                  <Handshake className="w-3.5 h-3.5" />
+                  Mitra
+                </Label>
+                <Select value={form.mitraId || ""} onValueChange={(v) => setForm({ ...form, mitraId: v })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Pilih mitra..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {mitraList.map(m => (
+                      <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-[11px] text-gray-400">Pilih mitra untuk data ini. Kosongkan jika tanpa mitra.</p>
+              </div>
+            )}
             <div className="space-y-2">
               <Label>
                 Judul <span className="text-red-500">*</span>
