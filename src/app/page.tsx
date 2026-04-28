@@ -50,6 +50,7 @@ import {
   Menu,
   X,
   Heart,
+  HeartHandshake,
   TrendingUp,
   Clock,
   Users,
@@ -79,6 +80,7 @@ import {
   Droplets,
   TreePine as TreeIcon,
   MessageSquare,
+  ThumbsUp,
 } from "lucide-react";
 import MapWrapper from "@/components/map-wrapper";
 import Chatbot from "@/components/chatbot";
@@ -130,81 +132,81 @@ const FEATURES = [
 const FEATURES_TENTANG = [
   {
     icon: Shield,
-    title: "Syariah & KPR Bank",
-    subtitle: "Fleksibel — pilih skema yang sesuai kebutuhan",
+    title: "Kurasi Developer Ketat",
+    subtitle: "Hanya developer terpilih dan terverifikasi",
     points: [
-      "Syariah: Akad Murabahah, cicilan flat, tanpa riba & denda",
-      "KPR Bank: Kerjasama dengan bank ternama, angsuran kompetitif",
-      "DP fleksibel mulai 10% — bisa dicicil",
-      "Tenor hingga 25 tahun untuk KPR, hingga 7 tahun untuk Syariah",
+      "Setiap mitra developer melalui proses verifikasi legalitas dan track record",
+      "Audit berkala terhadap progres dan kualitas bangunan",
+      "Rating dan review transparan dari pembeli sebelumnya",
+      "Penilaian kinerja developer setiap kuartal",
     ],
-    proof: "Bekerjasama dengan BSI, Bank Muamalat, BTN Syariah, BNI Syariah, dan bank konvensional terkemuka",
+    proof: "Hanya developer dengan track record minimal 2 tahun dan legalitas lengkap yang diterima bergabung",
     gradient: "from-green-500 to-green-600",
   },
   {
-    icon: MapPin,
-    title: "Lokasi Premium",
-    subtitle: "Strategis di jantung kota Bandung",
+    icon: Building2,
+    title: "Developer Terpilih",
+    subtitle: "Pilihan terluas dari mitra terbaik",
     points: [
-      "Akses langsung ke jalan tol dan jalan utama",
-      "Dekat pusat perbelanjaan dan kawasan bisnis",
-      "Dekat sekolah, kampus, dan rumah sakit terkemuka",
-      "Transportasi umum mudah dijangkau",
+      "3+ mitra developer aktif dan terus bertumbuh",
+      "10+ proyek perumahan di berbagai lokasi strategis",
+      "Beragam tipe: Inden, Kavling, Siap Huni",
+      "Desain modern dari arsitek berpengalaman",
     ],
-    proof: "Kawasan berkembang pesat dengan kenaikan nilai properti 15-20% per tahun",
+    proof: "Setiap mitra dipilih berdasarkan reputasi, kualitas bangunan, dan kepuasan pembeli",
     gradient: "from-red-500 to-red-600",
   },
   {
-    icon: TreePine,
-    title: "Lingkungan Asri & Aman",
-    subtitle: "Konsep kawasan hijau terpadu",
+    icon: Shield,
+    title: "Legalitas Terjamin",
+    subtitle: "Setiap proyek memiliki dokumen lengkap",
     points: [
-      "One gate system dengan keamanan 24 jam",
-      "Taman terawat dan jalur hijau di setiap cluster",
-      "Playground dan area olahraga untuk warga",
-      "Mushola dan fasilitas ibadah lengkap",
+      "Sertifikat SHM per unit dari setiap proyek mitra",
+      "IMB/PBG dan perizinan lingkungan lengkap",
+      "Tim legal platform memverifikasi semua dokumen",
+      "Pendampingan akad dan PJB oleh profesional",
     ],
-    proof: "98% penghuni merasa nyaman dan puas tinggal di kawasan perumahan kami",
-    gradient: "from-emerald-500 to-emerald-600",
+    proof: "Platform melakukan verifikasi ulang legalitas setiap proyek sebelum dipasarkan",
+    gradient: "from-blue-500 to-blue-600",
   },
   {
     icon: TrendingUp,
-    title: "Investasi Menjanjikan",
-    subtitle: "Nilai properti terus naik setiap tahun",
+    title: "Investasi Cerdas",
+    subtitle: "Properti dari developer dengan nilai naik konsisten",
     points: [
-      "{{UNITS}}+ unit rumah telah terjual di seluruh proyek",
-      "Harga properti naik konsisten 15-20% per tahun",
-      "3 lokasi proyek: Bandung & Sentul",
-      "10+ tahun pengalaman di bidang properti",
+      "{{UNITS}}+ unit rumah telah terjual melalui platform",
+      "Harga properti naik konsisten di setiap lokasi mitra",
+      "Skema pembayaran fleksibel: Syariah & KPR",
+      "Konsultasi gratis untuk membantu pilihan terbaik",
     ],
-    proof: "Pengembalian investasi rata-rata 2x dalam 5 tahun terakhir",
+    proof: "Data menunjukkan rata-rata kenaikan nilai properti 15-20% per tahun di lokasi mitra kami",
     gradient: "from-amber-500 to-amber-600",
   },
   {
-    icon: Building2,
-    title: "Desain Premium & Beragam",
-    subtitle: "9+ tipe rumah untuk berbagai kebutuhan",
+    icon: HeartHandshake,
+    title: "Pendampingan Penuh",
+    subtitle: "Dari konsultasi hingga serah terima kunci",
     points: [
-      "Multiple konsep desain: Modern Minimalis, Classic Belanda, dan lainnya",
-      "Material berkualitas tinggi dan finishing premium",
-      "Tipe rumah dari 21/50 hingga 45/127",
-      "Setiap cluster memiliki konsep arsitektur unik",
+      "Konsultasi gratis dengan tim ahli properti",
+      "Pendampingan proses KPR/Syariah dari awal",
+      "Monitoring progres pembangunan berkala",
+      "After-sales service dan garansi dari developer",
     ],
-    proof: "Tersedia 9 tipe rumah: Inden, Kavling, dan Siap Huni mulai Rp 226 juta",
+    proof: "Dedicated customer support untuk setiap pembeli dari tahap konsultasi hingga penghuni",
     gradient: "from-purple-500 to-purple-600",
   },
   {
-    icon: FileText,
-    title: "Legalitas Lengkap & Aman",
-    subtitle: "Semua dokumen terjamin dan transparan",
+    icon: Eye,
+    title: "Transparansi Total",
+    subtitle: "Informasi jelas, tanpa biaya tersembunyi",
     points: [
-      "Sertifikat SHM (Sertifikat Hak Milik) per unit",
-      "IMB / Izin Mendirikan Bangunan lengkap",
-      "Akta Notaris resmi dan PJB terdokumentasi",
-      "Tim legal profesional mendampingi setiap akad",
+      "Harga dan spesifikasi properti terbuka dan akurat",
+      "Progres pembangunan bisa dipantau real-time",
+      "Semua biaya dan skema cicilan dijelaskan di awal",
+      "Review dan testimoni dari pembeli asli",
     ],
-    proof: "Sertifikat SHM diterbitkan langsung untuk setiap unit rumah yang dibeli",
-    gradient: "from-blue-500 to-blue-600",
+    proof: "Platform tidak memungut biaya tambahan dari pembeli — semua transaksi langsung ke developer",
+    gradient: "from-pink-500 to-pink-600",
   },
 ];
 
@@ -431,7 +433,7 @@ function Hero() {
       <div className="absolute inset-0">
         <img
           src={S.hero_bg_image || "/images/properties/hero_cover.png"}
-          alt="{S.company_name}"
+          alt={S.company_name}
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/30" />
@@ -451,7 +453,7 @@ function Hero() {
           >
             <Badge className="mb-6 bg-yellow-500/20 text-yellow-300 border-yellow-500/30 backdrop-blur-sm px-4 py-1.5 text-sm font-medium">
               <Sparkles className="w-3.5 h-3.5 mr-1.5" />
-              Perumahan Syariah &amp; KPR di Bandung &amp; Sentul
+              Platform Perumahan Terpercaya di Indonesia
             </Badge>
           </motion.div>
 
@@ -461,10 +463,11 @@ function Hero() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-[1.1] mb-6"
           >
-            Hunian Nyaman,{" "}
-            <span className="text-gradient-gold">Cicilan</span> Ringan
+            Temukan Hunian
             <br />
-            <span className="text-red-400">Syariah &amp; KPR</span>
+            <span className="text-gradient-gold">Idaman</span> Anda
+            <br />
+            dari <span className="text-red-400">Developer Terpilih</span>
           </motion.h1>
 
           <motion.p
@@ -473,11 +476,11 @@ function Hero() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-lg sm:text-xl text-gray-300 mb-8 leading-relaxed max-w-xl"
           >
-            {S.company_name} — Hunian modern dengan skema{" "}
-            <span className="text-yellow-400 font-semibold">Syariah &amp; KPR Bank</span>.
+            {S.company_name} menghimpun developer perumahan terbaik. Pilihan hunian
+            terluas dengan skema{" "}
+            <span className="text-yellow-400 font-semibold">Syariah & KPR Bank</span>.
             Cicilan mulai{" "}
             <span className="text-yellow-400 font-semibold">Rp 999k/bulan</span>.
-            Lokasi strategis, lingkungan asri.
           </motion.p>
 
           <motion.div
@@ -490,15 +493,15 @@ function Hero() {
               onClick={() => router.push("/?tab=proyek")}
               className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-red-600 to-red-700 text-white font-bold rounded-2xl shadow-2xl shadow-red-900/50 hover:from-red-700 hover:to-red-800 hover:shadow-red-900/70 transition-all active:scale-95 text-lg"
             >
-              Lihat Properti
+              Lihat Semua Proyek
               <ChevronRight className="w-5 h-5" />
             </button>
             <button
-              onClick={() => router.push("/?tab=proyek")}
+              onClick={() => router.push("/?tab=tentang")}
               className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-bold rounded-2xl border border-white/20 hover:bg-white/20 transition-all active:scale-95 text-lg"
             >
-              <Calculator className="w-5 h-5" />
-              Simulasi Cicilan
+              <Building2 className="w-5 h-5" />
+              Tentang Kami
             </button>
           </motion.div>
 
@@ -511,8 +514,8 @@ function Hero() {
           >
             {[
               { value: `${S.total_units_sold}+`, label: "Unit Terjual" },
-              { value: "3+", label: "Proyek" },
-              { value: "98%", label: "Puas" },
+              { value: "3+", label: "Mitra Developer" },
+              { value: "10+", label: "Proyek Perumahan" },
             ].map((stat) => (
               <div key={stat.label} className="text-center sm:text-left">
                 <div className="text-2xl sm:text-3xl font-extrabold text-yellow-400">
@@ -3524,9 +3527,10 @@ function TentangKamiPage() {
 
   return (
     <>
-      {/* Tentang Kami */}
+      {/* Banner */}
       <PageBanner title="Tentang Kami" subtitle={`Mengenal lebih dekat ${S.company_name}`} bgImage={S.page_banner_image} />
 
+      {/* ═══════ PROFIL PERUSAHAAN ═══════ */}
       <section className="py-20 md:py-28 bg-warm-bg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -3537,60 +3541,83 @@ function TentangKamiPage() {
                   alt={S.company_name}
                   className="w-full h-[400px] object-cover"
                 />
+                <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 to-transparent p-6">
+                  <p className="text-white font-bold text-lg">{S.company_legal_name}</p>
+                </div>
               </div>
             </FadeIn>
             <FadeIn direction="right">
               <Badge variant="secondary" className="mb-4 bg-red-50 text-red-700 border-red-200">
                 <Building2 className="w-3.5 h-3.5 mr-1.5" />
-                {S.company_legal_name}
+                Profil Perusahaan
               </Badge>
               <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-6">
-                Developer Perumahan <span className="text-red-600">Terpercaya</span> di Bandung
+                Platform Perumahan <span className="text-red-600">Terpercaya</span> di Indonesia
               </h2>
               <p className="text-gray-600 text-lg leading-relaxed mb-4">
-                {S.company_name} adalah developer perumahan berpengalaman yang telah membangun lebih dari {S.total_units_sold} unit rumah di kawasan Bandung dan Sentul. Dengan komitmen menghadirkan hunian berkualitas, kami menyediakan pilihan skema pembayaran Syariah maupun KPR Bank sesuai kebutuhan Anda.
+                {S.company_name} adalah platform perumahan yang menghimpun developer-developer perumahan terpilih di bawah naungan {S.company_legal_name}. Kami berperan sebagai jembatan antara pengembang properti berkualitas dan calon pembeli rumah yang mencari hunian terbaik.
+              </p>
+              <p className="text-gray-600 text-lg leading-relaxed mb-4">
+                Setiap mitra developer yang bergabung telah melalui proses kurasi ketat — dari legalitas, kualitas bangunan, hingga track record. Tujuan kami: memudahkan Anda menemukan rumah idaman dengan pilihan terluas dari developer terpercaya.
               </p>
               <p className="text-gray-600 text-lg leading-relaxed">
-                Berdiri sejak bertahun-tahun lalu, {S.company_legal_name} telah dipercaya oleh ratusan keluarga untuk mewujudkan rumah impian mereka. Kepuasan pelanggan adalah prioritas utama kami.
+                Dengan skema pembayaran fleksibel mulai dari Syariah hingga KPR Bank, {S.company_name} memastikan setiap keluarga Indonesia punya akses ke hunian berkualitas.
               </p>
             </FadeIn>
           </div>
         </div>
       </section>
 
-      {/* Visi & Misi */}
+      {/* ═══════ VISI & MISI ═══════ */}
       <section className="py-20 md:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-12">
+          <FadeIn className="text-center mb-12">
+            <Badge variant="secondary" className="mb-4 bg-amber-50 text-amber-700 border-amber-200">
+              <Sparkles className="w-3.5 h-3.5 mr-1.5" />
+              Visi & Misi
+            </Badge>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
+              Arah & <span className="text-red-600">Tujuan</span> Kami
+            </h2>
+          </FadeIn>
+          <div className="grid md:grid-cols-2 gap-8">
             <FadeIn>
-              <div className="bg-gradient-to-br from-red-600 to-red-700 rounded-2xl p-8 text-white h-full">
-                <Award className="w-10 h-10 text-yellow-300 mb-4" />
+              <div className="bg-gradient-to-br from-red-600 to-red-700 rounded-2xl p-8 md:p-10 text-white h-full shadow-xl">
+                <div className="w-16 h-16 bg-white/15 rounded-2xl flex items-center justify-center mb-6">
+                  <Eye className="w-8 h-8 text-yellow-300" />
+                </div>
                 <h3 className="text-2xl font-extrabold mb-4">Visi</h3>
                 <p className="text-red-100 text-lg leading-relaxed">
-                  Menjadi developer perumahan terdepan di Indonesia yang menghadirkan hunian berkualitas, terjangkau, dan penuh keberkahan untuk seluruh keluarga Indonesia.
+                  Menjadi platform perumahan terdepan di Indonesia yang menyatukan developer terbaik dan memberikan hunian berkualitas, terjangkau, serta penuh keberkahan bagi seluruh keluarga Indonesia.
                 </p>
               </div>
             </FadeIn>
             <FadeIn delay={0.15}>
-              <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 text-white h-full">
-                <BookOpen className="w-10 h-10 text-yellow-300 mb-4" />
+              <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 md:p-10 text-white h-full shadow-xl">
+                <div className="w-16 h-16 bg-white/15 rounded-2xl flex items-center justify-center mb-6">
+                  <BookOpen className="w-8 h-8 text-yellow-300" />
+                </div>
                 <h3 className="text-2xl font-extrabold mb-4">Misi</h3>
                 <ul className="text-gray-300 text-lg leading-relaxed space-y-3">
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-5 h-5 text-green-400 mt-1 shrink-0" />
-                    <span>Membangun rumah berkualitas dengan desain modern dan material terbaik</span>
+                    <span>Mengkurasi developer perumahan berkualitas dan berintegritas tinggi</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-5 h-5 text-green-400 mt-1 shrink-0" />
-                    <span>Menyediakan skema pembayaran Syariah & KPR yang transparan dan mudah</span>
+                    <span>Menyediakan pilihan hunian terluas dari berbagai mitra developer</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-5 h-5 text-green-400 mt-1 shrink-0" />
-                    <span>Menciptakan lingkungan hunian yang asri, aman, dan nyaman</span>
+                    <span>Menjamin transparansi harga, legalitas, dan kualitas setiap properti</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-5 h-5 text-green-400 mt-1 shrink-0" />
-                    <span>Memberikan pelayanan prima dan pendampingan penuh ke konsumen</span>
+                    <span>Memberikan pendampingan penuh dari konsultasi hingga serah terima kunci</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-5 h-5 text-green-400 mt-1 shrink-0" />
+                    <span>Menghadirkan skema pembayaran Syariah & KPR yang mudah dan aman</span>
                   </li>
                 </ul>
               </div>
@@ -3599,54 +3626,112 @@ function TentangKamiPage() {
         </div>
       </section>
 
-      {/* Keunggulan Detail (berbeda level dari Home) */}
+      {/* ═══════ NILAI PERUSAHAAN ═══════ */}
+      <section className="py-20 md:py-28 bg-warm-bg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeIn className="text-center mb-16">
+            <Badge variant="secondary" className="mb-4 bg-red-50 text-red-700 border-red-200">
+              <Award className="w-3.5 h-3.5 mr-1.5" />
+              Nilai-Nilai Kami
+            </Badge>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
+              Prinsip yang <span className="text-red-600">Kami Pegang</span>
+            </h2>
+            <p className="text-gray-500 max-w-2xl mx-auto text-lg">
+              Setiap keputusan yang kami ambil berlandaskan pada nilai-nilai inti yang memastikan kepercayaan dan kenyamanan Anda.
+            </p>
+          </FadeIn>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { icon: Shield, title: "Profesional", desc: "Tim berpengalaman dengan standar layanan tertinggi. Setiap proses dijalankan secara sistematis dan terstruktur.", gradient: "from-red-500 to-red-600" },
+              { icon: Eye, title: "Transparan", desc: "Harga jelas, legalitas terbuka, progres proyek bisa dipantau. Tidak ada biaya tersembunyi.", gradient: "from-blue-500 to-blue-600" },
+              { icon: CheckCircle2, title: "Terpercaya", desc: "Setiap mitra developer telah melalui proses verifikasi ketat. Reputasi adalah fondasi bisnis kami.", gradient: "from-green-500 to-green-600" },
+              { icon: HeartHandshake, title: "Kolaboratif", desc: "Sinergi antara platform, developer, dan pembeli. Semua pihak mendapatkan manfaat.", gradient: "from-amber-500 to-amber-600" },
+              { icon: Sparkles, title: "Inovatif", desc: "Terus beradaptasi dengan teknologi dan tren properti terbaru untuk pengalaman yang lebih baik.", gradient: "from-purple-500 to-purple-600" },
+              { icon: Users, title: "Berorientasi Keluarga", desc: "Setiap rumah yang kami tawarkan dirancang untuk kenyamanan dan kebahagiaan keluarga.", gradient: "from-pink-500 to-pink-600" },
+            ].map((val, i) => {
+              const Icon = val.icon;
+              return (
+                <FadeIn key={val.title} delay={i * 0.08}>
+                  <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
+                    <CardContent className="p-6">
+                      <div className={`w-14 h-14 bg-gradient-to-br ${val.gradient} rounded-2xl flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform`}>
+                        <Icon className="w-7 h-7 text-white" />
+                      </div>
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">{val.title}</h3>
+                      <p className="text-gray-500 leading-relaxed text-sm">{val.desc}</p>
+                    </CardContent>
+                  </Card>
+                </FadeIn>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ KEUNGGULAN PLATFORM ═══════ */}
       <TentangKamiKeunggulanSection />
 
-      {/* Track Record */}
-      <section className="py-20 md:py-28 bg-gradient-to-br from-red-700 via-red-600 to-red-800 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-72 h-72 bg-yellow-400/10 rounded-full blur-3xl" />
+      {/* ═══════ TIMELINE / PERJALANAN BISNIS ═══════ */}
+      <section className="py-20 md:py-28 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-red-500/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-72 h-72 bg-amber-500/5 rounded-full blur-3xl" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-16">
+            <Badge variant="secondary" className="mb-4 bg-white/10 text-amber-300 border-white/20">
+              <Clock className="w-3.5 h-3.5 mr-1.5" />
+              Perjalanan Kami
+            </Badge>
             <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">
-              Track Record <span className="text-yellow-300">Kami</span>
+              Milestone <span className="text-amber-300">Bisnis</span>
             </h2>
+            <p className="text-gray-400 max-w-2xl mx-auto text-lg">
+              Dari satu proyek menjadi platform perumahan yang menghimpun puluhan mitra developer.
+            </p>
           </FadeIn>
 
+          {/* Stats row */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
             {[
-              { value: `${S.total_units_sold}+`, label: "Unit Terjual" },
-              { value: "10+", label: "Tahun Pengalaman" },
-              { value: "3", label: "Lokasi Proyek" },
-              { value: "98%", label: "Kepuasan Klien" },
-            ].map((stat, i) => (
-              <FadeIn key={stat.label} delay={i * 0.1}>
-                <div className="text-center bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
-                  <p className="text-3xl md:text-4xl font-extrabold text-yellow-300">{stat.value}</p>
-                  <p className="text-white/80 text-sm mt-2">{stat.label}</p>
-                </div>
-              </FadeIn>
-            ))}
+              { value: `${S.total_units_sold}+`, label: "Unit Terjual", icon: Home },
+              { value: "3+", label: "Mitra Developer", icon: Building2 },
+              { value: "10+", label: "Proyek Perumahan", icon: LandPlot },
+              { value: "98%", label: "Kepuasan Klien", icon: ThumbsUp },
+            ].map((stat, i) => {
+              const Icon = stat.icon;
+              return (
+                <FadeIn key={stat.label} delay={i * 0.1}>
+                  <div className="text-center bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+                    <Icon className="w-6 h-6 text-amber-300 mx-auto mb-2" />
+                    <p className="text-3xl md:text-4xl font-extrabold text-white">{stat.value}</p>
+                    <p className="text-gray-400 text-sm mt-1">{stat.label}</p>
+                  </div>
+                </FadeIn>
+              );
+            })}
           </div>
 
           {/* Timeline */}
           <FadeIn>
-            <div className="max-w-3xl mx-auto space-y-8">
+            <div className="max-w-3xl mx-auto space-y-0">
               {[
-                { year: "2018", title: "Awal Mula", desc: `${S.company_legal_name} didirikan dan memulai proyek perumahan pertama di Bandung.` },
-                { year: "2020", title: "Ekspansi", desc: "Membuka proyek kedua di kawasan Sentul dengan 3 klaster baru." },
-                { year: "2023", title: `${S.total_units_sold} Unit`, desc: `Mencapai milestone ${S.total_units_sold} unit rumah terjual di seluruh proyek.` },
-                { year: "2025", title: "Terus Bertumbuh", desc: "Meluncurkan proyek baru dengan desain modern dan konsep ramah lingkungan." },
+                { year: "2018", title: "Awal Mula", desc: `${S.company_legal_name} didirikan. Memulai proyek perumahan pertama di kawasan Bandung dengan fokus hunian syariah.`, color: "bg-red-500" },
+                { year: "2020", title: "Ekspansi Proyek", desc: "Membuka proyek kedua di kawasan Sentul. Memperluas portofolio dengan klaster baru dan konsep modern.", color: "bg-amber-500" },
+                { year: "2022", title: "Mitra Pertama Bergabung", desc: `Developer mitra pertama resmi bergabung. ${S.company_name} mulai bertransformasi dari single developer menjadi platform.`, color: "bg-green-500" },
+                { year: "2023", title: `${S.total_units_sold} Unit Terjual`, desc: `Milestone ${S.total_units_sold} unit rumah terjual dari seluruh mitra developer. Platform terus berkembang.`, color: "bg-blue-500" },
+                { year: "2024", title: "Digital Platform Launch", desc: "Peluncuran platform digital untuk memudahkan calon pembeli menemukan dan membandingkan proyek dari berbagai mitra.", color: "bg-purple-500" },
+                { year: "2025", title: "Terus Bertumbuh", desc: "Semakin banyak mitra developer terpilih bergabung. Menyediakan jasa konstruksi lengkap bagi konsumen.", color: "bg-pink-500" },
               ].map((item, i) => (
-                <div key={item.year} className="flex gap-6">
+                <div key={item.year} className="flex gap-6 group">
                   <div className="flex flex-col items-center">
-                    <div className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center text-red-800 font-extrabold text-sm shrink-0">
+                    <div className={`w-14 h-14 ${item.color} rounded-full flex items-center justify-center text-white font-extrabold text-sm shrink-0 shadow-lg group-hover:scale-110 transition-transform`}>
                       {item.year}
                     </div>
-                    {i < 3 && <div className="w-0.5 h-full bg-white/20 mt-2" />}
+                    {i < 5 && <div className="w-0.5 h-full bg-white/10 mt-2" />}
                   </div>
-                  <div className="pb-8">
+                  <div className="pb-10">
                     <h4 className="text-lg font-bold text-white mb-1">{item.title}</h4>
-                    <p className="text-red-200 text-sm leading-relaxed">{item.desc}</p>
+                    <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
                   </div>
                 </div>
               ))}
@@ -3655,29 +3740,68 @@ function TentangKamiPage() {
         </div>
       </section>
 
-      {/* Legalitas */}
+      {/* ═══════ TIM ═══════ */}
+      <section className="py-20 md:py-28 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeIn className="text-center mb-16">
+            <Badge variant="secondary" className="mb-4 bg-red-50 text-red-700 border-red-200">
+              <Users className="w-3.5 h-3.5 mr-1.5" />
+              Tim Kami
+            </Badge>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
+              Orang-Orang di Balik <span className="text-red-600">{S.company_name}</span>
+            </h2>
+            <p className="text-gray-500 max-w-2xl mx-auto text-lg">
+              Tim profesional yang berdedikasi memastikan setiap proyek dan layanan berjalan optimal.
+            </p>
+          </FadeIn>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { name: "Direktur Utama", role: "Founder & CEO", desc: "Bertanggung jawab atas strategi perusahaan dan pengembangan platform.", initials: "DU", gradient: "from-red-500 to-red-600" },
+              { name: "Direktur Operasional", role: "COO", desc: "Mengawasi operasional harian dan koordinasi seluruh mitra developer.", initials: "DO", gradient: "from-amber-500 to-amber-600" },
+              { name: "Head of Marketing", role: "CMO", desc: "Merancang strategi pemasaran dan branding untuk seluruh proyek.", initials: "MK", gradient: "from-blue-500 to-blue-600" },
+              { name: "Head of Legal", role: "Legal Counsel", desc: "Memastikan seluruh legalitas perusahaan dan mitra developer terpenuhi.", initials: "LG", gradient: "from-green-500 to-green-600" },
+            ].map((member, i) => (
+              <FadeIn key={member.role} delay={i * 0.1}>
+                <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-shadow text-center group">
+                  <CardContent className="p-6">
+                    <div className={`w-20 h-20 mx-auto bg-gradient-to-br ${member.gradient} rounded-full flex items-center justify-center mb-4 shadow-lg group-hover:scale-105 transition-transform`}>
+                      <span className="text-white font-extrabold text-xl">{member.initials}</span>
+                    </div>
+                    <h4 className="font-bold text-gray-900 text-lg mb-1">{member.name}</h4>
+                    <p className="text-red-600 text-sm font-semibold mb-3">{member.role}</p>
+                    <p className="text-gray-500 text-sm leading-relaxed">{member.desc}</p>
+                  </CardContent>
+                </Card>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ LEGALITAS ═══════ */}
       <section className="py-20 md:py-28 bg-warm-bg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-12">
             <Badge variant="secondary" className="mb-4 bg-green-50 text-green-700 border-green-200">
-              <FileText className="w-3.5 h-3.5 mr-1.5" />
-              Legalitas
+              <Shield className="w-3.5 h-3.5 mr-1.5" />
+              Legalitas Perusahaan
             </Badge>
             <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-              Dokumen <span className="text-red-600">Lengkap & Aman</span>
+              Dokumen <span className="text-red-600">Lengkap & Terverifikasi</span>
             </h2>
             <p className="text-gray-500 max-w-2xl mx-auto text-lg">
-              Semua legalitas terpenuhi untuk kenyamanan dan keamanan investasi Anda.
+              {S.company_legal_name} beroperasi secara legal dengan seluruh dokumen perizinan lengkap.
             </p>
           </FadeIn>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-5 mb-12">
             {[
-              { title: "SHM", desc: "Sertifikat Hak Milik", icon: FileText },
-              { title: "IMB", desc: "Izin Mendirikan Bangunan", icon: Building2 },
-              { title: "Akta", desc: "Akta Notaris Resmi", icon: FileText },
-              { title: "NUP", desc: "Nomor Unit Pembelian", icon: FileText },
-              { title: "PJB", desc: "Perjanjian Jual Beli", icon: Handshake },
-              { title: "Bank", desc: "Kerjasama Bank & Lembaga Keuangan", icon: LandPlot },
+              { title: "Akta Pendirian", desc: "Akta Notaris pendirian perusahaan", icon: FileText },
+              { title: "NIB / OSS", desc: "Nomor Induk Berusaha terdaftar", icon: FileText },
+              { title: "SIUP / IUJK", desc: "Izin usaha jasa konstruksi", icon: Building2 },
+              { title: "NPWP Badan", desc: "Terdaftar di Direktorat Pajak", icon: FileText },
+              { title: "SK Kemenkumham", desc: "Pengesahan badan hukum", icon: Shield },
+              { title: "Rekening Bank", desc: "Rekening perusahaan resmi", icon: LandPlot },
             ].map((item, i) => {
               const Icon = item.icon;
               return (
@@ -3695,10 +3819,27 @@ function TentangKamiPage() {
               );
             })}
           </div>
+          <FadeIn>
+            <div className="bg-white rounded-2xl shadow-lg border border-green-200 p-6 md:p-8">
+              <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+                <div className="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center shrink-0">
+                  <CheckCircle2 className="w-7 h-7 text-green-600" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900 text-lg mb-1">Jaminan Legalitas Setiap Proyek Mitra</h4>
+                  <p className="text-gray-600 text-sm leading-relaxed">
+                    Setiap developer mitra yang bergabung dengan {S.company_name} wajib memenuhi standar legalitas minimum:
+                    Sertifikat SHM, IMB/PBG, perizinan lingkungan, dan dokumen perjanjian pengembang. Kami melakukan audit berkala
+                    untuk memastikan semua dokumen tetap valid dan up-to-date.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </FadeIn>
         </div>
       </section>
 
-      {/* Partner */}
+      {/* ═══════ MITRA PERBANKAN ═══════ */}
       <section className="py-16 md:py-20 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-10">
@@ -3720,11 +3861,9 @@ function TentangKamiPage() {
             <p className="text-center text-gray-400 py-8">Belum ada data mitra bank</p>
           ) : (
             <>
-              {/* Fade edges */}
               <div className="relative">
                 <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
                 <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
-                {/* Scrolling track — duplicate items for seamless loop */}
                 <div
                   className="flex gap-8 w-max hover:[animation-play-state:paused]"
                   style={{ animation: "bank-slide 25s linear infinite" }}
@@ -3761,7 +3900,7 @@ function TentangKamiPage() {
         </div>
       </section>
 
-      {/* Dokumentasi */}
+      {/* ═══════ GALERI ═══════ */}
       <section className="py-20 md:py-28 bg-warm-bg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-12">
@@ -3783,18 +3922,18 @@ function TentangKamiPage() {
             ))}
           </div>
           <FadeIn className="text-center mt-10">
-            <a
-              href="/?tab=gallery"
+            <button
+              onClick={() => (typeof window !== "undefined") && window.location.assign("/?tab=gallery")}
               className="inline-flex items-center gap-2 px-6 py-3 bg-red-50 text-red-700 font-semibold rounded-xl hover:bg-red-100 transition-colors"
             >
               Lihat Semua Foto
               <ArrowRight className="w-4 h-4" />
-            </a>
+            </button>
           </FadeIn>
         </div>
       </section>
 
-      {/* Testimoni */}
+      {/* ═══════ TESTIMONI ═══════ */}
       <TestimonialsSection />
     </>
   );
