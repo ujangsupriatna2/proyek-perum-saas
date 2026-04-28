@@ -10,7 +10,7 @@ export async function GET(req: Request) {
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
 
-    const where: Record<string, unknown> = { isPublished: true };
+    const where: Record<string, unknown> = { isPublished: true, mitraId: null };
     if (slug) where.slug = slug;
     if (category && category !== "all") where.category = category;
 
