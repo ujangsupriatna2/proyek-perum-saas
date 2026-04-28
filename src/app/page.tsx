@@ -4440,11 +4440,12 @@ function ServiceDetailDialog({
   open,
   onClose,
 }: {
-  service: ServiceItem;
+  service: ServiceItem | null;
   open: boolean;
   onClose: () => void;
 }) {
   const { settings: S } = useSettingsStore();
+  if (!service) return null;
   const catLabel = SERVICE_CATEGORY_LABELS[service.category] || service.category;
   const unitLabel = SERVICE_PRICE_UNIT_MAP[service.priceUnit] || service.priceUnit;
   const IconComponent = SERVICE_CATEGORY_ICONS[service.category] || Wrench;
