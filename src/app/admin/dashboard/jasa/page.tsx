@@ -573,16 +573,26 @@ export default function JasaPage() {
             <div className="space-y-2">
               <Label>Harga (Rp)</Label>
               <div className="flex gap-2">
-                <Input
-                  type="number"
-                  value={form.price}
-                  onChange={(e) => {
-                    clearFieldError("price");
-                    setForm({ ...form, price: e.target.value });
-                  }}
-                  placeholder="600000"
-                  className="flex-1"
-                />
+                <div className="flex-1 space-y-1">
+                  <Input
+                    type="text"
+                    inputMode="numeric"
+                    value={form.price}
+                    onChange={(e) => {
+                      clearFieldError("price");
+                      // Allow only digits
+                      const raw = e.target.value.replace(/\D/g, "");
+                      setForm({ ...form, price: raw });
+                    }}
+                    placeholder="600000"
+                    className={hasError("price") ? "border-red-400 focus-visible:ring-red-400" : ""}
+                  />
+                  {form.price && (
+                    <p className="text-xs text-gray-500 font-medium">
+                      ≈ Rp {formatRupiah(parseInt(form.price) || 0)}
+                    </p>
+                  )}
+                </div>
                 <Select
                   value={form.priceUnit}
                   onValueChange={(v) => setForm({ ...form, priceUnit: v })}
@@ -599,7 +609,7 @@ export default function JasaPage() {
                 </Select>
               </div>
               <p className="text-[11px] text-gray-400">
-                Contoh: 600000 (Rp 600.000) atau 2500000 (Rp 2.500.000)
+                Ketik angka saja, contoh: 600000 atau 2500000
               </p>
             </div>
 
