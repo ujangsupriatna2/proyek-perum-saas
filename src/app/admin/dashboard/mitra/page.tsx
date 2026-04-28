@@ -64,6 +64,7 @@ interface Mitra {
   address: string;
   phone: string;
   email: string;
+  website: string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -82,6 +83,7 @@ interface FormState {
   address: string;
   phone: string;
   email: string;
+  website: string;
   isActive: boolean;
 }
 
@@ -94,6 +96,7 @@ const emptyForm: FormState = {
   address: "",
   phone: "",
   email: "",
+  website: "",
   isActive: true,
 };
 
@@ -164,6 +167,7 @@ export default function MitraPage() {
       address: m.address || "",
       phone: m.phone || "",
       email: m.email || "",
+      website: m.website || "",
       isActive: m.isActive,
     });
     setErrors({});
@@ -597,6 +601,22 @@ export default function MitraPage() {
                   <AlertCircle className="w-3 h-3" /> {errors.email}
                 </p>
               )}
+            </div>
+
+            {/* Website */}
+            <div className="space-y-2">
+              <Label>Website</Label>
+              <div className="relative">
+                <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Input
+                  value={form.website}
+                  onChange={(e) =>
+                    setForm((prev) => ({ ...prev, website: e.target.value }))
+                  }
+                  placeholder="https://www.example.com"
+                  className="pl-9"
+                />
+              </div>
             </div>
 
             {/* Phone */}

@@ -30,6 +30,7 @@ export async function GET(
         address: true,
         phone: true,
         email: true,
+        website: true,
         isActive: true,
         createdAt: true,
         updatedAt: true,
@@ -67,7 +68,7 @@ export async function PUT(
 
     const { id } = await params;
     const body = await req.json();
-    const { name, slug, subdomain, logo, description, address, phone, email, isActive } = body;
+    const { name, slug, subdomain, logo, description, address, phone, email, website, isActive } = body;
 
     const existing = await db.mitra.findUnique({ where: { id } });
     if (!existing) {
@@ -99,6 +100,7 @@ export async function PUT(
     if (address !== undefined) updateData.address = address;
     if (phone !== undefined) updateData.phone = phone;
     if (email !== undefined) updateData.email = email;
+    if (website !== undefined) updateData.website = website;
     if (isActive !== undefined) updateData.isActive = isActive;
 
     const mitra = await db.mitra.update({
@@ -114,6 +116,7 @@ export async function PUT(
         address: true,
         phone: true,
         email: true,
+        website: true,
         isActive: true,
         createdAt: true,
       },

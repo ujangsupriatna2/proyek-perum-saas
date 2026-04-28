@@ -25,6 +25,7 @@ export async function GET() {
         address: true,
         phone: true,
         email: true,
+        website: true,
         isActive: true,
         createdAt: true,
         updatedAt: true,
@@ -55,7 +56,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { name, slug, subdomain, logo, description, address, phone, email } = body;
+    const { name, slug, subdomain, logo, description, address, phone, email, website } = body;
 
     if (!name || !slug || !subdomain) {
       return NextResponse.json({ error: "Name, slug, dan subdomain wajib diisi" }, { status: 400 });
@@ -81,6 +82,7 @@ export async function POST(req: Request) {
         address: address || "",
         phone: phone || "",
         email: email || "",
+        website: website || "",
       },
     });
 

@@ -22,6 +22,7 @@ model Mitra {
   address     String   @default("")
   phone       String   @default("")
   email       String   @default("")
+  website     String   @default("")
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

@@ -9,6 +9,7 @@ export interface MitraItem {
   address: string;
   phone: string;
   email: string;
+  website: string;
   createdAt: string;
   propertyCount: number;
 }

@@ -15,6 +15,7 @@ export async function GET() {
         address: true,
         phone: true,
         email: true,
+        website: true,
         createdAt: true,
         _count: {
           select: {
@@ -35,6 +36,7 @@ export async function GET() {
         address: m.address || "",
         phone: m.phone || "",
         email: m.email || "",
+        website: m.website || "",
         createdAt: m.createdAt instanceof Date ? m.createdAt.toISOString() : String(m.createdAt),
         propertyCount: m._count.properties,
       }))

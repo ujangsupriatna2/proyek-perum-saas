@@ -66,6 +66,7 @@ import {
   FileText,
   Award,
   Handshake,
+  Globe,
   Camera,
   Send,
   User,
@@ -4907,8 +4908,18 @@ function MitraPage() {
                       </div>
 
                       {/* Contact */}
-                      {(mitra.phone || mitra.email) && (
+                      {(mitra.phone || mitra.email || mitra.website) && (
                         <div className="flex flex-wrap gap-2 mt-4">
+                          {mitra.website && (
+                            <a
+                              href={mitra.website.startsWith("http") ? mitra.website : `https://${mitra.website}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 transition-colors"
+                            >
+                              <Globe className="w-3 h-3" /> Website
+                            </a>
+                          )}
                           {mitra.phone && (
                             <a
                               href={`https://wa.me/${mitra.phone.replace(/^0/, "62")}`}
