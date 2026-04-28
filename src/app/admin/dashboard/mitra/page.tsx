@@ -135,7 +135,7 @@ export default function MitraPage() {
     try {
       const res = await fetch("/api/admin/mitra");
       const data = await res.json();
-      setMitras(data.mitras || []);
+      setMitras(Array.isArray(data) ? data : []);
     } catch {
       /* ignore */
     }
