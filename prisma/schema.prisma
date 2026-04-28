@@ -4,8 +4,8 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:../db/custom.db"
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model Admin {
@@ -32,7 +32,7 @@ model Property {
   landArea         Float    @default(0)
   buildingArea     Float    @default(0)
   status           String   @default("available")
-  description      String   @default("")
+  description      String   @default("") @db.Text
   features         String   @default("[]")
   images           String   @default("[]")
   tag              String   @default("")
@@ -47,7 +47,7 @@ model Property {
   kprInstallments  String   @default("{}")
   kprInterestRate  Float    @default(7.5)
   kprInterestType  String   @default("annuity")
-  videoUrl         String   @default("")
+  videoUrl         String   @default("") @db.Text
   isFeatured       Boolean  @default(false)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
@@ -57,11 +57,11 @@ model BlogPost {
   id        String   @id @default(cuid())
   title     String
   slug      String   @unique
-  excerpt   String   @default("")
-  content   String   @default("")
+  excerpt   String   @default("") @db.Text
+  content   String   @default("") @db.Text
   category  String
   author    String   @default("Admin BRR")
-  image     String   @default("")
+  image     String   @default("") @db.Text
   published Boolean  @default(false)
   readTime  String   @default("5 menit")
   views     Int      @default(0)
@@ -84,9 +84,9 @@ model GalleryItem {
   id          String   @id @default(cuid())
   title       String
   category    String
-  image       String
-  description String   @default("")
-  videoUrl    String   @default("")
+  image       String   @db.Text
+  description String   @default("") @db.Text
+  videoUrl    String   @default("") @db.Text
   sortOrder   Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -95,8 +95,8 @@ model GalleryItem {
 model Bank {
   id          String   @id @default(cuid())
   name        String
-  description String   @default("")
-  image       String   @default("")
+  description String   @default("") @db.Text
+  image       String   @default("") @db.Text
   sortOrder   Int      @default(0)
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
