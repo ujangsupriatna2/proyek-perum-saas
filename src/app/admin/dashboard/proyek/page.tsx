@@ -874,6 +874,8 @@ export default function ProyekPage() {
             <Table containerClassName="max-h-[calc(100vh-14rem)]">
               <TableHeader className="sticky top-0 z-10 bg-gray-50">
                 <TableRow className="bg-gray-50">
+                  <TableHead className="w-12">No</TableHead>
+                  {superAdmin && <TableHead>Mitra</TableHead>}
                   <TableHead>Nama</TableHead>
                   <TableHead>Tipe</TableHead>
                   <TableHead>Kategori</TableHead>
@@ -886,6 +888,8 @@ export default function ProyekPage() {
                 {loading
                   ? Array.from({ length: 5 }).map((_, i) => (
                       <TableRow key={i}>
+                        <TableCell><Skeleton className="h-4 w-6" /></TableCell>
+                        {superAdmin && <TableCell><Skeleton className="h-4 w-20" /></TableCell>}
                         <TableCell><Skeleton className="h-4 w-32" /></TableCell>
                         <TableCell><Skeleton className="h-4 w-20" /></TableCell>
                         <TableCell><Skeleton className="h-4 w-16" /></TableCell>
@@ -897,17 +901,23 @@ export default function ProyekPage() {
                   : properties.length === 0
                   ? (
                       <TableRow>
-                        <TableCell colSpan={6} className="text-center py-10 text-gray-400">
+                        <TableCell colSpan={superAdmin ? 8 : 7} className="text-center py-10 text-gray-400">
                           <Building2 className="w-10 h-10 mx-auto mb-2 text-gray-300" />
                           {search ? "Tidak ada hasil" : "Belum ada proyek"}
                         </TableCell>
                       </TableRow>
                     )
-                  : properties.map((p) => {
+                  : properties.map((p, idx) => {
                       const st = STATUS_MAP[p.status] || STATUS_MAP.available;
                       const catLabel = CATEGORY_MAP[p.category] || p.category;
                       return (
                         <TableRow key={p.id} className="hover:bg-gray-50">
+                          <TableCell className="text-xs text-gray-400">{idx + 1}</TableCell>
+                          {superAdmin && (
+                            <TableCell>
+                              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-md">{(p as any).mitra?.name || "-"}</span>
+                            </TableCell>
+                          )}
                           <TableCell>
                             <div className="flex items-center gap-2">
                               {p.images && parseImages(p.images)[0] ? (

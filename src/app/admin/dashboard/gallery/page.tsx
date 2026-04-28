@@ -194,7 +194,8 @@ export default function GalleryPage() {
             <Table containerClassName="max-h-[calc(100vh-14rem)]">
               <TableHeader className="sticky top-0 z-10 bg-gray-50">
                 <TableRow className="bg-gray-50">
-                  <TableHead className="w-12">#</TableHead>
+                  <TableHead className="w-12">No</TableHead>
+                  {superAdmin && <TableHead>Mitra</TableHead>}
                   <TableHead>Preview</TableHead>
                   <TableHead>Judul</TableHead>
                   <TableHead>Kategori</TableHead>
@@ -207,6 +208,7 @@ export default function GalleryPage() {
                   ? Array.from({ length: 4 }).map((_, i) => (
                       <TableRow key={i}>
                         <TableCell><Skeleton className="h-4 w-6" /></TableCell>
+                        {superAdmin && <TableCell><Skeleton className="h-4 w-20" /></TableCell>}
                         <TableCell><Skeleton className="h-12 w-16 rounded-lg" /></TableCell>
                         <TableCell><Skeleton className="h-4 w-28" /></TableCell>
                         <TableCell><Skeleton className="h-4 w-20" /></TableCell>
@@ -217,17 +219,20 @@ export default function GalleryPage() {
                   : items.length === 0
                   ? (
                       <TableRow>
-                        <TableCell colSpan={6} className="text-center py-10 text-gray-400">
+                        <TableCell colSpan={superAdmin ? 7 : 6} className="text-center py-10 text-gray-400">
                           <ImageIcon className="w-10 h-10 mx-auto mb-2 text-gray-300" />
                           {search ? "Tidak ada hasil" : "Belum ada item gallery"}
                         </TableCell>
                       </TableRow>
                     )
-                  : items.map((item) => (
+                  : items.map((item, idx) => (
                       <TableRow key={item.id} className="hover:bg-gray-50">
-                        <TableCell>
-                          <span className="text-xs font-mono text-gray-400">{item.sortOrder}</span>
-                        </TableCell>
+                        <TableCell className="text-xs text-gray-400">{idx + 1}</TableCell>
+                        {superAdmin && (
+                          <TableCell>
+                            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-md">{(item as any).mitra?.name || "-"}</span>
+                          </TableCell>
+                        )}
                         <TableCell>
                           {item.videoUrl ? (
                             <div className="w-14 h-10 rounded-lg bg-red-50 flex items-center justify-center border border-red-200">
