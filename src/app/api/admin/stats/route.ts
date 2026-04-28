@@ -39,8 +39,12 @@ export async function GET() {
 
     // Superadmin also gets total mitra count
     if (isSuperadmin(role)) {
-      const totalMitra = await db.mitra.count();
+      const [totalMitra, totalServices] = await Promise.all([
+        db.mitra.count(),
+        db.service.count(),
+      ]);
       result.totalMitra = totalMitra;
+      result.totalServices = totalServices;
     }
 
     return NextResponse.json(result);

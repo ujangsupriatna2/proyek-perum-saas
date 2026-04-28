@@ -11,12 +11,14 @@ export const ROLES = {
 const SUPERADMIN_ONLY_ROUTES = [
   "/admin/dashboard/users",
   "/admin/dashboard/mitra",
+  "/admin/dashboard/jasa",
 ];
 
 // API routes that require superadmin
 const SUPERADMIN_ONLY_API = [
   "/api/admin/users",
   "/api/admin/mitra",
+  "/api/admin/jasa",
 ];
 
 export function isSuperadmin(role?: string | null): boolean {

@@ -9,6 +9,7 @@ import {
   LandPlot,
   Camera,
   Handshake,
+  Wrench,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -22,6 +23,7 @@ interface Stats {
   totalBanks: number;
   totalGallery: number;
   totalMitra?: number;
+  totalServices?: number;
 }
 
 const STAT_CARDS = [
@@ -31,6 +33,7 @@ const STAT_CARDS = [
   { key: "totalBanks" as const, label: "Mitra Bank", icon: LandPlot, gradient: "from-orange-500 to-orange-600", bg: "bg-orange-50" },
   { key: "totalGallery" as const, label: "Gallery", icon: Camera, gradient: "from-teal-500 to-teal-600", bg: "bg-teal-50" },
   { key: "totalMitra" as const, label: "Mitra", icon: Handshake, gradient: "from-purple-500 to-purple-600", bg: "bg-purple-50", superadminOnly: true },
+  { key: "totalServices" as const, label: "Jasa", icon: Wrench, gradient: "from-cyan-500 to-cyan-600", bg: "bg-cyan-50", superadminOnly: true },
 ];
 
 export default function DashboardPage() {

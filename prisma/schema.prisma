@@ -17,7 +17,7 @@ model Mitra {
   name        String
   slug        String   @unique
   subdomain   String   @unique
-  logo        String   @default("")
+  logo        String   @default("") @db.Text
   description String   @default("") @db.Text
   address     String   @default("")
   phone       String   @default("")
@@ -34,6 +34,7 @@ model Mitra {
   galleryItems GalleryItem[]
   banks        Bank[]
   settings     Setting[]
+  services     Service[]
 }
 
 // ═══════════════════════════════════════════════
@@ -201,4 +202,33 @@ model Setting {
   mitra Mitra? @relation(fields: [mitraId], references: [id])
 
   @@unique([mitraId, key])
+}
+
+// ═══════════════════════════════════════════════
+//  SERVICE (Jasa)
+// ═══════════════════════════════════════════════
+
+model Service {
+  id          String   @id @default(cuid())
+  mitraId     String?
+  title       String
+  slug        String
+  description String   @default("") @db.Text
+  category    String
+  price       Float
+  priceUnit   String   @default("proyek")
+  image       String   @default("") @db.Text
+  images      String   @default("[]")
+  features    String   @default("[]")
+  duration    String   @default("")
+  isPublished Boolean  @default(false)
+  isFeatured  Boolean  @default(false)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  mitra Mitra? @relation(fields: [mitraId], references: [id])
+
+  @@unique([mitraId, slug])
 }

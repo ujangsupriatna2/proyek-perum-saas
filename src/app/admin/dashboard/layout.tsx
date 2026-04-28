@@ -14,6 +14,7 @@ import {
   Camera,
   LandPlot,
   Handshake,
+  Wrench,
   Settings,
   LogOut,
   Menu,
@@ -47,6 +48,7 @@ const NAV_ITEMS = [
   { label: "Kalkulator", icon: Calculator, href: "/admin/dashboard/kalkulator", superadminOnly: false },
   { label: "Gallery", icon: Camera, href: "/admin/dashboard/gallery", superadminOnly: false },
   { label: "Kerjasama Bank", icon: LandPlot, href: "/admin/dashboard/bank", superadminOnly: false },
+  { label: "Jasa", icon: Wrench, href: "/admin/dashboard/jasa", superadminOnly: true },
   { label: "Pengaturan", icon: Settings, href: "/admin/dashboard/pengaturan", superadminOnly: false },
 ];
 
@@ -61,6 +63,7 @@ const BREADCRUMBS: Record<string, string> = {
   "/admin/dashboard/kalkulator": "Kalkulator",
   "/admin/dashboard/gallery": "Gallery",
   "/admin/dashboard/bank": "Kerjasama Bank",
+  "/admin/dashboard/jasa": "Jasa",
   "/admin/dashboard/pengaturan": "Pengaturan",
 };
 
