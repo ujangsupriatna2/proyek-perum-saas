@@ -4459,6 +4459,7 @@ function ServiceDetailDialog({
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto p-0 gap-0">
+        <DialogTitle className="sr-only">{service.title}</DialogTitle>
         {/* Hero Image */}
         <div className="relative h-64 sm:h-80 bg-gray-200">
           {service.image ? (
