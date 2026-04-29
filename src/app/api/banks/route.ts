@@ -8,7 +8,7 @@ export async function GET(req: Request) {
     const limit = parseInt(searchParams.get("limit") || "50");
 
     const items = await db.bank.findMany({
-      where: { isActive: true, mitraId: null },
+      where: { isActive: true },
       orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
       take: limit,
     });
