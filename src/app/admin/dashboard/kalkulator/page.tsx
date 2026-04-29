@@ -778,8 +778,8 @@ function SyariahCalculator() {
       <Card className="border-0 shadow-sm">
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-2 text-lg">
-            <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
-              <Building2 className="w-4 h-4 text-amber-600" />
+            <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
+              <Building2 className="w-4 h-4 text-gray-700" />
             </div>
             Pembiayaan Syariah (Murabahah)
           </CardTitle>
@@ -854,9 +854,9 @@ function SyariahCalculator() {
           </div>
 
           {/* Info */}
-          <div className="flex items-start gap-2 p-3 bg-amber-50 rounded-lg">
-            <Info className="w-3.5 h-3.5 text-amber-500 mt-0.5 shrink-0" />
-            <p className="text-[11px] text-amber-700 leading-relaxed">
+          <div className="flex items-start gap-2 p-3 bg-gray-50 rounded-lg">
+            <Info className="w-3.5 h-3.5 text-gray-500 mt-0.5 shrink-0" />
+            <p className="text-[11px] text-gray-600 leading-relaxed">
               <strong>Akad Murabahah</strong> — Bank membeli properti lalu menjualnya ke Anda dengan harga yang sudah ditentukan (margin). Cicilan tetap flat setiap bulan, tanpa bunga fluktuatif.
             </p>
           </div>
@@ -876,7 +876,7 @@ function SyariahCalculator() {
                 onClick={() => setMargin(preset.margin)}
                 className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all ${
                   margin === preset.margin
-                    ? "bg-amber-600 text-white"
+                    ? "bg-gray-900 text-white"
                     : "bg-gray-100 text-gray-500 hover:bg-gray-200"
                 }`}
               >
@@ -888,11 +888,11 @@ function SyariahCalculator() {
       </Card>
 
       {/* Result Card */}
-      <Card className="border-0 shadow-sm bg-gradient-to-br from-amber-500 via-amber-600 to-yellow-700 text-white">
+      <Card className="border-0 shadow-sm bg-gradient-to-br from-gray-800 via-gray-900 to-black text-white">
         <CardContent className="p-6">
           <div className="flex items-start justify-between mb-4">
             <div>
-              <p className="text-amber-200 text-sm font-medium">Cicilan per Bulan</p>
+              <p className="text-gray-300 text-sm font-medium">Cicilan per Bulan</p>
               <p className="text-3xl font-bold mt-1">
                 Rp {formatRupiah(result.monthly)}
               </p>
@@ -902,7 +902,7 @@ function SyariahCalculator() {
                 variant="ghost"
                 size="icon"
                 onClick={() => setShowDetail(true)}
-                className="text-amber-200 hover:text-white hover:bg-amber-500/30"
+                className="text-gray-300 hover:text-white hover:bg-gray-500/30"
                 title="Lihat Detail"
               >
                 <Eye className="w-4 h-4" />
@@ -911,7 +911,7 @@ function SyariahCalculator() {
                 variant="ghost"
                 size="icon"
                 onClick={() => handlePrint(printHtml)}
-                className="text-amber-200 hover:text-white hover:bg-amber-500/30"
+                className="text-gray-300 hover:text-white hover:bg-gray-500/30"
                 title="Print"
               >
                 <Printer className="w-4 h-4" />
@@ -920,7 +920,7 @@ function SyariahCalculator() {
                 variant="ghost"
                 size="icon"
                 onClick={copyResult}
-                className="text-amber-200 hover:text-white hover:bg-amber-500/30"
+                className="text-gray-300 hover:text-white hover:bg-gray-500/30"
                 title="Salin"
               >
                 {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
@@ -929,7 +929,7 @@ function SyariahCalculator() {
                 variant="ghost"
                 size="icon"
                 onClick={resetForm}
-                className="text-amber-200 hover:text-white hover:bg-amber-500/30"
+                className="text-gray-300 hover:text-white hover:bg-gray-500/30"
                 title="Reset"
               >
                 <RotateCcw className="w-4 h-4" />
@@ -939,25 +939,25 @@ function SyariahCalculator() {
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
             <div className="bg-white/10 rounded-xl p-3">
-              <p className="text-amber-200 text-[11px]">Harga Properti</p>
+              <p className="text-gray-300 text-[11px]">Harga Properti</p>
               <p className="text-sm font-semibold mt-0.5">{formatJuta(result.propertyPrice)} jt</p>
             </div>
             <div className="bg-white/10 rounded-xl p-3">
-              <p className="text-amber-200 text-[11px]">Uang Muka</p>
+              <p className="text-gray-300 text-[11px]">Uang Muka</p>
               <p className="text-sm font-semibold mt-0.5">{result.dpPercent.toFixed(1)}% ({formatJuta(result.dpAmount)} jt)</p>
             </div>
             <div className="bg-white/10 rounded-xl p-3">
-              <p className="text-amber-200 text-[11px]">Harga Jual Bank</p>
+              <p className="text-gray-300 text-[11px]">Harga Jual Bank</p>
               <p className="text-sm font-semibold mt-0.5">{formatJuta(result.sellingPrice)} jt</p>
             </div>
             <div className="bg-white/10 rounded-xl p-3">
-              <p className="text-amber-200 text-[11px]">Margin Bank</p>
+              <p className="text-gray-300 text-[11px]">Margin Bank</p>
               <p className="text-sm font-semibold mt-0.5">{formatJuta(result.profitAmount)} jt</p>
             </div>
           </div>
 
           <div className="mt-4 flex items-center gap-2 bg-white/15 rounded-lg px-3 py-2">
-            <Info className="w-4 h-4 text-amber-200" />
+            <Info className="w-4 h-4 text-gray-300" />
             <p className="text-sm">
               Cicilan <strong>FLAT</strong> — tidak berubah selama {result.tenorYears} tahun. Tanpa bunga, tanpa denda.
             </p>
@@ -1016,9 +1016,9 @@ function SyariahCalculator() {
             {/* Dialog Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gray-50">
               <div className="flex items-center gap-2">
-                <Shield className="w-5 h-5 text-amber-600" />
+                <Shield className="w-5 h-5 text-gray-700" />
                 <h2 className="text-lg font-bold text-gray-900">Detail Simulasi Syariah</h2>
-                <span className="text-xs px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full font-medium">Murabahah</span>
+                <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded-full font-medium">Murabahah</span>
               </div>
               <div className="flex items-center gap-2">
                 <Button variant="outline" size="sm" onClick={() => handlePrint(printHtml)} className="gap-1.5">
@@ -1033,10 +1033,10 @@ function SyariahCalculator() {
             {/* Dialog Content */}
             <div className="flex-1 overflow-y-auto p-6">
               {/* Highlight */}
-              <div className="text-center mb-6 p-6 bg-amber-50 rounded-xl border border-amber-100">
-                <p className="text-sm text-amber-600 font-medium">Cicilan Per Bulan (Flat)</p>
-                <p className="text-3xl font-extrabold text-amber-700 mt-1">Rp {formatRupiah(result.monthly)}</p>
-                <p className="text-xs text-amber-500 mt-1">Tetap selama {result.tenorYears} tahun — tanpa bunga, tanpa denda</p>
+              <div className="text-center mb-6 p-6 bg-gray-50 rounded-xl border border-gray-200">
+                <p className="text-sm text-gray-600 font-medium">Cicilan Per Bulan (Flat)</p>
+                <p className="text-3xl font-extrabold text-gray-900 mt-1">Rp {formatRupiah(result.monthly)}</p>
+                <p className="text-xs text-gray-500 mt-1">Tetap selama {result.tenorYears} tahun — tanpa bunga, tanpa denda</p>
               </div>
 
               {/* Detail Table */}
@@ -1073,13 +1073,13 @@ function SyariahCalculator() {
                       <td className="px-4 py-3 text-gray-700">Tenor</td>
                       <td className="px-4 py-3 text-right font-semibold">{result.tenorYears} Tahun <span className="text-gray-400 font-normal">({result.tenorYears * 12} Bulan)</span></td>
                     </tr>
-                    <tr className="border-t border-gray-100 bg-amber-50">
-                      <td className="px-4 py-3 text-amber-700 font-semibold">Total Pembayaran</td>
-                      <td className="px-4 py-3 text-right font-bold text-amber-700">Rp {formatRupiah(result.totalPayment)}</td>
+                    <tr className="border-t border-gray-100 bg-gray-50">
+                      <td className="px-4 py-3 text-gray-800 font-semibold">Total Pembayaran</td>
+                      <td className="px-4 py-3 text-right font-bold text-gray-800">Rp {formatRupiah(result.totalPayment)}</td>
                     </tr>
-                    <tr className="border-t border-gray-100 bg-amber-50/50">
-                      <td className="px-4 py-3 text-amber-600 font-medium">Margin Bank (Keuntungan)</td>
-                      <td className="px-4 py-3 text-right font-semibold text-amber-600">Rp {formatRupiah(result.profitAmount)}</td>
+                    <tr className="border-t border-gray-100 bg-gray-50/50">
+                      <td className="px-4 py-3 text-gray-700 font-medium">Margin Bank (Keuntungan)</td>
+                      <td className="px-4 py-3 text-right font-semibold text-gray-700">Rp {formatRupiah(result.profitAmount)}</td>
                     </tr>
                   </tbody>
                 </table>
