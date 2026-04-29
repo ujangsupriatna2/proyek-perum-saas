@@ -180,7 +180,7 @@ const FEATURES_TENTANG = [
       "Konsultasi gratis untuk membantu pilihan terbaik",
     ],
     proof: "Data menunjukkan rata-rata kenaikan nilai properti 15-20% per tahun di lokasi mitra kami",
-    gradient: "from-amber-500 to-amber-600",
+    gradient: "from-gray-600 to-gray-700",
   },
   {
     icon: HeartHandshake,
@@ -2483,7 +2483,7 @@ function CicilanCalculator() {
               </div>
               <div className="flex items-center justify-between py-2 border-b border-gray-200">
                 <span className="text-sm text-gray-500">Total Bunga ({tenor} thn)</span>
-                <span className="text-sm font-semibold text-red-500">{fmtRp(totalBunga)}</span>
+                <span className="text-sm font-semibold text-gray-600">{fmtRp(totalBunga)}</span>
               </div>
               <div className="flex items-center justify-between py-2 border-b border-gray-200">
                 <span className="text-sm text-gray-500">Total Pembayaran</span>
@@ -4291,7 +4291,7 @@ function TentangKamiPage() {
             <FadeIn>
               <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 md:p-10 text-white h-full shadow-xl">
                 <div className="w-16 h-16 bg-white/15 rounded-2xl flex items-center justify-center mb-6">
-                  <Eye className="w-8 h-8 text-yellow-300" />
+                  <Eye className="w-8 h-8 text-gray-400" />
                 </div>
                 <h3 className="text-2xl font-extrabold mb-4">Visi</h3>
                 <p className="text-gray-400 text-lg leading-relaxed">
@@ -4302,7 +4302,7 @@ function TentangKamiPage() {
             <FadeIn delay={0.15}>
               <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 md:p-10 text-white h-full shadow-xl">
                 <div className="w-16 h-16 bg-white/15 rounded-2xl flex items-center justify-center mb-6">
-                  <BookOpen className="w-8 h-8 text-yellow-300" />
+                  <BookOpen className="w-8 h-8 text-gray-400" />
                 </div>
                 <h3 className="text-2xl font-extrabold mb-4">Misi</h3>
                 <ul className="text-gray-300 text-lg leading-relaxed space-y-3">
@@ -4357,7 +4357,7 @@ function TentangKamiPage() {
               { icon: Shield, title: "Profesional", desc: "Tim berpengalaman dengan standar layanan tertinggi. Setiap proses dijalankan secara sistematis dan terstruktur.", gradient: "from-gray-800 to-gray-900" },
               { icon: Eye, title: "Transparan", desc: "Harga jelas, legalitas terbuka, progres proyek bisa dipantau. Tidak ada biaya tersembunyi.", gradient: "from-blue-500 to-blue-600" },
               { icon: CheckCircle2, title: "Terpercaya", desc: "Setiap mitra developer telah melalui proses verifikasi ketat. Reputasi adalah fondasi bisnis kami.", gradient: "from-gray-600 to-gray-700" },
-              { icon: HeartHandshake, title: "Kolaboratif", desc: "Sinergi antara platform, developer, dan pembeli. Semua pihak mendapatkan manfaat.", gradient: "from-amber-500 to-amber-600" },
+              { icon: HeartHandshake, title: "Kolaboratif", desc: "Sinergi antara platform, developer, dan pembeli. Semua pihak mendapatkan manfaat.", gradient: "from-gray-500 to-gray-600" },
               { icon: Sparkles, title: "Inovatif", desc: "Terus beradaptasi dengan teknologi dan tren properti terbaru untuk pengalaman yang lebih baik.", gradient: "from-purple-500 to-purple-600" },
               { icon: Users, title: "Berorientasi Keluarga", desc: "Setiap rumah yang kami tawarkan dirancang untuk kenyamanan dan kebahagiaan keluarga.", gradient: "from-pink-500 to-pink-600" },
             ].map((val, i) => {
@@ -4410,7 +4410,7 @@ function TentangKamiPage() {
               return (
                 <FadeIn key={stat.label} delay={i * 0.1}>
                   <div className="text-center bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
-                    <Icon className="w-6 h-6 text-amber-300 mx-auto mb-2" />
+                    <Icon className="w-6 h-6 text-gray-400 mx-auto mb-2" />
                     <p className="text-3xl md:text-4xl font-extrabold text-white">{stat.value}</p>
                     <p className="text-gray-400 text-sm mt-1">{stat.label}</p>
                   </div>
