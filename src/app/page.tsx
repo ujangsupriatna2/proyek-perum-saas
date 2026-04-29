@@ -798,8 +798,15 @@ function WhyChooseSection() {
 function TentangKamiKeunggulanSection() {
   const { settings: S } = useSettingsStore();
   return (
-    <section className="py-24 md:py-32 bg-section-gray">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-24 md:py-32 bg-section-gray relative overflow-hidden">
+      {/* Ambient floating orb */}
+      <motion.div
+        animate={{ y: [0, -15, 10, 0], x: [0, 12, -8, 0] }}
+        transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[15%] right-[-5%] w-[300px] h-[300px] rounded-full bg-gray-200/30 blur-3xl"
+      />
+      <FloatingParticles count={4} dark={false} />
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-16">
           <p className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Keunggulan Kami</p>
           <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
@@ -1913,6 +1920,12 @@ function PageBanner({ title, subtitle }: { title: string; subtitle?: string }) {
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
         className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-white blur-3xl"
       />
+      <motion.div
+        animate={{ y: [0, -20, 15, 0], x: [0, 15, -10, 0], scale: [1, 1.15, 0.95, 1] }}
+        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[10%] right-[15%] w-72 h-72 rounded-full bg-white blur-3xl opacity-[0.04]"
+      />
+      <FloatingParticles count={3} dark={true} />
       {/* Subtle grid pattern */}
       <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.5) 1px, transparent 0)', backgroundSize: '40px 40px' }} />
 
@@ -2176,8 +2189,15 @@ function PropertiesSection({
   ];
 
   return (
-    <section className="py-20 md:py-28 bg-section-gray">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 md:py-28 bg-section-gray relative overflow-hidden">
+      {/* Ambient floating orb */}
+      <motion.div
+        animate={{ y: [0, -15, 10, 0], x: [0, 12, -8, 0] }}
+        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[10%] right-[-5%] w-[300px] h-[300px] rounded-full bg-gray-200/30 blur-3xl"
+      />
+      <FloatingParticles count={4} dark={false} />
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-12">
           <Badge
             variant="secondary"
@@ -3005,12 +3025,14 @@ function CalculatorSection() {
   const formatDpLabel = (val: number) => isKpr ? `Rp ${formatRpShort(val)}` : `${val}%`;
 
   return (
-    <section id="simulasi" className="py-20 md:py-28 bg-section-gray relative">
-      {/* Decorative circles — clipped independently */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-32 -right-32 w-96 h-96 bg-gray-200/50 rounded-full blur-3xl" />
-        <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-gray-200/50 rounded-full blur-3xl" />
-      </div>
+    <section id="simulasi" className="py-20 md:py-28 bg-section-gray relative overflow-hidden">
+      {/* Ambient floating orb */}
+      <motion.div
+        animate={{ y: [0, -15, 10, 0], x: [0, 12, -8, 0] }}
+        transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[10%] right-[-5%] w-[300px] h-[300px] rounded-full bg-gray-200/30 blur-3xl"
+      />
+      <FloatingParticles count={3} dark={false} />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-8">
@@ -3351,9 +3373,13 @@ function LocationSection() {
   const { settings: S } = useSettingsStore();
   return (
     <section className="py-20 md:py-28 bg-white relative overflow-hidden">
-      {/* Animated background decoration */}
-      <div className="absolute top-0 right-0 w-72 h-72 bg-gray-100/50 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-gray-100/50 rounded-full blur-3xl" />
+      {/* Ambient floating orb */}
+      <motion.div
+        animate={{ y: [0, -15, 10, 0], x: [0, 12, -8, 0] }}
+        transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[15%] right-[-5%] w-[300px] h-[300px] rounded-full bg-gray-100/50 blur-3xl"
+      />
+      <FloatingParticles count={3} dark={false} />
 
       <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-14">
@@ -3486,8 +3512,13 @@ function ContactSection() {
 
   return (
     <section className="py-20 md:py-28 bg-section-gray relative overflow-hidden">
-      {/* Animated background */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-gray-200/30 rounded-full blur-3xl" />
+      {/* Ambient floating orb */}
+      <motion.div
+        animate={{ y: [0, -15, 10, 0], x: [0, 12, -8, 0] }}
+        transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[10%] left-[-5%] w-[350px] h-[350px] rounded-full bg-gray-200/30 blur-3xl"
+      />
+      <FloatingParticles count={3} dark={false} />
 
       <div className="relative max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-12">
@@ -3707,8 +3738,15 @@ function ProyekGallery() {
   }
 
   return (
-    <section className="py-20 md:py-28 bg-section-gray">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 md:py-28 bg-section-gray relative overflow-hidden">
+      {/* Ambient floating orb */}
+      <motion.div
+        animate={{ y: [0, -15, 10, 0], x: [0, 12, -8, 0] }}
+        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[10%] right-[-5%] w-[300px] h-[300px] rounded-full bg-gray-200/30 blur-3xl"
+      />
+      <FloatingParticles count={3} dark={false} />
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-12">
           <Badge variant="secondary" className="mb-4 bg-gray-100 text-gray-600 border-gray-200">
             <Camera className="w-3.5 h-3.5 mr-1.5" />
@@ -3912,8 +3950,15 @@ function TentangKamiPage() {
       <PageBanner title="Tentang Kami" subtitle={`Mengenal lebih dekat ${S.company_name}`} />
 
       {/* ═══════ PROFIL PERUSAHAAN ═══════ */}
-      <section className="py-20 md:py-28 bg-section-gray">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 md:py-28 bg-section-gray relative overflow-hidden">
+        {/* Ambient floating orb */}
+        <motion.div
+          animate={{ y: [0, -15, 10, 0], x: [0, 12, -8, 0] }}
+          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-[20%] left-[-5%] w-[300px] h-[300px] rounded-full bg-gray-200/30 blur-3xl"
+        />
+        <FloatingParticles count={3} dark={false} />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <FadeIn direction="left">
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
@@ -4008,8 +4053,15 @@ function TentangKamiPage() {
       </section>
 
       {/* ═══════ NILAI PERUSAHAAN ═══════ */}
-      <section className="py-20 md:py-28 bg-section-gray">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 md:py-28 bg-section-gray relative overflow-hidden">
+        {/* Ambient floating orb */}
+        <motion.div
+          animate={{ y: [0, -12, 8, 0], x: [0, 10, -6, 0] }}
+          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute bottom-[10%] right-[-5%] w-[280px] h-[280px] rounded-full bg-gray-200/30 blur-3xl"
+        />
+        <FloatingParticles count={4} dark={false} />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-16">
             <Badge variant="secondary" className="mb-4 bg-gray-100 text-gray-600 border-gray-200">
               <Award className="w-3.5 h-3.5 mr-1.5" />
@@ -4376,8 +4428,15 @@ function BlogArticlePage({ slug }: { slug: string }) {
       </div>
 
       {/* Article content */}
-      <article className="py-10 md:py-16 bg-white">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 overflow-x-visible">
+      <article className="py-10 md:py-16 bg-white relative overflow-hidden">
+        {/* Ambient floating orb */}
+        <motion.div
+          animate={{ y: [0, -15, 10, 0], x: [0, 12, -8, 0] }}
+          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-[15%] right-[-5%] w-[300px] h-[300px] rounded-full bg-gray-100/50 blur-3xl"
+        />
+        <FloatingParticles count={3} dark={false} />
+        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 overflow-x-visible">
           {/* Meta */}
           <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400 mb-8 pb-8 border-b border-gray-100">
             <div className="flex items-center gap-1.5">
@@ -4514,8 +4573,15 @@ function BlogPage() {
   return (
     <>
       <PageBanner title="Blog & Artikel" subtitle="Tips, panduan, dan informasi seputar properti, KPR, dan investasi rumah" />
-      <section className="py-16 md:py-24 bg-section-gray">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-16 md:py-24 bg-section-gray relative overflow-hidden">
+        {/* Ambient floating orb */}
+        <motion.div
+          animate={{ y: [0, -15, 10, 0], x: [0, 12, -8, 0] }}
+          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-[10%] right-[-5%] w-[300px] h-[300px] rounded-full bg-gray-200/30 blur-3xl"
+        />
+        <FloatingParticles count={4} dark={false} />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {articles.length === 0 ? (
             <div className="text-center py-20">
               <BookOpen className="w-16 h-16 mx-auto mb-4 text-gray-300" />
@@ -5097,8 +5163,15 @@ function JasaListingSection({
   const paged = filtered.slice((page - 1) * JASA_PER_PAGE, page * JASA_PER_PAGE);
 
   return (
-    <section className="py-20 md:py-28 bg-section-gray">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 md:py-28 bg-section-gray relative overflow-hidden">
+      {/* Ambient floating orb */}
+      <motion.div
+        animate={{ y: [0, -15, 10, 0], x: [0, 12, -8, 0] }}
+        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[10%] right-[-5%] w-[300px] h-[300px] rounded-full bg-gray-200/30 blur-3xl"
+      />
+      <FloatingParticles count={3} dark={false} />
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-12">
           <Badge variant="secondary" className="mb-4 bg-gray-50 text-gray-600 border-gray-200">
             <HardHat className="w-3.5 h-3.5 mr-1.5" />
@@ -5208,8 +5281,15 @@ function MitraPage() {
         subtitle="Developer perumahan terpilih yang bergabung dengan platform kami"
       />
 
-      <section className="py-20 md:py-28 bg-section-gray">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 md:py-28 bg-section-gray relative overflow-hidden">
+        {/* Ambient floating orb */}
+        <motion.div
+          animate={{ y: [0, -15, 10, 0], x: [0, 12, -8, 0] }}
+          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-[10%] left-[-5%] w-[300px] h-[300px] rounded-full bg-gray-200/30 blur-3xl"
+        />
+        <FloatingParticles count={3} dark={false} />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-16">
             <Badge variant="secondary" className="mb-4 bg-gray-100 text-gray-600 border-gray-200">
               <Handshake className="w-3.5 h-3.5 mr-1.5" />
