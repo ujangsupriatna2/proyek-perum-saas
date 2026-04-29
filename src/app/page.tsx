@@ -5748,10 +5748,7 @@ function Footer() {
           <div className="lg:col-span-2">
             <div className="flex items-center gap-3 mb-5">
               <img src={S.logo_url || "/images/logo-brr.png"} alt="Logo" className="w-10 h-10 rounded-lg object-contain" />
-              <div className="flex flex-col leading-tight">
-                <span className="text-[10px] text-gray-500 font-semibold tracking-wider uppercase">{S.company_legal_name}</span>
-                <span className="text-sm text-white font-black">{S.company_name}</span>
-              </div>
+              <span className="text-sm text-white font-bold tracking-wider uppercase">{S.company_legal_name}</span>
             </div>
             <p className="text-gray-500 text-sm leading-relaxed mb-5 max-w-sm">
               Platform perumahan terpercaya yang menghimpun developer terpilih. Menyediakan hunian berkualitas dengan skema Syariah &amp; KPR.
