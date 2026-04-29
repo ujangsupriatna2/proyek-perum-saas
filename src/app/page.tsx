@@ -77,6 +77,8 @@ import {
   ThumbsUp,
   SlidersHorizontal,
   Mail,
+  Youtube,
+  Music,
 } from "lucide-react";
 import MapWrapper from "@/components/map-wrapper";
 import Chatbot from "@/components/chatbot";
@@ -3777,6 +3779,51 @@ function ContactSection() {
     setTimeout(() => setSent(false), 4000);
   };
 
+  const contactItems = [
+    {
+      icon: Phone,
+      label: "Telepon",
+      value: S.contact_phone,
+      href: `tel:${S.contact_phone.replace(/-/g, "")}`,
+      color: "bg-gray-900",
+    },
+    {
+      icon: MessageCircle,
+      label: "WhatsApp",
+      value: S.contact_wa ? `+${S.contact_wa.replace(/^(\d{2})(\d{3})(\d{4})(\d{4})$/, "$1 $2-$3-$4")}` : "-",
+      href: `https://wa.me/${S.contact_wa}`,
+      color: "bg-gray-800",
+    },
+    {
+      icon: Mail,
+      label: "Email",
+      value: S.contact_email,
+      href: `mailto:${S.contact_email}`,
+      color: "bg-gray-700",
+    },
+    {
+      icon: MapPin,
+      label: "Alamat",
+      value: S.contact_address,
+      href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(S.contact_address)}`,
+      color: "bg-gray-600",
+    },
+    {
+      icon: User,
+      label: "Contact Person",
+      value: S.contact_person,
+      href: `https://wa.me/${S.contact_wa}?text=Halo, saya ingin bicara dengan ${S.contact_person}`,
+      color: "bg-gray-500",
+    },
+  ];
+
+  const socials = [
+    { icon: Instagram, label: "Instagram", value: S.social_instagram, href: `https://instagram.com/${S.social_instagram}`, color: "from-purple-500 to-pink-500" },
+    { icon: Globe, label: "Facebook", value: S.social_facebook, href: `https://facebook.com/${S.social_facebook}`, color: "from-blue-600 to-blue-500" },
+    { icon: Youtube, label: "YouTube", value: S.social_youtube, href: `https://youtube.com/@${S.social_youtube}`, color: "from-red-600 to-red-500" },
+    { icon: Music, label: "TikTok", value: S.social_tiktok, href: `https://tiktok.com/@${S.social_tiktok}`, color: "from-gray-900 to-gray-700" },
+  ].filter((s) => s.value);
+
   return (
     <section className="py-20 md:py-28 bg-section-gray relative overflow-hidden">
       {/* Ambient floating orb */}
@@ -3787,156 +3834,195 @@ function ContactSection() {
       />
       <FloatingParticles count={3} dark={false} />
 
-      <div className="relative max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-        <FadeIn className="text-center mb-12">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Heading */}
+        <FadeIn className="text-center mb-14">
           <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Hubungi Kami</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-3 mb-4 tracking-tight">
             Tim Marketing Kami Siap <span className="text-gradient-gray">Melayani</span> Anda
           </h2>
           <p className="text-gray-500 max-w-xl mx-auto text-lg">
-            Isi form di bawah, pesan otomatis dikirim ke WhatsApp kami.
+            Jangan ragu untuk menghubungi kami melalui berbagai channel di bawah ini.
           </p>
         </FadeIn>
 
-        {/* Contact Form - centered */}
-        <FadeIn delay={0.1}>
-          <Card className="border-0 shadow-xl">
-            <CardContent className="p-6 md:p-8">
-              <div className="flex items-center justify-center gap-3 mb-8">
-                <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center shadow-md">
-                  <Send className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-gray-900">Kirim Pesan via WhatsApp</h3>
-                  <p className="text-xs text-gray-400">Respon cepat dari tim marketing kami</p>
+        {/* Two-Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-10">
+          {/* ── Left Column: Contact Info ── */}
+          <FadeIn delay={0.05} className="lg:col-span-2 space-y-6">
+            {/* Contact Cards */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-1">
+              <h3 className="text-lg font-bold text-gray-900 mb-5">Informasi Kontak</h3>
+              {contactItems.map((item, idx) => (
+                <a
+                  key={idx}
+                  href={item.href}
+                  target={item.href.startsWith("http") ? "_blank" : undefined}
+                  rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                  className="flex items-start gap-4 p-3 -mx-3 rounded-xl hover:bg-gray-50 transition-colors group"
+                >
+                  <div className={`w-10 h-10 ${item.color} rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-sm`}>
+                    <item.icon className="w-[18px] h-[18px] text-white" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">{item.label}</p>
+                    <p className="text-sm font-medium text-gray-800 mt-0.5 break-words">{item.value}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+
+            {/* Social Media */}
+            {socials.length > 0 && (
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-5">Media Sosial</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {socials.map((s, idx) => (
+                    <a
+                      key={idx}
+                      href={s.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 p-3 rounded-xl border border-gray-100 hover:border-gray-200 hover:shadow-sm transition-all group"
+                    >
+                      <div className={`w-9 h-9 bg-gradient-to-br ${s.color} rounded-lg flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-sm`}>
+                        <s.icon className="w-4 h-4 text-white" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold text-gray-900">{s.label}</p>
+                        <p className="text-[11px] text-gray-400 truncate">@{s.value}</p>
+                      </div>
+                    </a>
+                  ))}
                 </div>
               </div>
+            )}
 
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">
-                      Nama Lengkap <span className="text-gray-500">*</span>
-                    </Label>
-                    <div className="relative">
-                      <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                      <Input
-                        required
-                        placeholder="Masukkan nama Anda"
-                        value={formData.nama}
-                        onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
-                        className="pl-11 h-11 rounded-xl border-gray-200 shadow-sm focus:ring-gray-400 focus:border-gray-400"
-                      />
-                    </div>
+            {/* WhatsApp CTA */}
+            <a
+              href={`https://wa.me/${S.contact_wa}?text=Halo, saya tertarik dengan properti ${S.company_name}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-3 w-full py-4 bg-gray-900 text-white font-bold rounded-2xl hover:bg-gray-800 transition-all active:scale-[0.98] shadow-lg hover:shadow-xl group"
+            >
+              <div className="relative">
+                <MessageCircle className="w-5 h-5" />
+                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse" />
+              </div>
+              Chat via WhatsApp Sekarang
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </a>
+          </FadeIn>
+
+          {/* ── Right Column: Contact Form ── */}
+          <FadeIn delay={0.15} className="lg:col-span-3">
+            <Card className="border-0 shadow-xl h-full">
+              <CardContent className="p-6 md:p-8">
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center shadow-md">
+                    <Send className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">
-                      Nomor WhatsApp <span className="text-gray-500">*</span>
-                    </Label>
-                    <div className="relative">
-                      <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                      <Input
-                        required
-                        type="tel"
-                        placeholder="08xxxxxxxxxx"
-                        value={formData.nomor}
-                        onChange={(e) => setFormData({ ...formData, nomor: e.target.value })}
-                        className="pl-11 h-11 rounded-xl border-gray-200 shadow-sm focus:ring-gray-400 focus:border-gray-400"
-                      />
-                    </div>
+                    <h3 className="text-lg font-bold text-gray-900">Kirim Pesan</h3>
+                    <p className="text-xs text-gray-400">Pesan otomatis dikirim ke WhatsApp kami</p>
                   </div>
                 </div>
 
-                <div>
-                  <Label className="text-sm font-semibold text-gray-700 mb-2 block">
-                    Saya Tertarik Dengan
-                  </Label>
-                  <Select value={formData.minat} onValueChange={(v) => setFormData({ ...formData, minat: v })}>
-                    <SelectTrigger className="h-11 rounded-xl border-gray-200 shadow-sm focus:ring-gray-400 focus:border-gray-400">
-                      <SelectValue placeholder="Pilih topik..." />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl">
-                      <SelectItem value="Info Properti" className="py-2.5 rounded-lg">Info Properti / Tipe Rumah</SelectItem>
-                      <SelectItem value="Simulasi Cicilan" className="py-2.5 rounded-lg">Simulasi Cicilan</SelectItem>
-                      <SelectItem value="Jadwal Survey" className="py-2.5 rounded-lg">Jadwal Survey Lokasi</SelectItem>
-                      <SelectItem value="Syariah" className="py-2.5 rounded-lg">Skema Pembayaran Syariah</SelectItem>
-                      <SelectItem value="KPR" className="py-2.5 rounded-lg">Skema Pembayaran KPR Bank</SelectItem>
-                      <SelectItem value="Promo" className="py-2.5 rounded-lg">Info Promo / Diskon</SelectItem>
-                      <SelectItem value="Lainnya" className="py-2.5 rounded-lg">Lainnya</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-sm font-semibold text-gray-700 mb-2 block">
+                        Nama Lengkap <span className="text-gray-500">*</span>
+                      </Label>
+                      <div className="relative">
+                        <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <Input
+                          required
+                          placeholder="Masukkan nama Anda"
+                          value={formData.nama}
+                          onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+                          className="pl-11 h-11 rounded-xl border-gray-200 shadow-sm focus:ring-gray-400 focus:border-gray-400"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-semibold text-gray-700 mb-2 block">
+                        Nomor WhatsApp <span className="text-gray-500">*</span>
+                      </Label>
+                      <div className="relative">
+                        <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <Input
+                          required
+                          type="tel"
+                          placeholder="08xxxxxxxxxx"
+                          value={formData.nomor}
+                          onChange={(e) => setFormData({ ...formData, nomor: e.target.value })}
+                          className="pl-11 h-11 rounded-xl border-gray-200 shadow-sm focus:ring-gray-400 focus:border-gray-400"
+                        />
+                      </div>
+                    </div>
+                  </div>
 
-                <div>
-                  <Label className="text-sm font-semibold text-gray-700 mb-2 block">
-                    Pesan <span className="text-gray-500">*</span>
-                  </Label>
-                  <Textarea
-                    required
-                    rows={4}
-                    placeholder="Tulis pesan atau pertanyaan Anda di sini..."
-                    value={formData.pesan}
-                    onChange={(e) => setFormData({ ...formData, pesan: e.target.value })}
-                    className="resize-none rounded-xl border-gray-200 shadow-sm focus:ring-gray-400 focus:border-gray-400"
-                  />
-                </div>
+                  <div>
+                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">
+                      Saya Tertarik Dengan
+                    </Label>
+                    <Select value={formData.minat} onValueChange={(v) => setFormData({ ...formData, minat: v })}>
+                      <SelectTrigger className="h-11 rounded-xl border-gray-200 shadow-sm focus:ring-gray-400 focus:border-gray-400">
+                        <SelectValue placeholder="Pilih topik..." />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl">
+                        <SelectItem value="Info Properti" className="py-2.5 rounded-lg">Info Properti / Tipe Rumah</SelectItem>
+                        <SelectItem value="Simulasi Cicilan" className="py-2.5 rounded-lg">Simulasi Cicilan</SelectItem>
+                        <SelectItem value="Jadwal Survey" className="py-2.5 rounded-lg">Jadwal Survey Lokasi</SelectItem>
+                        <SelectItem value="Syariah" className="py-2.5 rounded-lg">Skema Pembayaran Syariah</SelectItem>
+                        <SelectItem value="KPR" className="py-2.5 rounded-lg">Skema Pembayaran KPR Bank</SelectItem>
+                        <SelectItem value="Promo" className="py-2.5 rounded-lg">Info Promo / Diskon</SelectItem>
+                        <SelectItem value="Lainnya" className="py-2.5 rounded-lg">Lainnya</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-                {sent && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center justify-center gap-2 p-3 bg-gray-50 border border-gray-200 rounded-xl"
+                  <div>
+                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">
+                      Pesan <span className="text-gray-500">*</span>
+                    </Label>
+                    <Textarea
+                      required
+                      rows={4}
+                      placeholder="Tulis pesan atau pertanyaan Anda di sini..."
+                      value={formData.pesan}
+                      onChange={(e) => setFormData({ ...formData, pesan: e.target.value })}
+                      className="resize-none rounded-xl border-gray-200 shadow-sm focus:ring-gray-400 focus:border-gray-400"
+                    />
+                  </div>
+
+                  {sent && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="flex items-center gap-2 p-3 bg-gray-50 border border-gray-200 rounded-xl"
+                    >
+                      <CheckCircle2 className="w-5 h-5 text-gray-600 shrink-0" />
+                      <p className="text-sm text-gray-600 font-medium">Pesan berhasil dikirim ke WhatsApp!</p>
+                    </motion.div>
+                  )}
+
+                  <button
+                    type="submit"
+                    className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-gray-900 text-white font-bold rounded-xl hover:bg-gray-800 transition-all active:scale-[0.98] shadow-lg hover:shadow-xl text-base"
                   >
-                    <CheckCircle2 className="w-5 h-5 text-gray-600 shrink-0" />
-                    <p className="text-sm text-gray-600 font-medium">Pesan berhasil dikirim ke WhatsApp!</p>
-                  </motion.div>
-                )}
+                    <Send className="w-5 h-5" />
+                    Kirim via WhatsApp
+                  </button>
+                </form>
+              </CardContent>
+            </Card>
+          </FadeIn>
+        </div>
 
-                <button
-                  type="submit"
-                  className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-gray-900 text-white font-bold rounded-xl hover:bg-gray-800 transition-all active:scale-[0.98] shadow-lg hover:shadow-xl text-base"
-                >
-                  <Send className="w-5 h-5" />
-                  Kirim via WhatsApp
-                </button>
-              </form>
-            </CardContent>
-          </Card>
-        </FadeIn>
-
-        {/* Quick contact buttons - centered */}
-        <FadeIn delay={0.2} className="mt-8">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <a
-              href={`https://wa.me/${S.contact_wa}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2.5 py-3 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors shadow-sm"
-            >
-              <MessageCircle className="w-4 h-4" />
-              WhatsApp
-            </a>
-            <a
-              href={`tel:${S.contact_phone.replace(/-/g, "")}`}
-              className="flex items-center justify-center gap-2.5 py-3 bg-gray-700 text-white font-semibold rounded-xl hover:bg-gray-600 transition-colors shadow-sm"
-            >
-              <Phone className="w-4 h-4" />
-              Telepon
-            </a>
-            <a
-              href={`https://instagram.com/${S.social_instagram}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2.5 py-3 bg-gray-500 text-white font-semibold rounded-xl hover:bg-gray-400 transition-colors shadow-sm"
-            >
-              <Instagram className="w-4 h-4" />
-              Instagram
-            </a>
-          </div>
-        </FadeIn>
-
-        {/* Map */}
-        <FadeIn delay={0.3} className="mt-12">
+        {/* Map - Full Width */}
+        <FadeIn delay={0.25} className="mt-12">
           <MapWrapper latitude={S.map_latitude} longitude={S.map_longitude} companyName={S.company_name} />
         </FadeIn>
       </div>
