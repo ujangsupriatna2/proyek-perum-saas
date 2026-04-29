@@ -460,19 +460,19 @@ function Hero() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 max-w-4xl mx-auto px-6 sm:px-10 text-center">
+      <div className="relative z-10 max-w-4xl mx-auto px-5 sm:px-10 text-center pt-16 pb-24 sm:pt-0 sm:pb-0">
         {/* Eyebrow */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="inline-flex items-center gap-3 mb-6"
+          className="inline-flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6"
         >
-          <div className="h-px w-8 bg-white/40" />
-          <span className="text-white/60 text-[11px] font-semibold uppercase tracking-[0.25em]">
+          <div className="h-px w-6 sm:w-8 bg-white/40" />
+          <span className="text-white/60 text-[9px] sm:text-[11px] font-semibold uppercase tracking-[0.2em] sm:tracking-[0.25em]">
             {S.company_legal_name || "Platform Perumahan"}
           </span>
-          <div className="h-px w-8 bg-white/40" />
+          <div className="h-px w-6 sm:w-8 bg-white/40" />
         </motion.div>
 
         {/* Headline */}
@@ -480,10 +480,10 @@ function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-[2.75rem] sm:text-5xl md:text-6xl lg:text-[4.5rem] font-black text-white leading-[1.1] mb-6 tracking-tight drop-shadow-[0_4px_30px_rgba(0,0,0,0.8)]"
+          className="text-[2rem] sm:text-5xl md:text-6xl lg:text-[4.5rem] font-black text-white leading-[1.1] sm:leading-[1.1] mb-4 sm:mb-6 tracking-tight drop-shadow-[0_4px_30px_rgba(0,0,0,0.8)]"
         >
-          Temukan Hunian{" "}
-          <span className="block mt-1">Idaman Anda <span className="text-white/80">di Sini</span></span>
+          <span className="block">Temukan Hunian</span>
+          <span className="block mt-1 sm:mt-1">Idaman Anda <span className="text-white/80">di Sini</span></span>
         </motion.h1>
 
         {/* Divider */}
@@ -491,7 +491,7 @@ function Hero() {
           initial={{ opacity: 0, scaleX: 0 }}
           animate={{ opacity: 1, scaleX: 1 }}
           transition={{ duration: 0.6, delay: 0.55 }}
-          className="w-12 h-0.5 bg-white/50 mx-auto mb-6"
+          className="w-10 sm:w-12 h-0.5 bg-white/50 mx-auto mb-4 sm:mb-6"
         />
 
         {/* Subtitle */}
@@ -499,7 +499,7 @@ function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.65 }}
-          className="text-base sm:text-lg text-white/75 leading-relaxed mb-12 max-w-xl mx-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]"
+          className="text-sm sm:text-lg text-white/75 leading-relaxed mb-8 sm:mb-12 max-w-md sm:max-w-xl mx-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] px-2 sm:px-0"
         >
           Platform perumahan terpercaya yang menghubungkan Anda dengan developer terpilih.{" "}
           <span className="text-white font-medium">Skema pembayaran fleksibel</span> — Syariah &amp; KPR Bank.
@@ -510,15 +510,15 @@ function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.8 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
+          className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-12 sm:mb-16 px-4 sm:px-0"
         >
           <a
             href={`https://wa.me/${S.contact_wa}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-white text-gray-950 font-bold rounded-xl hover:bg-gray-100 transition-all active:scale-[0.98] text-sm shadow-lg shadow-white/10 overflow-hidden"
+            className="group relative inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 bg-white text-gray-950 font-bold rounded-xl hover:bg-gray-100 transition-all active:scale-[0.98] text-sm shadow-lg shadow-white/10 overflow-hidden"
           >
-            <span className="relative z-10 flex items-center gap-2.5">
+            <span className="relative z-10 flex items-center gap-2">
               <MessageCircle className="w-4 h-4" />
               Booking via WhatsApp
             </span>
@@ -526,7 +526,7 @@ function Hero() {
           </a>
           <button
             onClick={() => router.push("/?tab=proyek")}
-            className="inline-flex items-center justify-center gap-2.5 px-8 py-4 border border-white/25 text-white font-semibold rounded-xl hover:bg-white/10 hover:border-white/50 transition-all text-sm backdrop-blur-sm"
+            className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 border border-white/25 text-white font-semibold rounded-xl hover:bg-white/10 hover:border-white/50 transition-all text-sm backdrop-blur-sm"
           >
             Lihat Semua Proyek
             <ArrowRight className="w-4 h-4" />
@@ -537,8 +537,8 @@ function Hero() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 1.1 }}
-          className="grid grid-cols-3 gap-8 max-w-xl mx-auto"
+          transition={{ duration: 0.7, delay: 1.0 }}
+          className="grid grid-cols-3 gap-4 sm:gap-8 max-w-sm sm:max-w-xl mx-auto"
         >
           {[
             { value: `${S.total_units_sold}+`, label: "Unit Terjual" },
@@ -546,8 +546,8 @@ function Hero() {
             { value: "10+", label: "Proyek Perumahan" },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
-              <div className="text-2xl sm:text-3xl font-black text-white drop-shadow-[0_1px_8px_rgba(255,255,255,0.2)]">{stat.value}</div>
-              <div className="text-[11px] text-white/40 mt-1.5 font-medium uppercase tracking-wider">{stat.label}</div>
+              <div className="text-xl sm:text-3xl font-black text-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.5)]">{stat.value}</div>
+              <div className="text-[9px] sm:text-[11px] text-white/40 mt-1 sm:mt-1.5 font-medium uppercase tracking-wider">{stat.label}</div>
             </div>
           ))}
         </motion.div>
@@ -558,9 +558,9 @@ function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+        className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
       >
-        <span className="text-white/30 text-[10px] uppercase tracking-widest font-medium">Scroll</span>
+        <span className="text-white/30 text-[9px] sm:text-[10px] uppercase tracking-widest font-medium">Scroll</span>
         <div className="w-5 h-8 border border-white/20 rounded-full flex justify-center pt-1.5">
           <div className="w-1 h-2 bg-white/40 rounded-full animate-scroll-indicator" />
         </div>
