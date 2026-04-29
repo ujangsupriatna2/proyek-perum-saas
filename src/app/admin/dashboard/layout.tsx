@@ -111,8 +111,8 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
             className={cn(
               "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
               isActive
-                ? "bg-gray-900 text-white shadow-lg shadow-gray-900/30"
-                : "text-gray-300 hover:bg-gray-800 hover:text-white"
+                ? "bg-gray-700 text-white shadow-lg shadow-gray-900/30"
+                : "text-gray-400 hover:bg-gray-800 hover:text-white"
             )}
             title={collapsed ? item.label : undefined}
           >
