@@ -240,6 +240,49 @@ const FAQ_ITEMS = [
 
 /* ─────────────────────────── COMPONENTS ─────────────────────────── */
 
+function SectionDivider({ dark = false }: { dark?: boolean }) {
+  return (
+    <div className={`relative h-px w-full overflow-hidden ${dark ? "bg-gray-900" : "bg-gray-50"}`}>
+      <motion.div
+        initial={{ scaleX: 0 }}
+        whileInView={{ scaleX: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+        className={`absolute inset-0 h-full origin-left ${dark ? "bg-gradient-to-r from-transparent via-gray-700 to-transparent" : "bg-gradient-to-r from-transparent via-gray-300 to-transparent"}`}
+      />
+    </div>
+  );
+}
+
+function FloatingParticles({ count = 6, dark = false }: { count?: number; dark?: boolean }) {
+  const particles = Array.from({ length: count }, (_, i) => ({
+    id: i,
+    size: 4 + (i * 7) % 8,
+    left: `${(i * 17 + 5) % 100}%`,
+    top: `${(i * 23 + 10) % 100}%`,
+    delay: i * 1.3,
+    duration: 6 + (i % 4) * 2,
+  }));
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {particles.map((p) => (
+        <motion.div
+          key={p.id}
+          animate={{
+            y: [0, -30 - p.size * 3, -10, 0],
+            x: [0, 10 + p.size, -8, 0],
+            opacity: [0.15, 0.4, 0.2, 0.15],
+            scale: [1, 1.2, 0.8, 1],
+          }}
+          transition={{ duration: p.duration, repeat: Infinity, delay: p.delay, ease: "easeInOut" }}
+          className={`absolute rounded-full ${dark ? "bg-white" : "bg-gray-900"}`}
+          style={{ width: p.size, height: p.size, left: p.left, top: p.top }}
+        />
+      ))}
+    </div>
+  );
+}
+
 function FadeIn({
   children,
   delay = 0,
@@ -610,8 +653,16 @@ function VideoOverviewSection() {
   if (!videoUrl || videoUrl.includes("youtube.com") || videoUrl.includes("youtu.be")) return null;
 
   return (
-    <section className="py-20 md:py-28 bg-white overflow-hidden">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 md:py-28 bg-white overflow-hidden relative">
+      {/* Ambient orb */}
+      <motion.div
+        animate={{ y: [0, -10, 5, 0], x: [0, 8, -5, 0] }}
+        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[20%] left-[-5%] w-[250px] h-[250px] rounded-full bg-gray-100/40 blur-3xl"
+      />
+      <FloatingParticles count={3} dark={false} />
+
+      <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-12">
           <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Kenali Kami</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-4 mb-5 tracking-tight">
@@ -678,6 +729,22 @@ function WhyChooseSection() {
   const { settings: S } = useSettingsStore();
   return (
     <section className="relative py-28 bg-gray-950 overflow-hidden">
+      {/* Animated gradient orbs */}
+      <motion.div
+        animate={{ x: [0, 40, -20, 0], y: [0, -30, 20, 0], scale: [1, 1.1, 0.95, 1] }}
+        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-gradient-to-br from-gray-800/30 to-gray-900/30 blur-3xl"
+      />
+      <motion.div
+        animate={{ x: [0, -30, 20, 0], y: [0, 20, -30, 0], scale: [1, 0.9, 1.1, 1] }}
+        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] rounded-full bg-gradient-to-br from-gray-700/20 to-gray-800/20 blur-3xl"
+      />
+      <motion.div
+        animate={{ x: [0, 20, -30, 0], y: [0, -20, 10, 0] }}
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[40%] left-[50%] w-[300px] h-[300px] rounded-full bg-gradient-to-br from-gray-600/10 to-transparent blur-3xl"
+      />
       {/* Subtle background pattern */}
       <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.3) 1px, transparent 0)', backgroundSize: '40px 40px' }} />
 
@@ -696,16 +763,24 @@ function WhyChooseSection() {
           {FEATURES.map((feat, i) => (
             <FadeIn key={feat.title} delay={i * 0.08}>
               <div className="group relative bg-white/[0.04] backdrop-blur-sm border border-white/[0.08] rounded-2xl p-8 hover:bg-white/[0.08] hover:border-white/[0.15] transition-all duration-500 overflow-hidden">
-                {/* Hover shimmer */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-shimmer" />
+                {/* Hover shimmer sweep */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 overflow-hidden">
+                  <div className="absolute inset-0 animate-shimmer-slow bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+                </div>
+                {/* Animated border glow */}
+                <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 animate-border-glow transition-opacity duration-500" />
                 {/* Number */}
                 <div className="absolute top-6 right-6 text-5xl font-black text-white/[0.03] group-hover:text-white/[0.06] transition-colors leading-none">
                   {String(i + 1).padStart(2, '0')}
                 </div>
                 <div className="relative z-10">
-                  <div className="w-12 h-12 rounded-xl bg-white/[0.08] flex items-center justify-center mb-5 group-hover:bg-white/[0.12] transition-colors">
+                  <motion.div
+                    whileHover={{ rotate: [0, -5, 5, 0], scale: 1.1 }}
+                    transition={{ duration: 0.5 }}
+                    className="w-12 h-12 rounded-xl bg-white/[0.08] flex items-center justify-center mb-5 group-hover:bg-white/[0.12] transition-colors"
+                  >
                     <feat.icon className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
-                  </div>
+                  </motion.div>
                   <h3 className="text-lg font-bold text-white mb-2">{feat.title}</h3>
                   <p className="text-gray-500 leading-relaxed text-sm">{feat.desc}</p>
                 </div>
@@ -968,8 +1043,21 @@ function PropertyShowcaseSection({
     : PROPERTIES.filter((p) => p.category === activeCategory);
 
   return (
-    <section className="py-28 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-28 bg-white relative overflow-hidden">
+      {/* Ambient background */}
+      <motion.div
+        animate={{ y: [0, -15, 10, 0], x: [0, 15, -10, 0] }}
+        transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[5%] right-[-8%] w-[400px] h-[400px] rounded-full bg-gray-100/50 blur-3xl"
+      />
+      <motion.div
+        animate={{ y: [0, 20, -10, 0], x: [0, -12, 8, 0] }}
+        transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute bottom-[5%] left-[-5%] w-[300px] h-[300px] rounded-full bg-gray-100/40 blur-3xl"
+      />
+      <FloatingParticles count={4} dark={false} />
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
           <FadeIn>
@@ -1056,6 +1144,18 @@ function HowToBuySection() {
     <section className="py-28 bg-gray-50 relative overflow-hidden">
       {/* Decorative dot pattern */}
       <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(0,0,0,0.5) 1px, transparent 0)', backgroundSize: '32px 32px' }} />
+      {/* Ambient floating orbs */}
+      <motion.div
+        animate={{ x: [0, 20, -10, 0], y: [0, -15, 10, 0] }}
+        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[10%] right-[-5%] w-[300px] h-[300px] rounded-full bg-gray-200/40 blur-3xl"
+      />
+      <motion.div
+        animate={{ x: [0, -15, 10, 0], y: [0, 20, -15, 0] }}
+        transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute bottom-[10%] left-[-5%] w-[250px] h-[250px] rounded-full bg-gray-200/30 blur-3xl"
+      />
+      <FloatingParticles count={5} dark={false} />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-20">
@@ -1069,7 +1169,13 @@ function HowToBuySection() {
         <div className="relative max-w-4xl mx-auto">
           {/* Center vertical line (desktop) */}
           <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-gray-200 -translate-x-1/2">
-            <div className="absolute inset-0 animate-line-grow bg-gradient-to-b from-gray-300 via-gray-400 to-gray-300" />
+            <motion.div
+              initial={{ scaleY: 0 }}
+              whileInView={{ scaleY: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+              className="absolute inset-0 origin-top bg-gradient-to-b from-gray-300 via-gray-400 to-gray-300"
+            />
           </div>
 
           {steps.map((step, i) => {
@@ -1080,20 +1186,36 @@ function HowToBuySection() {
                 <div className={`relative flex items-center mb-12 last:mb-0 md:mb-16 ${isLeft ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
                   {/* Content */}
                   <div className={`w-full md:w-[calc(50%-40px)] ${isLeft ? 'md:text-right md:pr-0' : 'md:text-left md:pl-0'}`}>
-                    <div className={`bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 transition-all duration-300 group ${isLeft ? 'md:mr-auto' : 'md:ml-auto'}`}>
-                      <div className={`flex items-center gap-3 mb-3 ${isLeft ? 'md:justify-end' : 'md:justify-start'}`}>
-                        <div className={`w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center ${isLeft ? 'md:order-2 md:ml-3' : 'md:order-1 md:mr-3'}`}>
+                    <motion.div
+                      whileHover={{ y: -4, boxShadow: "0 20px 40px -12px rgba(0,0,0,0.1)" }}
+                      transition={{ duration: 0.3 }}
+                      className={`bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 hover:border-gray-200 transition-all duration-300 group overflow-hidden relative ${isLeft ? 'md:mr-auto' : 'md:ml-auto'}`}
+                    >
+                      {/* Shimmer on hover */}
+                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 overflow-hidden rounded-2xl">
+                        <div className="absolute inset-0 animate-shimmer-slow bg-gradient-to-r from-transparent via-gray-100/50 to-transparent" />
+                      </div>
+                      <div className={`relative z-10 flex items-center gap-3 mb-3 ${isLeft ? 'md:justify-end' : 'md:justify-start'}`}>
+                        <motion.div
+                          whileHover={{ rotate: 360 }}
+                          transition={{ duration: 0.6 }}
+                          className={`w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center ${isLeft ? 'md:order-2 md:ml-3' : 'md:order-1 md:mr-3'}`}
+                        >
                           <Icon className="w-5 h-5 text-white" />
-                        </div>
+                        </motion.div>
                         <h3 className="text-lg font-bold text-gray-900">{step.title}</h3>
                       </div>
-                      <p className="text-gray-500 text-sm leading-relaxed">{step.desc}</p>
-                    </div>
+                      <p className="text-gray-500 text-sm leading-relaxed relative z-10">{step.desc}</p>
+                    </motion.div>
                   </div>
 
                   {/* Center dot (desktop) */}
                   <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 w-10 h-10 bg-white border-2 border-gray-900 rounded-full items-center justify-center z-10 shrink-0">
-                    <div className="w-3 h-3 bg-gray-900 rounded-full" />
+                    <motion.div
+                      animate={{ scale: [1, 1.3, 1] }}
+                      transition={{ duration: 2, repeat: Infinity, delay: i * 0.5 }}
+                      className="w-3 h-3 bg-gray-900 rounded-full"
+                    />
                   </div>
                 </div>
               </FadeIn>
@@ -1169,8 +1291,21 @@ function TestimonialsCarousel({ limit }: { limit?: number }) {
   if (items.length === 0) return null;
 
   return (
-    <section className="py-28 bg-gray-50 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-28 bg-gray-50 overflow-hidden relative">
+      {/* Ambient orbs */}
+      <motion.div
+        animate={{ x: [0, 15, -10, 0], y: [0, -20, 10, 0] }}
+        transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[20%] left-[-8%] w-[350px] h-[350px] rounded-full bg-gray-200/30 blur-3xl"
+      />
+      <motion.div
+        animate={{ x: [0, -20, 15, 0], y: [0, 15, -20, 0] }}
+        transition={{ duration: 13, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute bottom-[15%] right-[-5%] w-[280px] h-[280px] rounded-full bg-gray-200/25 blur-3xl"
+      />
+      <FloatingParticles count={4} dark={false} />
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-16">
           <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Testimoni</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-3 mb-4 tracking-tight">
@@ -1192,8 +1327,17 @@ function TestimonialsCarousel({ limit }: { limit?: number }) {
               transition={{ duration: 0.5 }}
               className="max-w-3xl mx-auto"
             >
-              <div className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-100 text-center">
-                <div className="text-6xl text-gray-200 font-serif leading-none mb-6">&ldquo;</div>
+              <div className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-100 text-center relative overflow-hidden group hover:shadow-xl transition-shadow duration-500">
+                {/* Shimmer sweep */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 overflow-hidden">
+                  <div className="absolute inset-0 animate-shimmer-slow bg-gradient-to-r from-transparent via-gray-50 to-transparent" />
+                </div>
+                <div className="relative z-10">
+                <motion.div
+                  animate={{ rotate: [0, 3, -3, 0] }}
+                  transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                  className="text-6xl text-gray-200 font-serif leading-none mb-6"
+                >&ldquo;</motion.div>
                 <div className="flex justify-center gap-1 mb-6">
                   {Array.from({ length: 5 }).map((_, si) => (
                     <Star key={si} className={`w-5 h-5 ${si < items[activeIndex].rating ? "text-gray-900 fill-gray-900" : "text-gray-200"}`} />
@@ -1203,13 +1347,17 @@ function TestimonialsCarousel({ limit }: { limit?: number }) {
                   &ldquo;{items[activeIndex].text}&rdquo;
                 </p>
                 <div className="flex items-center justify-center gap-3">
-                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 font-bold shrink-0">
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 font-bold shrink-0"
+                  >
                     {items[activeIndex].name.charAt(0)}
-                  </div>
+                  </motion.div>
                   <div className="text-left">
                     <p className="font-bold text-gray-900">{items[activeIndex].name}</p>
                     <p className="text-sm text-gray-400">{items[activeIndex].role}</p>
                   </div>
+                </div>
                 </div>
               </div>
             </motion.div>
@@ -1243,8 +1391,16 @@ function TestimonialsCarousel({ limit }: { limit?: number }) {
 
 function FAQSection() {
   return (
-    <section className="py-20 md:py-28 bg-white">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 md:py-28 bg-white relative overflow-hidden">
+      {/* Ambient decoration */}
+      <motion.div
+        animate={{ x: [0, 20, -10, 0], y: [0, -15, 10, 0] }}
+        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[10%] right-[-5%] w-[300px] h-[300px] rounded-full bg-gray-100/60 blur-3xl"
+      />
+      <FloatingParticles count={3} dark={false} />
+
+      <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-12">
           <span className="text-gray-500 text-sm font-bold uppercase tracking-[0.2em]">FAQ</span>
           <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-3 mb-4">Pertanyaan Umum</h2>
@@ -1253,10 +1409,18 @@ function FAQSection() {
         <FadeIn>
           <Accordion type="single" collapsible className="space-y-3">
             {FAQ_ITEMS.map((item, i) => (
-              <AccordionItem key={i} value={`faq-${i}`} className="bg-gray-50 rounded-lg border-0 px-6 data-[state=open]:bg-white data-[state=open]:shadow-md transition-all">
-                <AccordionTrigger className="text-sm font-semibold text-gray-900 hover:text-gray-900 hover:no-underline py-4">{item.q}</AccordionTrigger>
-                <AccordionContent className="text-gray-600 text-sm leading-relaxed pb-4">{item.a}</AccordionContent>
-              </AccordionItem>
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: i * 0.05 }}
+              >
+                <AccordionItem value={`faq-${i}`} className="bg-gray-50 rounded-xl border-0 px-6 data-[state=open]:bg-white data-[state=open]:shadow-lg transition-all duration-300 hover:bg-gray-100/80">
+                  <AccordionTrigger className="text-sm font-semibold text-gray-900 hover:text-gray-900 hover:no-underline py-5">{item.q}</AccordionTrigger>
+                  <AccordionContent className="text-gray-600 text-sm leading-relaxed pb-5">{item.a}</AccordionContent>
+                </AccordionItem>
+              </motion.div>
             ))}
           </Accordion>
         </FadeIn>
@@ -1411,17 +1575,37 @@ function CTASection() {
       <div className="absolute inset-0">
         <img src={S.location_bg_image || "/images/location.png"} alt="" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gray-950/85" />
-        {/* Subtle grain */}
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")' }} />
       </div>
+      {/* Animated gradient orbs */}
+      <motion.div
+        animate={{ x: [0, 30, -15, 0], y: [0, -20, 15, 0], scale: [1, 1.15, 0.95, 1] }}
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[10%] left-[20%] w-[400px] h-[400px] rounded-full bg-white/[0.03] blur-3xl"
+      />
+      <motion.div
+        animate={{ x: [0, -20, 25, 0], y: [0, 25, -10, 0], scale: [1, 0.9, 1.1, 1] }}
+        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute bottom-[10%] right-[15%] w-[350px] h-[350px] rounded-full bg-white/[0.02] blur-3xl"
+      />
+      {/* Floating particles */}
+      <FloatingParticles count={5} dark={true} />
+
       <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <FadeIn>
           <div className="flex items-center justify-center gap-3 mb-8">
-            <div className="h-px w-12 bg-gray-500" />
+            <motion.div
+              animate={{ scaleX: [0, 1, 0] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              className="h-px w-12 bg-gray-500"
+            />
             <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Jangan Tunda Lagi</span>
-            <div className="h-px w-12 bg-gray-500" />
+            <motion.div
+              animate={{ scaleX: [0, 1, 0] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
+              className="h-px w-12 bg-gray-500"
+            />
           </div>
-          <h2 className="text-3xl md:text-5xl font-black text-white mb-6 leading-tight tracking-tight">
+          <h2 className="text-3xl md:text-5xl font-black text-white mb-6 leading-tight tracking-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
             Miliki Rumah Impian
             <br />
             <span className="text-gray-400">Anda Sekarang</span>
@@ -1429,18 +1613,23 @@ function CTASection() {
           <p className="text-gray-500 text-lg mb-12 max-w-xl mx-auto">
             Hubungi kami untuk konsultasi gratis. Tim marketing siap membantu Anda 24/7.
           </p>
-          <a
-            href={`https://wa.me/${S.contact_wa}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group relative inline-flex items-center justify-center gap-2.5 px-10 py-4 bg-white text-gray-950 font-bold rounded-xl hover:bg-gray-100 transition-all active:scale-[0.98] text-sm overflow-hidden"
+          <motion.div
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
           >
-            <span className="relative z-10 flex items-center gap-2.5">
-              <MessageCircle className="w-4 h-4" />
-              Booking via WhatsApp
-            </span>
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-          </a>
+            <a
+              href={`https://wa.me/${S.contact_wa}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative inline-flex items-center justify-center gap-2.5 px-10 py-4 bg-white text-gray-950 font-bold rounded-xl hover:bg-gray-100 transition-all text-sm overflow-hidden"
+            >
+              <span className="relative z-10 flex items-center gap-2.5">
+                <MessageCircle className="w-4 h-4" />
+                Booking via WhatsApp
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+            </a>
+          </motion.div>
         </FadeIn>
       </div>
     </section>
@@ -1470,8 +1659,16 @@ function ServicePreviewSection({
   if (display.length === 0) return null;
 
   return (
-    <section className="py-20 md:py-28 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 md:py-28 bg-white relative overflow-hidden">
+      {/* Ambient floating */}
+      <motion.div
+        animate={{ y: [0, -20, 0], x: [0, 10, 0] }}
+        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[30%] left-[-3%] w-[250px] h-[250px] rounded-full bg-gray-100/50 blur-3xl"
+      />
+      <FloatingParticles count={4} dark={false} />
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-12">
           <Badge variant="secondary" className="mb-4 bg-gray-50 text-gray-600 border-gray-200">
             <HardHat className="w-3.5 h-3.5 mr-1.5" />
@@ -1603,8 +1800,16 @@ function BlogPreviewSection() {
   ];
 
   return (
-    <section className="py-20 md:py-28 bg-section-gray">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 md:py-28 bg-section-gray relative overflow-hidden">
+      {/* Ambient floating */}
+      <motion.div
+        animate={{ y: [0, 15, -10, 0], x: [0, -10, 5, 0] }}
+        transition={{ duration: 17, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[15%] right-[-5%] w-[280px] h-[280px] rounded-full bg-gray-200/30 blur-3xl"
+      />
+      <FloatingParticles count={3} dark={false} />
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-12">
           <Badge variant="secondary" className="mb-4 bg-gray-100 text-gray-600 border-gray-200">
             <BookOpen className="w-3.5 h-3.5 mr-1.5" />
