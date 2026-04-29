@@ -1176,7 +1176,7 @@ function FAQSection() {
     <section className="py-20 md:py-28 bg-white">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-12">
-          <span className="text-amber-600 text-sm font-bold uppercase tracking-[0.2em]">FAQ</span>
+          <span className="text-gray-500 text-sm font-bold uppercase tracking-[0.2em]">FAQ</span>
           <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-3 mb-4">Pertanyaan Umum</h2>
           <p className="text-gray-500">Jawaban atas pertanyaan yang sering ditanyakan calon pembeli.</p>
         </FadeIn>
@@ -1616,8 +1616,8 @@ function PageBanner({ title, subtitle, bgImage }: { title: string; subtitle?: st
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
           <div className="flex items-center gap-3 mb-4">
-            <div className="h-px w-10 bg-amber-400" />
-            <span className="text-amber-400 text-xs font-bold uppercase tracking-[0.2em]">{subtitle}</span>
+            <div className="h-px w-10 bg-gray-400" />
+            <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.2em]">{subtitle}</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-black text-white leading-tight">{title}</h1>
         </motion.div>
@@ -1892,28 +1892,50 @@ function PropertiesSection({
         </FadeIn>
 
         {/* Filter Inputs */}
-        <FadeIn delay={0.1} className="flex justify-center gap-3 mb-10">
-          <Select value={activeCategory} onValueChange={(v) => setActiveCategory(v as PropertyCategory | "all")}>
-            <SelectTrigger className="w-[160px] h-10 text-xs font-semibold border-gray-200 focus:ring-gray-400 focus:border-gray-400">
-              <SelectValue placeholder="Semua Kategori" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Semua Kategori</SelectItem>
-              <SelectItem value="inden">Inden</SelectItem>
-              <SelectItem value="kavling">Kavling</SelectItem>
-              <SelectItem value="siap_huni">Siap Huni</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={filter} onValueChange={(v) => setFilter(v as "semua" | "termurah" | "terlaris")}>
-            <SelectTrigger className="w-[160px] h-10 text-xs font-semibold border-gray-200 focus:ring-gray-400 focus:border-gray-400">
-              <SelectValue placeholder="Semua Harga" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="semua">Semua Harga</SelectItem>
-              <SelectItem value="termurah">Termurah</SelectItem>
-              <SelectItem value="terlaris">Terlaris</SelectItem>
-            </SelectContent>
-          </Select>
+        <FadeIn delay={0.1} className="mb-10">
+          <div className="flex flex-wrap justify-center gap-3">
+            {/* Category filter pills */}
+            {[
+              { key: "all", label: "Semua", icon: Home },
+              { key: "inden", label: "Inden", icon: Hammer },
+              { key: "kavling", label: "Kavling", icon: LandPlot },
+              { key: "siap_huni", label: "Siap Huni", icon: KeyRound },
+            ].map((cat) => {
+              const Icon = cat.icon;
+              const isActive = activeCategory === cat.key;
+              return (
+                <button
+                  key={cat.key}
+                  onClick={() => setActiveCategory(cat.key as PropertyCategory | "all")}
+                  className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                    isActive
+                      ? "bg-gray-900 text-white shadow-lg shadow-gray-900/20"
+                      : "bg-white text-gray-600 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900"
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  {cat.label}
+                </button>
+              );
+            })}
+
+            {/* Divider */}
+            <div className="w-px bg-gray-200 self-stretch hidden sm:block" />
+
+            {/* Sort filter */}
+            <div className="relative">
+              <Select value={filter} onValueChange={(v) => setFilter(v as "semua" | "termurah" | "terlaris")}>
+                <SelectTrigger className="w-[170px] h-11 text-sm font-semibold bg-white border-gray-200 rounded-xl focus:ring-gray-400 focus:border-gray-400 shadow-sm">
+                  <SelectValue placeholder="Urutkan" />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl">
+                  <SelectItem value="semua" className="rounded-lg py-2.5">Semua Harga</SelectItem>
+                  <SelectItem value="termurah" className="rounded-lg py-2.5">Termurah</SelectItem>
+                  <SelectItem value="terlaris" className="rounded-lg py-2.5">Terlaris</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </FadeIn>
 
         {/* Grid */}
@@ -2454,7 +2476,7 @@ function PropertyDetailDialog({
                 <p className="text-xs text-gray-700 uppercase tracking-wider mb-1">Luas Tanah</p>
                 <p className="text-xl font-extrabold text-gray-600">{property.landArea} Meter²</p>
                 {property.landArea > 0 && (
-                  <p className="text-[11px] text-yellow-500 mt-0.5">
+                  <p className="text-[11px] text-gray-400 mt-0.5">
                     Harga per m²: Rp {formatRp(Math.round(property.price * 1_000_000 / property.landArea))}
                   </p>
                 )}
@@ -2463,7 +2485,7 @@ function PropertyDetailDialog({
               <div className="bg-gray-50 rounded-xl p-4 text-center">
                 <p className="text-xs text-gray-700 uppercase tracking-wider mb-1">Tipe Bangunan</p>
                 <p className="text-xl font-extrabold text-gray-600">{property.type}</p>
-                <p className="text-[11px] text-yellow-500 mt-0.5">LB {property.buildingArea} m² / LT {property.landArea} m²</p>
+                <p className="text-[11px] text-gray-400 mt-0.5">LB {property.buildingArea} m² / LT {property.landArea} m²</p>
               </div>
             )}
           </div>
@@ -2684,7 +2706,7 @@ function CalculatorSection() {
       {/* Decorative circles — clipped independently */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-32 -right-32 w-96 h-96 bg-gray-200/50 rounded-full blur-3xl" />
-        <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-yellow-100/50 rounded-full blur-3xl" />
+        <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-gray-200/50 rounded-full blur-3xl" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -2736,12 +2758,12 @@ function CalculatorSection() {
                     Pilih Properti
                   </Label>
                   <Select value={effectivePropId} onValueChange={handlePropertyChange}>
-                    <SelectTrigger className="h-12 text-sm md:text-base w-full !whitespace-normal">
+                    <SelectTrigger className="h-12 text-sm md:text-base w-full !whitespace-normal rounded-xl border-gray-200 shadow-sm focus:ring-gray-400 focus:border-gray-400">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="max-w-[min(90vw,20rem)]">
+                    <SelectContent className="max-w-[min(90vw,20rem)] rounded-xl">
                       {PROPERTIES.map((p) => (
-                        <SelectItem key={p.id} value={p.id} className="py-3">
+                        <SelectItem key={p.id} value={p.id} className="py-3 rounded-lg">
                           <div className="flex flex-col gap-0.5">
                             <span className="font-semibold text-sm leading-tight">{p.name}</span>
                             <span className="text-xs text-gray-500">Rp {p.price} Juta</span>
@@ -2879,7 +2901,7 @@ function CalculatorSection() {
                   <p className="text-gray-400 text-sm mt-2">
                     /bulan ({isFlat ? "flat" : "annuity"})
                   </p>
-                  <Badge className="mt-3 bg-gray-500/20 text-yellow-300 border-yellow-500/30 text-xs">
+                  <Badge className="mt-3 bg-gray-500/20 text-gray-300 border-gray-500/30 text-xs">
                     {effectiveFinType === "syariah" ? "Otomatis dari margin" : prop?.kprInstallments?.[dpNum]?.[tenorNum] ? "Data dari admin" : `Estimasi ${prop?.kprInterestRate ?? 7.5}% p.a.`}
                   </Badge>
                 </div>
@@ -2934,7 +2956,7 @@ function CalculatorSection() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm border-collapse">
                     <thead>
-                      <tr className={`text-white ${effectiveFinType === "syariah" ? "bg-gradient-to-r from-amber-500 to-amber-600" : "bg-gradient-to-r from-gray-800 to-gray-900"}`}>
+                      <tr className={`text-white ${effectiveFinType === "syariah" ? "bg-gradient-to-r from-gray-700 to-gray-800" : "bg-gradient-to-r from-gray-800 to-gray-900"}`}>
                         <th className="px-4 py-3 text-left font-semibold rounded-tl-xl">
                           DP {isKpr ? "(Rp)" : "(%)"} ↓ / Tenor →
                         </th>
@@ -2953,7 +2975,7 @@ function CalculatorSection() {
                         <tr
                           key={dpVal}
                           className={`${idx % 2 === 0 ? "bg-white" : effectiveFinType === "syariah" ? "bg-gray-50/50" : "bg-gray-100/50"} ${
-                            dpVal === dpNum ? "ring-2 ring-inset " + (effectiveFinType === "syariah" ? "ring-amber-500" : "ring-gray-500") : ""
+                            dpVal === dpNum ? "ring-2 ring-inset " + (effectiveFinType === "syariah" ? "ring-gray-500" : "ring-gray-500") : ""
                           }`}
                         >
                           <td className="px-4 py-3 font-semibold text-gray-700">
@@ -2987,8 +3009,8 @@ function CalculatorSection() {
                                 className={`px-4 py-3 text-center ${
                                   isActive
                                     ? effectiveFinType === "syariah"
-                                      ? "bg-amber-200 font-extrabold text-amber-800"
-                                      : "bg-yellow-100 font-extrabold text-gray-600"
+                                      ? "bg-gray-200 font-extrabold text-gray-800"
+                                      : "bg-gray-100 font-extrabold text-gray-600"
                                     : "text-gray-600"
                                 }`}
                               >
@@ -3005,7 +3027,7 @@ function CalculatorSection() {
                 </div>
 
                 <div className="mt-4 flex items-center gap-2 text-xs text-gray-400">
-                  <div className={`w-3 h-3 rounded border ${effectiveFinType === "syariah" ? "bg-amber-200 border-amber-300" : "bg-yellow-100 border-yellow-300"}`} />
+                  <div className={`w-3 h-3 rounded border ${effectiveFinType === "syariah" ? "bg-gray-200 border-gray-300" : "bg-gray-100 border-gray-300"}`} />
                   <span>= Kombinasi yang sedang dipilih</span>
                   {effectiveFinType === "syariah" && (
                     <span className="ml-2">✓ Otomatis — Akad Murabahah, cicilan flat per bulan</span>
@@ -3179,7 +3201,7 @@ function ContactSection() {
             </a>
 
             <div className="flex items-center gap-4 p-5 bg-gray-50 border border-gray-200 rounded-2xl">
-              <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-amber-500 rounded-xl flex items-center justify-center shadow-md ">
+              <div className="w-12 h-12 bg-gradient-to-br from-gray-600 to-gray-700 rounded-xl flex items-center justify-center shadow-md ">
                 <MapPin className="w-6 h-6 text-white" />
               </div>
               <div>
@@ -3211,13 +3233,13 @@ function ContactSection() {
                         Nama Lengkap <span className="text-gray-500">*</span>
                       </Label>
                       <div className="relative">
-                        <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                         <Input
                           required
                           placeholder="Masukkan nama Anda"
                           value={formData.nama}
                           onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
-                          className="pl-10 h-11"
+                          className="pl-11 h-11 rounded-xl border-gray-200 shadow-sm focus:ring-gray-400 focus:border-gray-400"
                         />
                       </div>
                     </div>
@@ -3226,14 +3248,14 @@ function ContactSection() {
                         Nomor WhatsApp <span className="text-gray-500">*</span>
                       </Label>
                       <div className="relative">
-                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                         <Input
                           required
                           type="tel"
                           placeholder="08xxxxxxxxxx"
                           value={formData.nomor}
                           onChange={(e) => setFormData({ ...formData, nomor: e.target.value })}
-                          className="pl-10 h-11"
+                          className="pl-11 h-11 rounded-xl border-gray-200 shadow-sm focus:ring-gray-400 focus:border-gray-400"
                         />
                       </div>
                     </div>
@@ -3244,17 +3266,17 @@ function ContactSection() {
                       Saya Tertarik Dengan
                     </Label>
                     <Select value={formData.minat} onValueChange={(v) => setFormData({ ...formData, minat: v })}>
-                      <SelectTrigger className="h-11">
+                      <SelectTrigger className="h-11 rounded-xl border-gray-200 shadow-sm focus:ring-gray-400 focus:border-gray-400">
                         <SelectValue placeholder="Pilih topik..." />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Info Properti">Info Properti / Tipe Rumah</SelectItem>
-                        <SelectItem value="Simulasi Cicilan">Simulasi Cicilan</SelectItem>
-                        <SelectItem value="Jadwal Survey">Jadwal Survey Lokasi</SelectItem>
-                        <SelectItem value="Syariah">Skema Pembayaran Syariah</SelectItem>
-                        <SelectItem value="KPR">Skema Pembayaran KPR Bank</SelectItem>
-                        <SelectItem value="Promo">Info Promo / Diskon</SelectItem>
-                        <SelectItem value="Lainnya">Lainnya</SelectItem>
+                      <SelectContent className="rounded-xl">
+                        <SelectItem value="Info Properti" className="py-2.5 rounded-lg">Info Properti / Tipe Rumah</SelectItem>
+                        <SelectItem value="Simulasi Cicilan" className="py-2.5 rounded-lg">Simulasi Cicilan</SelectItem>
+                        <SelectItem value="Jadwal Survey" className="py-2.5 rounded-lg">Jadwal Survey Lokasi</SelectItem>
+                        <SelectItem value="Syariah" className="py-2.5 rounded-lg">Skema Pembayaran Syariah</SelectItem>
+                        <SelectItem value="KPR" className="py-2.5 rounded-lg">Skema Pembayaran KPR Bank</SelectItem>
+                        <SelectItem value="Promo" className="py-2.5 rounded-lg">Info Promo / Diskon</SelectItem>
+                        <SelectItem value="Lainnya" className="py-2.5 rounded-lg">Lainnya</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -3269,7 +3291,7 @@ function ContactSection() {
                       placeholder="Tulis pesan atau pertanyaan Anda di sini..."
                       value={formData.pesan}
                       onChange={(e) => setFormData({ ...formData, pesan: e.target.value })}
-                      className="resize-none"
+                      className="resize-none rounded-xl border-gray-200 shadow-sm focus:ring-gray-400 focus:border-gray-400"
                     />
                   </div>
 
@@ -3282,7 +3304,7 @@ function ContactSection() {
 
                   <button
                     type="submit"
-                    className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-green-500 to-green-600 text-white font-bold rounded-xl hover:from-green-600 hover:to-green-700 transition-all active:scale-[0.98] shadow-lg  text-base"
+                    className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-gray-900 text-white font-bold rounded-xl hover:bg-gray-800 transition-all active:scale-[0.98] shadow-lg hover:shadow-xl text-base"
                   >
                     <Send className="w-5 h-5" />
                     Kirim via WhatsApp
@@ -3409,20 +3431,31 @@ function ProyekGallery() {
           </div>
         </FadeIn>
 
-        <FadeIn delay={0.1} className="flex justify-center mb-10">
-          <Select value={activeCategory} onValueChange={(v) => setActiveCategory(v as GalleryCategory)}>
-            <SelectTrigger className="w-[180px] h-10 text-xs font-semibold border-gray-200 focus:ring-gray-400 focus:border-gray-400">
-              <SelectValue placeholder="Semua Kategori" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Semua Kategori</SelectItem>
-              <SelectItem value="inden">Inden</SelectItem>
-              <SelectItem value="kavling">Kavling</SelectItem>
-              <SelectItem value="siap_huni">Siap Huni</SelectItem>
-              <SelectItem value="lingkungan">Lingkungan</SelectItem>
-              <SelectItem value="proses_bangun">Proses Bangun</SelectItem>
-            </SelectContent>
-          </Select>
+        <FadeIn delay={0.1} className="flex flex-wrap justify-center gap-3 mb-10">
+          {/* Category filter pills */}
+          {[
+            { key: "all", label: "Semua" },
+            { key: "inden", label: "Inden" },
+            { key: "kavling", label: "Kavling" },
+            { key: "siap_huni", label: "Siap Huni" },
+            { key: "lingkungan", label: "Lingkungan" },
+            { key: "proses_bangun", label: "Proses Bangun" },
+          ].map((cat) => {
+            const isActive = activeCategory === cat.key;
+            return (
+              <button
+                key={cat.key}
+                onClick={() => setActiveCategory(cat.key as GalleryCategory)}
+                className={`px-4 py-2 text-sm font-semibold rounded-xl transition-all duration-200 ${
+                  isActive
+                    ? "bg-gray-900 text-white shadow-lg shadow-gray-900/20"
+                    : "bg-white text-gray-600 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900"
+                }`}
+              >
+                {cat.label}
+              </button>
+            );
+          })}
         </FadeIn>
 
         {/* Foto Tab Content */}
@@ -4144,13 +4177,13 @@ function BlogPage() {
 
   const COLORS = [
     "from-gray-800 to-gray-900",
-    "from-amber-500 to-amber-600",
-    "from-green-500 to-green-600",
-    "from-blue-500 to-blue-600",
-    "from-purple-500 to-purple-600",
-    "from-teal-500 to-teal-600",
-    "from-orange-500 to-orange-600",
-    "from-emerald-500 to-emerald-600",
+    "from-gray-800 to-gray-900",
+    "from-gray-700 to-gray-800",
+    "from-gray-600 to-gray-700",
+    "from-gray-500 to-gray-600",
+    "from-gray-800 to-gray-950",
+    "from-gray-700 to-gray-900",
+    "from-gray-600 to-gray-800",
   ];
 
   return (
@@ -4184,7 +4217,7 @@ function BlogPage() {
                       <Badge className="absolute top-4 left-4 bg-white/20 text-white border-0 backdrop-blur-sm text-sm px-3 py-1 z-10">
                         {featuredArticle.category}
                       </Badge>
-                      <Badge className="absolute top-4 right-4 bg-yellow-400 text-gray-900 border-0 text-xs font-bold px-2.5 py-1 z-10">
+                      <Badge className="absolute top-4 right-4 bg-white/90 text-gray-900 border-0 text-xs font-bold px-2.5 py-1 z-10 backdrop-blur-sm">
                         <Star className="w-3.5 h-3.5 mr-1" />
                         Artikel Pilihan
                       </Badge>
@@ -4196,7 +4229,7 @@ function BlogPage() {
                           <span>•</span>
                           <span className="flex items-center gap-1.5"><Eye className="w-4 h-4" />{featuredArticle.views || 0}</span>
                         </div>
-                        <h2 className="text-xl md:text-3xl font-extrabold text-white mb-3 group-hover:text-yellow-300 transition-colors leading-tight drop-shadow-lg">
+                        <h2 className="text-xl md:text-3xl font-extrabold text-white mb-3 group-hover:text-gray-300 transition-colors leading-tight drop-shadow-lg">
                           {featuredArticle.title}
                         </h2>
                         <p className="text-white/80 leading-relaxed mb-4 max-w-2xl">
@@ -4352,8 +4385,8 @@ function BlogPage() {
               <FadeIn delay={0.35}>
                 <Card className="border-0 shadow-lg overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900 text-white">
                   <CardContent className="p-6 text-center">
-                    <div className="w-14 h-14 bg-yellow-400/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <MessageCircle className="w-7 h-7 text-yellow-400" />
+                    <div className="w-14 h-14 bg-gray-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <MessageCircle className="w-7 h-7 text-gray-300" />
                     </div>
                     <h4 className="font-bold text-lg mb-2">Masih Bingung?</h4>
                     <p className="text-sm text-gray-400 mb-5 leading-relaxed">
@@ -4440,16 +4473,16 @@ const SERVICE_CATEGORY_ICONS: Record<string, typeof Wrench> = {
 };
 
 const SERVICE_CATEGORY_GRADIENTS: Record<string, string> = {
-  konstruksi: "from-amber-500 to-orange-600",
-  renovasi: "from-gray-800 to-gray-900",
-  desain_arsitektur: "from-purple-500 to-indigo-600",
-  desain_interior: "from-pink-500 to-rose-600",
-  jasa_gambar: "from-blue-500 to-cyan-600",
-  pengecatan: "from-yellow-500 to-amber-600",
-  instalasi_listrik: "from-yellow-400 to-orange-500",
-  instalasi_pipa: "from-cyan-500 to-blue-600",
-  taman_landscape: "from-green-500 to-emerald-600",
-  konsultasi: "from-teal-500 to-green-600",
+  konstruksi: "from-gray-800 to-gray-900",
+  renovasi: "from-gray-700 to-gray-800",
+  desain_arsitektur: "from-gray-600 to-gray-700",
+  desain_interior: "from-gray-500 to-gray-600",
+  jasa_gambar: "from-gray-800 to-gray-950",
+  pengecatan: "from-gray-700 to-gray-900",
+  instalasi_listrik: "from-gray-600 to-gray-800",
+  instalasi_pipa: "from-gray-500 to-gray-700",
+  taman_landscape: "from-gray-800 to-gray-900",
+  konsultasi: "from-gray-700 to-gray-800",
 };
 
 /* ─────────────────────────── JASA PAGE ─────────────────────────── */
@@ -4756,13 +4789,13 @@ function JasaListingSection({
         </FadeIn>
 
         {/* Category Filter */}
-        <FadeIn delay={0.1} className="flex flex-wrap justify-center gap-2 mb-10">
+        <FadeIn delay={0.1} className="flex flex-wrap justify-center gap-2.5 mb-10">
           <button
             onClick={() => setActiveCategory("all")}
-            className={`px-4 py-2 text-sm font-semibold rounded-xl transition-all ${
+            className={`px-5 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 ${
               activeCategory === "all"
-                ? "bg-gray-900 text-white shadow-md "
-                : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-100 hover:text-gray-900 hover:border-gray-200"
+                ? "bg-gray-900 text-white shadow-lg shadow-gray-900/20"
+                : "bg-white text-gray-600 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900"
             }`}
           >
             Semua Jasa
@@ -4773,13 +4806,13 @@ function JasaListingSection({
               <button
                 key={key}
                 onClick={() => setActiveCategory(key)}
-                className={`px-4 py-2 text-sm font-semibold rounded-xl transition-all flex items-center gap-1.5 ${
+                className={`px-4 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 flex items-center gap-2 ${
                   activeCategory === key
-                    ? "bg-gray-900 text-white shadow-md "
-                    : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-100 hover:text-gray-900 hover:border-gray-200"
+                    ? "bg-gray-900 text-white shadow-lg shadow-gray-900/20"
+                    : "bg-white text-gray-600 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900"
                 }`}
               >
-                <Icon className="w-3.5 h-3.5" />
+                <Icon className="w-4 h-4" />
                 {label}
               </button>
             );
@@ -4975,12 +5008,12 @@ function MitraPage() {
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-gray-500/10 rounded-full blur-3xl" />
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <FadeIn>
-            <Badge variant="secondary" className="mb-6 bg-white/10 text-amber-300 border-white/20">
+            <Badge variant="secondary" className="mb-6 bg-white/10 text-gray-300 border-white/20">
               <Handshake className="w-3.5 h-3.5 mr-1.5" />
               Bergabunglah
             </Badge>
             <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">
-              Tertarik Bergabung sebagai <span className="text-amber-300">Mitra Developer</span>?
+              Tertarik Bergabung sebagai <span className="text-gray-300">Mitra Developer</span>?
             </h2>
             <p className="text-gray-400 text-lg leading-relaxed mb-8 max-w-2xl mx-auto">
               Jika Anda adalah developer perumahan dengan legalitas lengkap dan track record baik,
@@ -4990,7 +5023,7 @@ function MitraPage() {
               href={`https://wa.me/${S.contact_wa}?text=Halo,%20saya%20tertarik%20bergabung%20sebagai%20mitra%20developer`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-amber-500 to-amber-600 text-gray-900 font-bold rounded-2xl shadow-2xl hover:from-amber-600 hover:to-amber-700 transition-all active:scale-95 text-lg"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-gray-900 font-bold rounded-2xl shadow-2xl hover:bg-gray-100 transition-all active:scale-95 text-lg"
             >
               Hubungi Kami
               <ArrowRight className="w-5 h-5" />
