@@ -5153,7 +5153,7 @@ function ServiceCard({
           {/* Description */}
           {service.description && (
             <p className="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2">
-              {service.description.replace(/<[^>]*>/g, "")}
+              {service.description.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"')}
             </p>
           )}
 
