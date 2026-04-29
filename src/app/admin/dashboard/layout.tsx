@@ -128,8 +128,12 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
 // ──── Sidebar Content (shared between desktop & mobile) ────
 function SidebarContent({ showCollapseToggle = true }: { showCollapseToggle?: boolean }) {
   const { collapsed, setCollapsed } = useSidebar();
-  const { settings: S } = useSettingsStore();
+  const { settings: S, fetchSettings } = useSettingsStore();
   const { data: session } = useSession();
+
+  useEffect(() => {
+    fetchSettings();
+  }, [fetchSettings]);
   const year = new Date().getFullYear();
   const adminName = session?.user?.name || "Admin";
 
@@ -331,8 +335,13 @@ export default function AdminDashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const { fetchSettings } = useSettingsStore();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    fetchSettings();
+  }, [fetchSettings]);
 
   const handleMobileNav = useCallback(() => {
     setMobileOpen(false);
