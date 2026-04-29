@@ -20,6 +20,7 @@ export interface SiteSettings {
   social_facebook: string;
   social_youtube: string;
   social_tiktok: string;
+  hero_video_url: string;
 }
 
 const DEFAULTS: SiteSettings = {
@@ -42,6 +43,7 @@ const DEFAULTS: SiteSettings = {
   social_facebook: "",
   social_youtube: "",
   social_tiktok: "",
+  hero_video_url: "",
 };
 
 interface SettingsStore {

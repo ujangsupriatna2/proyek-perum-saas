@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { Save, Loader2, Settings as SettingsIcon, Phone, Globe, AlertCircle, MapPin, Building2, ImagePlus, X, Upload, Handshake } from "lucide-react";
+import { Save, Loader2, Settings as SettingsIcon, Phone, Globe, AlertCircle, MapPin, Building2, ImagePlus, X, Upload, Handshake, Youtube } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -67,6 +67,14 @@ const SETTINGS_GROUPS: { title: string; group: string; icon: React.ElementType; 
       { key: "social_facebook", label: "Facebook URL", type: "url", placeholder: "https://facebook.com/..." },
       { key: "social_youtube", label: "YouTube URL", type: "url", placeholder: "https://youtube.com/..." },
       { key: "social_tiktok", label: "TikTok URL", type: "url", placeholder: "https://tiktok.com/..." },
+    ],
+  },
+  {
+    title: "Video Overview",
+    group: "video",
+    icon: Youtube,
+    fields: [
+      { key: "hero_video_url", label: "Link Video YouTube (Overview / Company Profile)", type: "url", placeholder: "https://www.youtube.com/watch?v=..." },
     ],
   },
 ];
