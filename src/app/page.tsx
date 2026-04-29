@@ -618,9 +618,14 @@ function VideoOverviewSection() {
   const { settings: S } = useSettingsStore();
   const videoUrl = S.hero_video_url;
   const embedUrl = getYoutubeEmbedUrl(videoUrl);
-  const autoplayUrl = embedUrl ? `${embedUrl}?autoplay=1&mute=1&loop=1&playlist=${new URL(embedUrl).pathname.split('/').pop()}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&fs=0&disablekb=1&cc_load_policy=0` : null;
+  const [muted, setMuted] = useState(true);
 
-  if (!autoplayUrl) return null;
+  const videoId = embedUrl ? new URL(embedUrl).pathname.split('/').pop() : null;
+  const videoSrc = videoId
+    ? `${embedUrl}?autoplay=1&mute=${muted ? 1 : 0}&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&fs=0&disablekb=1&cc_load_policy=0&enablejsapi=1`
+    : null;
+
+  if (!videoSrc) return null;
 
   return (
     <section className="py-20 md:py-28 bg-white overflow-hidden">
@@ -644,13 +649,33 @@ function VideoOverviewSection() {
             <div className="relative rounded-2xl overflow-hidden border border-gray-200 shadow-xl shadow-gray-200/50">
               <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
                 <iframe
-                  src={autoplayUrl}
+                  key={muted ? 'muted' : 'unmuted'}
+                  src={videoSrc}
                   title={`${S.company_name} - Video Overview`}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
                   style={{ position: 'absolute', top: '-60px', left: 0, width: '100%', height: 'calc(100% + 120px)' }}
                 />
               </div>
+
+              {/* Mute/Unmute toggle */}
+              <button
+                type="button"
+                onClick={() => setMuted(!muted)}
+                className="absolute bottom-4 right-4 z-10 w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm text-white flex items-center justify-center hover:bg-black/70 transition-colors"
+                title={muted ? "Nyalakan suara" : "Matikan suara"}
+              >
+                {muted ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707A1 1 0 0112 5v14a1 1 0 01-1.707.707L5.586 15z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+                  </svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072M17.95 6.05a8 8 0 010 11.9M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707A1 1 0 0112 5v14a1 1 0 01-1.707.707L5.586 15z" />
+                  </svg>
+                )}
+              </button>
             </div>
           </div>
         </FadeIn>
