@@ -4642,39 +4642,24 @@ function TentangKamiPage() {
               <p className="text-gray-400 text-lg">Belum ada foto dokumentasi.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-12 gap-3 md:gap-4">
-              {homeGalleryItems.slice(0, 8).map((img, i) => {
-                // Bento layout: varied sizes
-                const sizeMap = [
-                  "col-span-12 md:col-span-7 row-span-2 aspect-[4/3]",  // 0: large left
-                  "col-span-6 md:col-span-5 aspect-square",              // 1: medium right top
-                  "col-span-6 md:col-span-5 aspect-[4/3]",              // 2: medium right bottom
-                  "col-span-6 md:col-span-4 aspect-[3/4]",              // 3: tall
-                  "col-span-6 md:col-span-4 aspect-square",             // 4: square
-                  "col-span-6 md:col-span-4 aspect-[3/4]",              // 5: tall
-                  "col-span-12 md:col-span-8 aspect-video",             // 6: wide bottom
-                  "col-span-12 md:col-span-4 aspect-square",            // 7: small
-                ] as const;
-                const size = sizeMap[i] || "col-span-6 md:col-span-3 aspect-square";
-                return (
-                  <FadeIn key={img.id} delay={i * 0.06}>
-                    <div
-                      className={`${size} overflow-hidden rounded-xl shadow-md group cursor-pointer relative`}
-                      onClick={() => { setLightboxIndex(i); setLightboxOpen(true); }}
-                    >
+            <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-3">
+              {homeGalleryItems.slice(0, 8).map((img, i) => (
+                <FadeIn key={img.id} delay={i * 0.05}>
+                  <div className="break-inside-avoid mb-3 cursor-pointer group" onClick={() => { setLightboxIndex(i); setLightboxOpen(true); }}>
+                    <div className="relative rounded-xl overflow-hidden bg-gray-100">
                       <img
                         src={img.image}
                         alt={img.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                        className="w-full h-auto object-cover group-hover:scale-[1.03] transition-transform duration-500"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
                         <p className="text-white font-semibold text-sm truncate">{img.title}</p>
                       </div>
                     </div>
-                  </FadeIn>
-                );
-              })}
+                  </div>
+                </FadeIn>
+              ))}
             </div>
           )}
 
