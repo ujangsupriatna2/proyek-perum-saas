@@ -201,12 +201,69 @@ section, header, footer, nav, main {
   100% { transform: translateX(-50%); }
 }
 
+@keyframes ken-burns {
+  0% { transform: scale(1) translate(0, 0); }
+  100% { transform: scale(1.15) translate(-2%, -1%); }
+}
+
+@keyframes marquee-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes slide-up-stagger {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes line-grow {
+  from { height: 0; }
+  to { height: 100%; }
+}
+
+@keyframes scroll-indicator {
+  0%, 100% { opacity: 1; transform: translateY(0); }
+  50% { opacity: 0.5; transform: translateY(8px); }
+}
+
 .animate-fade-in-up { animation: fade-in-up 0.6s ease-out forwards; }
 .animate-fade-in-down { animation: fade-in-down 0.5s ease-out forwards; }
 .animate-float { animation: float 3s ease-in-out infinite; }
 .animate-slide-in-left { animation: slide-in-left 0.6s ease-out forwards; }
 .animate-slide-in-right { animation: slide-in-right 0.6s ease-out forwards; }
 .animate-scale-in { animation: scale-in 0.4s ease-out forwards; }
+.animate-ken-burns { animation: ken-burns 20s ease-in-out infinite alternate; }
+.animate-marquee-left { animation: marquee-left 30s linear infinite; }
+.animate-float-y { animation: float-y 4s ease-in-out infinite; }
+.animate-pulse-ring { animation: pulse-ring 2s ease-out infinite; }
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 3s linear infinite;
+}
+.animate-scroll-indicator { animation: scroll-indicator 2s ease-in-out infinite; }
+.animate-line-grow { animation: line-grow 1.5s ease-out forwards; }
 
 /* ═══════════════════════════════════════ */
 /*  SECTION BACKGROUNDS                        */
@@ -228,7 +285,7 @@ section, header, footer, nav, main {
   background-color: #F9FAFB;
   background-image: 
     radial-gradient(circle at 20% 50%, rgba(55,65,81,0.03) 0%, transparent 50%),
-    radial-gradient(circle at 80% 50%, rgba(196,30,58,0.03) 0%, transparent 50%);
+    radial-gradient(circle at 80% 50%, rgba(55,65,81,0.03) 0%, transparent 50%);
 }
 
 /* ═══════════════════════════════════════ */

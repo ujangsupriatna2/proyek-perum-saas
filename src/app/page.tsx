@@ -438,160 +438,207 @@ function Navbar({ activeTab }: { activeTab: string }) {
   );
 }
 
-/* ─────────────────────────── HERO ─────────────────────────── */
+/* ─────────────────────────── HERO (Cinematic) ─────────────────────────── */
 
 function Hero() {
   const { settings: S } = useSettingsStore();
   const router = useRouter();
   return (
-    <section className="relative min-h-screen flex items-stretch overflow-hidden bg-gray-950">
-      {/* Left: Image */}
-      <div className="absolute inset-0 lg:relative lg:w-1/2">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-950">
+      {/* Ken Burns Background Image */}
+      <div className="absolute inset-0 overflow-hidden">
         <img
           src={S.hero_bg_image || "/images/properties/hero_cover.png"}
           alt={S.company_name}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover animate-ken-burns"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-black/70 lg:bg-gradient-to-r lg:from-transparent lg:via-transparent lg:to-gray-950" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 lg:hidden" />
+        {/* Multi-layer gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-950/70 via-gray-950/40 to-gray-950/90" />
+        <div className="absolute inset-0 bg-gradient-to-r from-gray-950/50 via-transparent to-gray-950/60" />
+        {/* Grain texture */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")' }} />
       </div>
 
-      {/* Right: Content */}
-      <div className="relative z-10 w-full lg:w-1/2 flex items-center">
-        <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 py-32 lg:py-20 w-full">
-          <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
+      {/* Floating decorative elements */}
+      <div className="absolute top-1/4 left-[10%] w-64 h-64 rounded-full bg-white/[0.02] blur-3xl animate-float-y" />
+      <div className="absolute bottom-1/4 right-[15%] w-80 h-80 rounded-full bg-white/[0.02] blur-3xl animate-float-y" style={{ animationDelay: '2s' }} />
+
+      {/* Content */}
+      <div className="relative z-10 max-w-5xl mx-auto px-6 sm:px-10 text-center">
+        {/* Eyebrow */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.2 }}
+          className="inline-flex items-center gap-3 mb-8"
+        >
+          <div className="h-px w-10 bg-gray-400" />
+          <span className="text-gray-400 text-xs font-semibold uppercase tracking-[0.25em]">
+            {S.company_legal_name || "Platform Perumahan"}
+          </span>
+          <div className="h-px w-10 bg-gray-400" />
+        </motion.div>
+
+        {/* Headline */}
+        <motion.h1
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-[1.05] mb-8 tracking-tight"
+        >
+          Temukan Hunian
+          <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-300 via-white to-gray-300">Idaman Anda</span>
+          <br />
+          <span className="text-gray-500 text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-light">di Sini</span>
+        </motion.h1>
+
+        {/* Subtitle */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.6 }}
+          className="text-base sm:text-lg text-gray-400 leading-relaxed mb-12 max-w-2xl mx-auto"
+        >
+          Platform perumahan terpercaya yang menghubungkan Anda dengan developer terpilih.
+          Skema pembayaran fleksibel — Syariah &amp; KPR Bank.
+        </motion.p>
+
+        {/* CTAs */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.8 }}
+          className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
+        >
+          <a
+            href={`https://wa.me/${S.contact_wa}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-white text-gray-950 font-bold rounded-xl hover:bg-gray-100 transition-all active:scale-[0.98] text-sm overflow-hidden"
           >
-            {/* Eyebrow */}
-            <div className="flex items-center gap-3 mb-8">
-              <div className="h-px w-12 bg-amber-400" />
-              <span className="text-amber-400 text-sm font-semibold uppercase tracking-[0.2em]">
-                {S.company_legal_name || "Platform Perumahan"}
-              </span>
+            <span className="relative z-10 flex items-center gap-2.5">
+              <MessageCircle className="w-4 h-4" />
+              Booking via WhatsApp
+            </span>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+          </a>
+          <button
+            onClick={() => router.push("/?tab=proyek")}
+            className="inline-flex items-center justify-center gap-2.5 px-8 py-4 border border-white/20 text-white font-semibold rounded-xl hover:bg-white/10 hover:border-white/40 transition-all text-sm backdrop-blur-sm"
+          >
+            Lihat Semua Proyek
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </motion.div>
+
+        {/* Stats Row */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 1.0 }}
+          className="grid grid-cols-3 gap-8 max-w-xl mx-auto"
+        >
+          {[
+            { value: `${S.total_units_sold}+`, label: "Unit Terjual" },
+            { value: "3+", label: "Mitra Developer" },
+            { value: "10+", label: "Proyek Perumahan" },
+          ].map((stat, i) => (
+            <div key={stat.label} className="text-center">
+              <div className="text-2xl sm:text-3xl font-black text-white">{stat.value}</div>
+              <div className="text-[11px] text-gray-500 mt-1 font-medium">{stat.label}</div>
             </div>
-
-            {/* Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-[1.08] mb-6 tracking-tight">
-              Hunian Idaman
-              <br />
-              <span className="text-amber-400">Dari Developer</span>
-              <br />
-              Terpilih
-            </h1>
-
-            {/* Subtitle */}
-            <p className="text-lg text-gray-400 leading-relaxed mb-10 max-w-md">
-              Pilihan terluas hunian berkualitas dengan skema pembayaran fleksibel — Syariah &amp; KPR Bank.
-            </p>
-
-            {/* CTAs */}
-            <div className="flex flex-col sm:flex-row gap-3 mb-14">
-              <a
-                href={`https://wa.me/${S.contact_wa}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-amber-500 text-gray-950 font-bold rounded-lg hover:bg-amber-400 transition-all active:scale-[0.98] text-sm"
-              >
-                <MessageCircle className="w-4 h-4" />
-                Booking via WhatsApp
-              </a>
-              <button
-                onClick={() => router.push("/?tab=proyek")}
-                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 border border-white/20 text-white font-semibold rounded-lg hover:bg-white/10 transition-all text-sm"
-              >
-                Lihat Semua Proyek
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-6 border-t border-white/10 pt-8">
-              {[
-                { value: `${S.total_units_sold}+`, label: "Unit Terjual" },
-                { value: "3+", label: "Mitra Developer" },
-                { value: "10+", label: "Proyek Perumahan" },
-              ].map((stat) => (
-                <div key={stat.label}>
-                  <div className="text-2xl lg:text-3xl font-black text-white">{stat.value}</div>
-                  <div className="text-xs text-gray-500 mt-1">{stat.label}</div>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
+          ))}
+        </motion.div>
       </div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+      >
+        <span className="text-gray-600 text-[10px] uppercase tracking-widest font-medium">Scroll</span>
+        <div className="w-5 h-8 border border-gray-600 rounded-full flex justify-center pt-1.5">
+          <div className="w-1 h-2 bg-gray-400 rounded-full animate-scroll-indicator" />
+        </div>
+      </motion.div>
     </section>
   );
 }
 
-/* ─────────────────────────── PROMO STRIP ─────────────────────────── */
+/* ─────────────────────────── INFINITE MARQUEE STRIP ─────────────────────────── */
 
-function PromoStrip() {
+function MarqueeStrip() {
   const { settings: S } = useSettingsStore();
-  const [dismissed, setDismissed] = useState(false);
-
+  const items = [
+    "Syariah & KPR Bank",
+    "✦",
+    "Legalitas SHM Terjamin",
+    "✦",
+    "DP Bisa Dicicil",
+    "✦",
+    "Lokasi Strategis Bandung",
+    "✦",
+    "One Gate System",
+    "✦",
+    "Konsultasi Gratis",
+    "✦",
+  ];
   return (
-    <div className={`bg-gray-900 transition-all duration-300 ${dismissed ? "h-0 overflow-hidden" : ""}`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3 text-white text-sm flex-1 min-w-0">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/10 text-white/90 text-xs font-semibold shrink-0">
-            🔥 Promo
+    <div className="bg-gray-900 py-3.5 overflow-hidden relative">
+      {/* Top/bottom subtle lines */}
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent" />
+      <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent" />
+      <div className="animate-marquee-left flex whitespace-nowrap">
+        {[...items, ...items, ...items, ...items].map((item, i) => (
+          <span key={i} className={`mx-6 text-sm font-medium ${item === "✦" ? "text-gray-600 text-lg" : "text-gray-300"}`}>
+            {item}
           </span>
-          <span className="truncate hidden sm:inline text-white/80">
-            DP bisa dicicil! Dapatkan unit impian Anda sebelum harga naik.
-          </span>
-          <span className="truncate sm:hidden text-white/80">
-            DP bisa dicicil! Promo terbatas.
-          </span>
-          <a
-            href={`https://wa.me/${S.contact_wa}?text=Halo,%20saya%20tertarik%20promo%20terbatas`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-white font-semibold hover:text-gray-300 transition-colors whitespace-nowrap ml-auto underline underline-offset-2"
-          >
-            Tanya Sekarang →
-          </a>
-        </div>
-        <button
-          onClick={() => setDismissed(true)}
-          className="text-white/40 hover:text-white transition-colors shrink-0"
-          aria-label="Tutup promo"
-        >
-          <X className="w-4 h-4" />
-        </button>
+        ))}
       </div>
     </div>
   );
 }
 
-/* ─────────────────────────── FEATURES ─────────────────────────── */
+/* ─────────────────────────── WHY CHOOSE US (Dark Glass) ─────────────────────────── */
 
-function FeaturesSection() {
+function WhyChooseSection() {
   const { settings: S } = useSettingsStore();
   return (
-    <section className="py-24 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <FadeIn className="text-center mb-16">
-          <span className="text-amber-600 text-sm font-bold uppercase tracking-[0.2em]">Mengapa Kami</span>
-          <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-3 mb-4">
+    <section className="relative py-28 bg-gray-950 overflow-hidden">
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.3) 1px, transparent 0)', backgroundSize: '40px 40px' }} />
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <FadeIn className="text-center mb-20">
+          <span className="text-gray-500 text-xs font-bold uppercase tracking-[0.3em]">Mengapa Kami</span>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-white mt-4 mb-5 tracking-tight">
             Keunggulan {S.company_name}
           </h2>
-          <p className="text-gray-500 max-w-xl mx-auto">
+          <p className="text-gray-500 max-w-xl mx-auto leading-relaxed">
             Bukan sekadar rumah — investasi masa depan yang aman untuk keluarga Anda.
           </p>
         </FadeIn>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border border-gray-200 rounded-2xl overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {FEATURES.map((feat, i) => (
-            <FadeIn key={feat.title} delay={i * 0.06}>
-              <div className={`group p-8 hover:bg-gray-50 transition-colors duration-300 border-b lg:border-b-0 ${i < 2 ? "lg:border-r" : i === 2 ? "" : i % 3 !== 2 ? "lg:border-r" : ""} border-gray-200`}>
-                <div className="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center mb-5 group-hover:bg-amber-100 transition-colors">
-                  <feat.icon className="w-5 h-5 text-amber-700" />
+            <FadeIn key={feat.title} delay={i * 0.08}>
+              <div className="group relative bg-white/[0.04] backdrop-blur-sm border border-white/[0.08] rounded-2xl p-8 hover:bg-white/[0.08] hover:border-white/[0.15] transition-all duration-500 overflow-hidden">
+                {/* Hover shimmer */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-shimmer" />
+                {/* Number */}
+                <div className="absolute top-6 right-6 text-5xl font-black text-white/[0.03] group-hover:text-white/[0.06] transition-colors leading-none">
+                  {String(i + 1).padStart(2, '0')}
                 </div>
-                <h3 className="text-base font-bold text-gray-900 mb-2">{feat.title}</h3>
-                <p className="text-gray-500 leading-relaxed text-sm">{feat.desc}</p>
+                <div className="relative z-10">
+                  <div className="w-12 h-12 rounded-xl bg-white/[0.08] flex items-center justify-center mb-5 group-hover:bg-white/[0.12] transition-colors">
+                    <feat.icon className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-2">{feat.title}</h3>
+                  <p className="text-gray-500 leading-relaxed text-sm">{feat.desc}</p>
+                </div>
               </div>
             </FadeIn>
           ))}
@@ -728,9 +775,9 @@ function getCheapestKprInstallment(property: Property): { amount: number; dp: nu
   return best;
 }
 
-/* ─────────────────────────── PROPERTY PREVIEW (Home) ─────────────────────────── */
+/* ─────────────────────────── PROPERTY CARD (Home - Premium) ─────────────────────────── */
 
-function CompactPropertyCard({
+function PremiumPropertyCard({
   property,
   onSelect,
 }: {
@@ -742,52 +789,92 @@ function CompactPropertyCard({
 
   return (
     <FadeIn className="h-full">
-      <div className="group h-full bg-white rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer" onClick={() => onSelect(property)}>
-        {/* Image */}
-        <div className="relative h-56 overflow-hidden bg-gray-100">
+      <div
+        className="group h-full bg-white rounded-2xl border border-gray-200/80 hover:border-gray-300 hover:shadow-2xl transition-all duration-500 overflow-hidden cursor-pointer"
+        onClick={() => onSelect(property)}
+      >
+        {/* Image with overlay */}
+        <div className="relative h-64 overflow-hidden bg-gray-100">
           {property.image ? (
-            <img src={property.image} alt={property.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+            <img
+              src={property.image}
+              alt={property.name}
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+            />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-300"><Home className="w-12 h-12" /></div>
+            <div className="w-full h-full flex items-center justify-center text-gray-200">
+              <Home className="w-16 h-16" />
+            </div>
           )}
-          {/* Price Badge */}
-          <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-lg px-3 py-1.5 shadow-md">
-            <span className="text-base font-black text-gray-900">Rp {property.price}</span>
-            <span className="text-[10px] text-gray-500 font-medium ml-0.5">Juta</span>
+          {/* Top gradient */}
+          <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/40 to-transparent" />
+          {/* Bottom gradient */}
+          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 to-transparent" />
+          {/* Category badge */}
+          <div className="absolute top-4 left-4">
+            <span className="text-[10px] font-bold px-3 py-1 rounded-full bg-white/90 backdrop-blur-sm text-gray-700 uppercase tracking-wider">
+              {CATEGORY_LABELS[property.category as PropertyCategory] || property.category}
+            </span>
           </div>
           {/* Financing badges */}
-          <div className="absolute top-4 right-4 flex gap-1">
-            {finTypes.includes("syariah") && <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-emerald-600 text-white">Syariah</span>}
-            {finTypes.includes("kpr") && <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-blue-600 text-white">KPR</span>}
+          <div className="absolute top-4 right-4 flex gap-1.5">
+            {finTypes.includes("syariah") && (
+              <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-gray-900/80 backdrop-blur-sm text-white">Syariah</span>
+            )}
+            {finTypes.includes("kpr") && (
+              <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-white/80 backdrop-blur-sm text-gray-800">KPR</span>
+            )}
           </div>
-          {/* Bottom gradient */}
-          <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/50 to-transparent" />
-          <div className="absolute bottom-3 left-4 right-4">
-            <p className="text-white text-xs flex items-center gap-1 font-medium"><MapPin className="w-3 h-3" />{property.location}</p>
+          {/* Price */}
+          <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between">
+            <div>
+              <p className="text-white font-black text-xl leading-none">Rp {property.price}</p>
+              <p className="text-white/60 text-[11px] font-medium mt-0.5">Juta</p>
+            </div>
+            {bestKpr && (
+              <div className="bg-white/90 backdrop-blur-sm rounded-lg px-3 py-1.5">
+                <p className="text-[10px] text-gray-500 font-medium">Mulai</p>
+                <p className="text-xs font-black text-gray-900">Rp {new Intl.NumberFormat("id-ID").format(Math.round(bestKpr.amount * 1_000_000))}<span className="text-gray-500 font-medium">/bln</span></p>
+              </div>
+            )}
           </div>
         </div>
         {/* Content */}
-        <div className="p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-50 text-amber-700 uppercase tracking-wider">{property.tag}</span>
-            <span className="text-[10px] text-gray-400">{CATEGORY_LABELS[property.category as PropertyCategory] || property.category}</span>
+        <div className="p-5">
+          <div className="flex items-center gap-1.5 text-gray-400 text-xs mb-2">
+            <MapPin className="w-3 h-3" />
+            <span>{property.location}</span>
           </div>
-          <h3 className="font-bold text-gray-900 text-sm mb-3 line-clamp-1 group-hover:text-amber-700 transition-colors">{property.name}</h3>
+          <h3 className="font-bold text-gray-900 text-base mb-4 line-clamp-1 group-hover:text-gray-600 transition-colors">
+            {property.name}
+          </h3>
           {/* Specs */}
           {property.category !== "kavling" ? (
-            <div className="flex items-center gap-3 text-[11px] text-gray-500 border-t border-gray-100 pt-3">
-              <span className="flex items-center gap-1"><Building2 className="w-3 h-3" />{property.buildingArea} m²</span>
-              <span className="flex items-center gap-1"><LandPlot className="w-3 h-3" />{property.landArea} m²</span>
-              <span className="flex items-center gap-1"><Home className="w-3 h-3" />{property.bedrooms} KT</span>
-              <span className="flex items-center gap-1"><Users className="w-3 h-3" />{property.bathrooms} KM</span>
+            <div className="flex items-center gap-4 text-xs text-gray-500">
+              <div className="flex items-center gap-1.5 bg-gray-50 px-2.5 py-1.5 rounded-lg">
+                <Building2 className="w-3.5 h-3.5 text-gray-400" />
+                <span className="font-semibold">{property.buildingArea} m²</span>
+              </div>
+              <div className="flex items-center gap-1.5 bg-gray-50 px-2.5 py-1.5 rounded-lg">
+                <LandPlot className="w-3.5 h-3.5 text-gray-400" />
+                <span className="font-semibold">{property.landArea} m²</span>
+              </div>
+              <div className="flex items-center gap-1.5 bg-gray-50 px-2.5 py-1.5 rounded-lg">
+                <Home className="w-3.5 h-3.5 text-gray-400" />
+                <span className="font-semibold">{property.bedrooms} KT</span>
+              </div>
+              <div className="flex items-center gap-1.5 bg-gray-50 px-2.5 py-1.5 rounded-lg">
+                <Users className="w-3.5 h-3.5 text-gray-400" />
+                <span className="font-semibold">{property.bathrooms} KM</span>
+              </div>
             </div>
           ) : (
-            <div className="flex items-center gap-3 text-[11px] text-gray-500 border-t border-gray-100 pt-3">
-              <span className="flex items-center gap-1"><LandPlot className="w-3 h-3" />{property.landArea} m²</span>
+            <div className="flex items-center gap-4 text-xs text-gray-500">
+              <div className="flex items-center gap-1.5 bg-gray-50 px-2.5 py-1.5 rounded-lg">
+                <LandPlot className="w-3.5 h-3.5 text-gray-400" />
+                <span className="font-semibold">{property.landArea} m²</span>
+              </div>
             </div>
-          )}
-          {bestKpr && (
-            <p className="text-[11px] text-emerald-600 font-semibold mt-2">Mulai Rp {new Intl.NumberFormat("id-ID").format(Math.round(bestKpr.amount * 1_000_000))}/bln</p>
           )}
         </div>
       </div>
@@ -795,7 +882,9 @@ function CompactPropertyCard({
   );
 }
 
-function PropertyPreviewSection({
+/* ─────────────────────────── PROPERTY SHOWCASE (Home) ─────────────────────────── */
+
+function PropertyShowcaseSection({
   onSelectProperty,
 }: {
   onSelectProperty: (p: Property) => void;
@@ -809,26 +898,47 @@ function PropertyPreviewSection({
     : PROPERTIES.filter((p) => p.category === activeCategory);
 
   return (
-    <section className="py-20 md:py-28 bg-gray-50">
+    <section className="py-28 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <FadeIn className="text-center mb-10">
-          <span className="text-amber-600 text-sm font-bold uppercase tracking-[0.2em]">Proyek Kami</span>
-          <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-3 mb-4">
-            Pilih Hunian Idaman Anda
-          </h2>
-          <p className="text-gray-500 max-w-xl mx-auto">
-            Tersedia berbagai tipe — Siap Huni, Kavling, dan Inden — dengan skema Syariah &amp; KPR.
-          </p>
-        </FadeIn>
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
+          <FadeIn>
+            <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Proyek Unggulan</span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-3 mb-3 tracking-tight">
+              Pilih Hunian <span className="text-gradient-gray">Idaman Anda</span>
+            </h2>
+            <p className="text-gray-500 max-w-lg leading-relaxed">
+              Tersedia berbagai tipe — Siap Huni, Kavling, dan Inden — dengan skema pembayaran yang fleksibel.
+            </p>
+          </FadeIn>
+          <FadeIn delay={0.2} className="flex items-center gap-3 shrink-0">
+            {/* Category pills */}
+            <div className="hidden md:flex bg-gray-100 rounded-full p-1 gap-0.5">
+              {(["all", "inden", "kavling", "siap_huni"] as const).map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                    activeCategory === cat
+                      ? "bg-gray-900 text-white shadow-md"
+                      : "text-gray-500 hover:text-gray-900"
+                  }`}
+                >
+                  {cat === "all" ? "Semua" : CATEGORY_LABELS[cat]}
+                </button>
+              ))}
+            </div>
+          </FadeIn>
+        </div>
 
-        {/* Category filter pills */}
-        <FadeIn delay={0.1} className="flex justify-center mb-10">
-          <div className="inline-flex bg-white rounded-full p-1 shadow-sm border border-gray-200">
+        {/* Mobile category pills */}
+        <FadeIn className="flex md:hidden justify-center mb-8 overflow-x-auto scrollbar-hide -mx-4 px-4">
+          <div className="flex bg-gray-100 rounded-full p-1 gap-0.5">
             {(["all", "inden", "kavling", "siap_huni"] as const).map((cat) => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-5 py-2 rounded-full text-xs font-semibold transition-all ${
+                className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap ${
                   activeCategory === cat
                     ? "bg-gray-900 text-white shadow-md"
                     : "text-gray-500 hover:text-gray-900"
@@ -840,15 +950,20 @@ function PropertyPreviewSection({
           </div>
         </FadeIn>
 
+        {/* Property Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.slice(0, 6).map((property) => (
-            <CompactPropertyCard key={property.id} property={property} onSelect={onSelectProperty} />
+            <PremiumPropertyCard key={property.id} property={property} onSelect={onSelectProperty} />
           ))}
         </div>
 
-        <FadeIn className="text-center mt-10">
-          <button onClick={() => router.push("/?tab=proyek")} className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors text-sm">
-            Lihat Semua Proyek <ArrowRight className="w-4 h-4" />
+        <FadeIn className="flex justify-center mt-12">
+          <button
+            onClick={() => router.push("/?tab=proyek")}
+            className="group inline-flex items-center gap-2.5 px-7 py-3.5 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-all text-sm"
+          >
+            Lihat Semua Proyek
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </button>
         </FadeIn>
       </div>
@@ -856,40 +971,59 @@ function PropertyPreviewSection({
   );
 }
 
-/* ─────────────────────────── CARA BELI ─────────────────────────── */
+/* ─────────────────────────── HOW TO BUY (Timeline) ─────────────────────────── */
 
-function CaraBeliSection() {
+function HowToBuySection() {
   const { settings: S } = useSettingsStore();
   const steps = [
-    { num: 1, title: "Konsultasi", desc: "Hubungi kami via WhatsApp untuk konsultasi gratis tentang pilihan rumah.", icon: MessageCircle },
-    { num: 2, title: "Pilih Proyek", desc: "Pilih proyek sesuai kebutuhan dan budget Anda.", icon: Home },
-    { num: 3, title: "Hitung Cicilan", desc: "Gunakan kalkulator simulasi cicilan kami.", icon: Calculator },
-    { num: 4, title: "Booking & Akad", desc: "Lakukan booking fee dan proses akad jual beli.", icon: KeyRound },
+    { num: "01", title: "Konsultasi Gratis", desc: "Hubungi tim marketing kami via WhatsApp. Ceritakan kebutuhan dan budget Anda.", icon: MessageCircle },
+    { num: "02", title: "Pilih Proyek", desc: "Jelajahi koleksi proyek kami dan pilih yang paling sesuai dengan kebutuhan.", icon: Home },
+    { num: "03", title: "Hitung Cicilan", desc: "Gunakan kalkulator KPR/Syariah kami untuk simulasi cicilan yang transparan.", icon: Calculator },
+    { num: "04", title: "Booking & Akad", desc: "Lakukan booking fee dan proses akad jual beli dengan pendampingan penuh.", icon: KeyRound },
   ];
 
   return (
-    <section className="py-20 md:py-28 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <FadeIn className="text-center mb-16">
-          <span className="text-amber-600 text-sm font-bold uppercase tracking-[0.2em]">Cara Memiliki Rumah</span>
-          <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-3 mb-4">Proses Mudah &amp; Transparan</h2>
-          <p className="text-gray-500 max-w-xl mx-auto">Hanya 4 langkah untuk memiliki rumah impian Anda.</p>
+    <section className="py-28 bg-gray-50 relative overflow-hidden">
+      {/* Decorative dot pattern */}
+      <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(0,0,0,0.5) 1px, transparent 0)', backgroundSize: '32px 32px' }} />
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <FadeIn className="text-center mb-20">
+          <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Cara Memiliki Rumah</span>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-3 mb-4 tracking-tight">
+            Proses Mudah &amp; <span className="text-gradient-gray">Transparan</span>
+          </h2>
+          <p className="text-gray-500 max-w-xl mx-auto">Hanya 4 langkah untuk memiliki hunian impian Anda.</p>
         </FadeIn>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0 border border-gray-200 rounded-2xl overflow-hidden">
+        <div className="relative max-w-4xl mx-auto">
+          {/* Center vertical line (desktop) */}
+          <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-gray-200 -translate-x-1/2">
+            <div className="absolute inset-0 animate-line-grow bg-gradient-to-b from-gray-300 via-gray-400 to-gray-300" />
+          </div>
+
           {steps.map((step, i) => {
             const Icon = step.icon;
+            const isLeft = i % 2 === 0;
             return (
-              <FadeIn key={step.num} delay={i * 0.1}>
-                <div className={`relative p-8 text-center border-b sm:border-b-0 lg:border-b-0 ${i < 3 ? "lg:border-r" : ""} border-gray-200 group hover:bg-amber-50/50 transition-colors`}>
-                  {/* Number */}
-                  <div className="absolute top-4 right-4 text-6xl font-black text-gray-100 group-hover:text-amber-100 transition-colors leading-none">{`0${step.num}`}</div>
-                  <div className="relative z-10">
-                    <div className="w-14 h-14 mx-auto mb-4 bg-gray-900 rounded-2xl flex items-center justify-center group-hover:bg-amber-600 transition-colors">
-                      <Icon className="w-6 h-6 text-white" />
+              <FadeIn key={step.num} delay={i * 0.15} direction={isLeft ? "left" : "right"}>
+                <div className={`relative flex items-center mb-12 last:mb-0 md:mb-16 ${isLeft ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
+                  {/* Content */}
+                  <div className={`w-full md:w-[calc(50%-40px)] ${isLeft ? 'md:text-right md:pr-0' : 'md:text-left md:pl-0'}`}>
+                    <div className={`bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 transition-all duration-300 group ${isLeft ? 'md:mr-auto' : 'md:ml-auto'}`}>
+                      <div className={`flex items-center gap-3 mb-3 ${isLeft ? 'md:justify-end' : 'md:justify-start'}`}>
+                        <div className={`w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center ${isLeft ? 'md:order-2 md:ml-3' : 'md:order-1 md:mr-3'}`}>
+                          <Icon className="w-5 h-5 text-white" />
+                        </div>
+                        <h3 className="text-lg font-bold text-gray-900">{step.title}</h3>
+                      </div>
+                      <p className="text-gray-500 text-sm leading-relaxed">{step.desc}</p>
                     </div>
-                    <h3 className="text-base font-bold text-gray-900 mb-2">{step.title}</h3>
-                    <p className="text-gray-500 text-sm leading-relaxed">{step.desc}</p>
+                  </div>
+
+                  {/* Center dot (desktop) */}
+                  <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 w-10 h-10 bg-white border-2 border-gray-900 rounded-full items-center justify-center z-10 shrink-0">
+                    <div className="w-3 h-3 bg-gray-900 rounded-full" />
                   </div>
                 </div>
               </FadeIn>
@@ -897,9 +1031,16 @@ function CaraBeliSection() {
           })}
         </div>
 
-        <FadeIn className="flex justify-center mt-10">
-          <a href={`https://wa.me/${S.contact_wa}?text=Halo,%20saya%20ingin%20cek%20unit%20tersedia`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition-colors text-sm">
-            <MessageCircle className="w-4 h-4" /> Cek Unit Tersedia
+        <FadeIn className="flex justify-center mt-16">
+          <a
+            href={`https://wa.me/${S.contact_wa}?text=Halo,%20saya%20ingin%20cek%20unit%20tersedia`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group inline-flex items-center gap-2.5 px-7 py-3.5 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-all text-sm"
+          >
+            <MessageCircle className="w-4 h-4" />
+            Cek Unit Tersedia
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </a>
         </FadeIn>
       </div>
@@ -907,53 +1048,121 @@ function CaraBeliSection() {
   );
 }
 
-/* ─────────────────────────── TESTIMONIALS ─────────────────────────── */
+/* ─────────────────────────── TESTIMONIALS (Auto Carousel) ─────────────────────────── */
 
-function TestimonialCard({ t }: { t: Testimonial }) {
+function TestimonialSlide({ t }: { t: Testimonial }) {
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 h-full flex flex-col">
-      <div className="text-amber-400 text-3xl font-serif leading-none mb-3">&ldquo;</div>
-      <div className="flex gap-0.5 mb-4">
-        {Array.from({ length: 5 }).map((_, si) => (
-          <Star key={si} className={`w-3.5 h-3.5 ${si < t.rating ? "text-amber-400 fill-amber-400" : "text-gray-200"}`} />
-        ))}
-      </div>
-      <p className="text-gray-600 text-sm leading-relaxed flex-1 italic">&ldquo;{t.text}&rdquo;</p>
-      <div className="flex items-center gap-3 mt-5 pt-4 border-t border-gray-100">
-        <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center text-amber-700 font-bold text-sm shrink-0">{t.name.charAt(0)}</div>
-        <div className="min-w-0">
-          <p className="font-bold text-gray-900 text-sm truncate">{t.name}</p>
-          <p className="text-xs text-gray-400 truncate">{t.role}</p>
+    <div className="min-w-full md:min-w-[calc(50%-12px)] lg:min-w-[calc(33.333%-16px)] px-2 md:px-3">
+      <div className="bg-white rounded-2xl p-7 shadow-sm border border-gray-100 h-full flex flex-col hover:shadow-lg hover:border-gray-200 transition-all duration-300">
+        {/* Stars */}
+        <div className="flex gap-1 mb-4">
+          {Array.from({ length: 5 }).map((_, si) => (
+            <Star key={si} className={`w-4 h-4 ${si < t.rating ? "text-gray-900 fill-gray-900" : "text-gray-200"}`} />
+          ))}
+        </div>
+        {/* Quote */}
+        <p className="text-gray-600 text-sm leading-relaxed flex-1 italic">&ldquo;{t.text}&rdquo;</p>
+        {/* Author */}
+        <div className="flex items-center gap-3 mt-6 pt-5 border-t border-gray-100">
+          <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 font-bold text-sm shrink-0">
+            {t.name.charAt(0)}
+          </div>
+          <div className="min-w-0">
+            <p className="font-bold text-gray-900 text-sm truncate">{t.name}</p>
+            <p className="text-xs text-gray-400 truncate">{t.role}</p>
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function TestimonialsSection({ limit }: { limit?: number }) {
+function TestimonialsCarousel({ limit }: { limit?: number }) {
   const { testimonials, fetchTestimonials } = useTestimonialStore();
+  const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     fetchTestimonials();
   }, [fetchTestimonials]);
 
   const items = (testimonials || []).slice(0, limit || 50);
+
+  // Auto-slide every 4 seconds
+  useEffect(() => {
+    if (items.length === 0) return;
+    const interval = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % items.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [items.length]);
+
   if (items.length === 0) return null;
 
   return (
-    <section className="py-20 md:py-28 relative overflow-hidden bg-gray-50">
-      <div className="absolute inset-0">
-        <img src="/images/properties/hero_cover.png" alt="" className="w-full h-full object-cover opacity-[0.06]" />
-      </div>
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <FadeIn className="text-center mb-14">
-          <span className="text-amber-600 text-sm font-bold uppercase tracking-[0.2em]">Testimoni</span>
-          <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-3 mb-4">Apa Kata Pembeli Kami</h2>
-          <p className="text-gray-500 max-w-xl mx-auto">Ratusan keluarga telah mempercayai kami untuk hunian mereka.</p>
+    <section className="py-28 bg-gray-50 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <FadeIn className="text-center mb-16">
+          <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Testimoni</span>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-3 mb-4 tracking-tight">
+            Apa Kata <span className="text-gradient-gray">Pembeli Kami</span>
+          </h2>
+          <p className="text-gray-500 max-w-xl mx-auto">
+            Ratusan keluarga telah mempercayai kami untuk hunian mereka.
+          </p>
         </FadeIn>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        {/* Featured testimonial (large) */}
+        <div className="mb-10">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeIndex}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+              className="max-w-3xl mx-auto"
+            >
+              <div className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-100 text-center">
+                <div className="text-6xl text-gray-200 font-serif leading-none mb-6">&ldquo;</div>
+                <div className="flex justify-center gap-1 mb-6">
+                  {Array.from({ length: 5 }).map((_, si) => (
+                    <Star key={si} className={`w-5 h-5 ${si < items[activeIndex].rating ? "text-gray-900 fill-gray-900" : "text-gray-200"}`} />
+                  ))}
+                </div>
+                <p className="text-gray-700 text-lg md:text-xl leading-relaxed italic mb-8">
+                  &ldquo;{items[activeIndex].text}&rdquo;
+                </p>
+                <div className="flex items-center justify-center gap-3">
+                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 font-bold shrink-0">
+                    {items[activeIndex].name.charAt(0)}
+                  </div>
+                  <div className="text-left">
+                    <p className="font-bold text-gray-900">{items[activeIndex].name}</p>
+                    <p className="text-sm text-gray-400">{items[activeIndex].role}</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Dot indicators */}
+        <div className="flex justify-center gap-2 mb-12">
+          {items.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setActiveIndex(i)}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                i === activeIndex ? "w-8 bg-gray-900" : "w-2 bg-gray-300 hover:bg-gray-400"
+              }`}
+            />
+          ))}
+        </div>
+
+        {/* Mini cards row */}
+        <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
           {items.map((t) => (
-            <FadeIn key={t.id}><TestimonialCard t={t} /></FadeIn>
+            <TestimonialSlide key={t.id} t={t} />
           ))}
         </div>
       </div>
@@ -1128,34 +1337,39 @@ function GalleryPreviewSection() {
 function CTASection() {
   const { settings: S } = useSettingsStore();
   return (
-    <section className="relative py-28 md:py-36 overflow-hidden">
+    <section className="relative py-32 md:py-40 overflow-hidden">
       <div className="absolute inset-0">
         <img src={S.hero_bg_image || "/images/properties/hero_cover.png"} alt="" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gray-950/85" />
+        {/* Subtle grain */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")' }} />
       </div>
       <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <FadeIn>
           <div className="flex items-center justify-center gap-3 mb-8">
-            <div className="h-px w-12 bg-amber-400" />
-            <span className="text-amber-400 text-sm font-bold uppercase tracking-[0.2em]">Promo Terbatas</span>
-            <div className="h-px w-12 bg-amber-400" />
+            <div className="h-px w-12 bg-gray-500" />
+            <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Jangan Tunda Lagi</span>
+            <div className="h-px w-12 bg-gray-500" />
           </div>
           <h2 className="text-3xl md:text-5xl font-black text-white mb-6 leading-tight tracking-tight">
-            Jangan Tunda Lagi!
+            Miliki Rumah Impian
             <br />
-            <span className="text-amber-400">Miliki Rumah Impian Anda Sekarang</span>
+            <span className="text-gray-400">Anda Sekarang</span>
           </h2>
-          <p className="text-gray-400 text-lg mb-10 max-w-xl mx-auto">
-            Hubungi kami untuk konsultasi gratis. Tim marketing siap membantu Anda.
+          <p className="text-gray-500 text-lg mb-12 max-w-xl mx-auto">
+            Hubungi kami untuk konsultasi gratis. Tim marketing siap membantu Anda 24/7.
           </p>
           <a
             href={`https://wa.me/${S.contact_wa}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-amber-500 text-gray-950 font-bold rounded-lg hover:bg-amber-400 transition-all text-sm"
+            className="group relative inline-flex items-center justify-center gap-2.5 px-10 py-4 bg-white text-gray-950 font-bold rounded-xl hover:bg-gray-100 transition-all active:scale-[0.98] text-sm overflow-hidden"
           >
-            <MessageCircle className="w-4 h-4" />
-            Booking via WhatsApp
+            <span className="relative z-10 flex items-center gap-2.5">
+              <MessageCircle className="w-4 h-4" />
+              Booking via WhatsApp
+            </span>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
           </a>
         </FadeIn>
       </div>
@@ -1216,7 +1430,7 @@ function ServicePreviewSection({
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+                    <div className="w-full h-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center">
                       <Wrench className="w-14 h-14 text-white/30" />
                     </div>
                   )}
@@ -1305,13 +1519,13 @@ function BlogPreviewSection() {
 
   const COLORS = [
     "from-gray-800 to-gray-900",
-    "from-amber-500 to-amber-600",
-    "from-green-500 to-green-600",
-    "from-blue-500 to-blue-600",
-    "from-purple-500 to-purple-600",
-    "from-teal-500 to-teal-600",
-    "from-orange-500 to-orange-600",
-    "from-emerald-500 to-emerald-600",
+    "from-gray-700 to-gray-800",
+    "from-gray-600 to-gray-700",
+    "from-gray-500 to-gray-600",
+    "from-gray-800 to-gray-950",
+    "from-gray-700 to-gray-900",
+    "from-gray-600 to-gray-800",
+    "from-gray-500 to-gray-700",
   ];
 
   return (
@@ -3704,7 +3918,7 @@ function TentangKamiPage() {
       </section>
 
       {/* ═══════ TESTIMONI ═══════ */}
-      <TestimonialsSection />
+      <TestimonialsCarousel />
     </>
   );
 }
@@ -4825,8 +5039,8 @@ function Footer() {
               Platform perumahan terpercaya yang menghimpun developer terpilih. Menyediakan hunian berkualitas dengan skema Syariah &amp; KPR.
             </p>
             <div className="flex gap-2">
-              <a href={`https://instagram.com/${S.social_instagram}`} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-gray-800 hover:bg-amber-600 rounded-lg flex items-center justify-center transition-colors"><Instagram className="w-4 h-4" /></a>
-              <a href={`https://wa.me/${S.contact_wa}`} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-gray-800 hover:bg-emerald-600 rounded-lg flex items-center justify-center transition-colors"><MessageCircle className="w-4 h-4" /></a>
+              <a href={`https://instagram.com/${S.social_instagram}`} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center justify-center transition-colors"><Instagram className="w-4 h-4" /></a>
+              <a href={`https://wa.me/${S.contact_wa}`} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center justify-center transition-colors"><MessageCircle className="w-4 h-4" /></a>
             </div>
           </div>
 
@@ -4835,7 +5049,7 @@ function Footer() {
             <h4 className="text-white font-bold text-sm mb-5">Navigasi</h4>
             <ul className="space-y-2.5">
               {NAV_LINKS.map((link) => (
-                <li key={link.tab}><a href={`/?tab=${link.tab}`} className="text-sm hover:text-amber-400 transition-colors">{link.label}</a></li>
+                <li key={link.tab}><a href={`/?tab=${link.tab}`} className="text-sm hover:text-white transition-colors">{link.label}</a></li>
               ))}
             </ul>
           </div>
@@ -4994,10 +5208,12 @@ function PageContent() {
           <>
             <Navbar activeTab={tab} />
             <Hero />
-            <PromoStrip />
-            <PropertyPreviewSection onSelectProperty={handleSelectProperty} />
+            <MarqueeStrip />
+            <WhyChooseSection />
+            <PropertyShowcaseSection onSelectProperty={handleSelectProperty} />
+            <HowToBuySection />
             <ServicePreviewSection onSelectService={handleSelectService} />
-            <TestimonialsSection limit={4} />
+            <TestimonialsCarousel limit={6} />
             <BlogPreviewSection />
             <FAQSection />
             <CTASection />
