@@ -334,14 +334,9 @@ function Navbar({ activeTab }: { activeTab: string }) {
           {/* Logo */}
           <a href="/?tab=home" onClick={(e) => { e.preventDefault(); handleNav("home"); }} className="flex items-center gap-2.5">
             <img src={S.logo_url || "/images/logo-brr.png"} alt="Logo" className="w-10 h-10 md:w-11 md:h-11 rounded-xl object-contain" />
-            <div className="flex flex-col leading-tight">
-              <span className={`text-[10px] md:text-xs font-medium tracking-wider uppercase ${isSolid ? 'text-gray-400' : 'text-white/60'} transition-colors`}>
-                {S.company_legal_name}
-              </span>
-              <span className={`text-sm md:text-base font-extrabold ${isSolid ? 'text-gray-900' : 'text-white'} transition-colors`}>
-                {S.company_name}
-              </span>
-            </div>
+            <span className={`text-xs md:text-sm font-bold tracking-wider uppercase ${isSolid ? 'text-gray-700' : 'text-white'} transition-colors`}>
+              {S.company_legal_name}
+            </span>
           </a>
 
           {/* Desktop Nav */}
