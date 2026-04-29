@@ -2645,7 +2645,7 @@ function PropertyGallery({
   return (
     <>
       <div
-        className="relative h-72 sm:h-80 overflow-hidden rounded-t-xl cursor-pointer group"
+        className="relative h-72 sm:h-80 overflow-hidden rounded-t-2xl cursor-pointer group"
         onClick={() => setLightboxOpen(true)}
       >
         <AnimatePresence mode="wait">
@@ -2690,7 +2690,7 @@ function PropertyGallery({
       </div>
 
       {images.length > 1 && (
-        <div className="flex gap-2 p-3 bg-gray-50 overflow-x-auto">
+        <div className="flex gap-2 p-3 bg-gray-50 overflow-x-auto rounded-b-2xl border border-t-0 border-gray-200">
           {images.filter(Boolean).map((img, idx) => (
             <button
               key={idx}
@@ -2993,9 +2993,9 @@ function PropertyDetailPage({ slug }: { slug: string }) {
   return (
     <>
       <Navbar activeTab="proyek" />
-      <article className="bg-white">
-        {/* Hero gallery */}
-        <div className="relative">
+      <article className="bg-white pt-20 md:pt-24">
+        {/* Hero gallery - constrained to content width */}
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <PropertyGallery
             images={images}
             name={property.name}
@@ -4634,31 +4634,33 @@ function BlogArticlePage({ slug }: { slug: string }) {
     <>
       <Navbar activeTab={activeTab} />
 
-      {/* Hero image */}
-      <div className="relative h-72 md:h-96 overflow-hidden">
-        {coverImg ? (
-          <img src={coverImg} alt={article.title} className="w-full h-full object-cover" />
-        ) : (
-          <div className="h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
-            <BookOpen className="w-24 h-24 text-white/20" />
-          </div>
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10" />
-        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12">
-          <div className="max-w-4xl mx-auto">
-            <button
-              onClick={() => router.push("/?tab=blog")}
-              className="inline-flex items-center gap-1.5 text-white/70 hover:text-white text-sm mb-4 transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Kembali ke Blog
-            </button>
-            <Badge className="bg-white/20 text-white border-0 backdrop-blur-sm text-sm mb-3">
-              {article.category}
-            </Badge>
-            <h1 className="text-2xl md:text-4xl font-extrabold text-white leading-tight drop-shadow-lg">
-              {article.title}
-            </h1>
+      {/* Hero image - constrained to content width */}
+      <div className="pt-20 md:pt-24">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="relative h-64 sm:h-80 overflow-hidden rounded-2xl">
+            {coverImg ? (
+              <img src={coverImg} alt={article.title} className="w-full h-full object-cover" />
+            ) : (
+              <div className="h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                <BookOpen className="w-24 h-24 text-white/20" />
+              </div>
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10" />
+            <div className="absolute bottom-0 left-0 right-0 p-5 md:p-8">
+              <button
+                onClick={() => router.push("/?tab=blog")}
+                className="inline-flex items-center gap-1.5 text-white/70 hover:text-white text-sm mb-3 transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Kembali ke Blog
+              </button>
+              <Badge className="bg-white/20 text-white border-0 backdrop-blur-sm text-sm mb-3">
+                {article.category}
+              </Badge>
+              <h1 className="text-2xl md:text-4xl font-extrabold text-white leading-tight drop-shadow-lg">
+                {article.title}
+              </h1>
+            </div>
           </div>
         </div>
       </div>
@@ -5275,24 +5277,26 @@ function ServiceDetailPage({ slug }: { slug: string }) {
   return (
     <>
       <Navbar activeTab="jasa" />
-      <article className="bg-white">
-        {/* Hero */}
-        <div className="relative h-72 sm:h-96 bg-gray-200">
-          {service.image ? (
-            <img src={service.image} alt={service.title} className="w-full h-full object-cover" />
-          ) : (
-            <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center`}>
-              <IconComponent className="w-24 h-24 text-white/20" />
+      <article className="bg-white pt-20 md:pt-24">
+        {/* Hero - constrained to content width */}
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="relative h-64 sm:h-80 bg-gray-200 rounded-2xl overflow-hidden">
+            {service.image ? (
+              <img src={service.image} alt={service.title} className="w-full h-full object-cover" />
+            ) : (
+              <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center`}>
+                <IconComponent className="w-24 h-24 text-white/20" />
+              </div>
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-5 md:p-8">
+              <Badge className="mb-3 bg-white/90 text-gray-700 border-0 shadow-lg text-xs font-semibold">
+                {catLabel}
+              </Badge>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight">
+                {service.title}
+              </h1>
             </div>
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 max-w-4xl mx-auto">
-            <Badge className="mb-3 bg-white/90 text-gray-700 border-0 shadow-lg text-xs font-semibold">
-              {catLabel}
-            </Badge>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight">
-              {service.title}
-            </h1>
           </div>
         </div>
 
