@@ -205,6 +205,17 @@ export default function JasaPage() {
 
   const openEdit = (s: Service) => {
     setEditing(s);
+    // Combine main image + images array for upload component
+    let allImgs = s.image || "";
+    if (s.images) {
+      try {
+        const imgsArr = typeof s.images === "string" ? JSON.parse(s.images) : s.images;
+        if (Array.isArray(imgsArr) && imgsArr.length > 0) {
+          allImgs = imgsArr.join(",");
+        }
+      } catch { /* ignore */ }
+    }
+
     setForm({
       title: s.title,
       slug: s.slug,
@@ -212,7 +223,7 @@ export default function JasaPage() {
       category: s.category,
       price: String(s.price),
       priceUnit: s.priceUnit || "proyek",
-      image: s.image || "",
+      image: allImgs,
       features: parseFeaturesToCSV(s.features),
       duration: s.duration || "",
       videoUrl: s.videoUrl || "",
@@ -260,7 +271,8 @@ export default function JasaPage() {
     if (Object.keys(newErrors).length > 0) return;
 
     const slug = form.slug || generateSlug(form.title);
-    const mainImage = form.image ? form.image.split(",").map((s) => s.trim()).filter(Boolean)[0] || "" : "";
+    const allImages = form.image ? form.image.split(",").map((s) => s.trim()).filter(Boolean) : [];
+    const mainImage = allImages[0] || "";
 
     setSaving(true);
     try {
@@ -277,6 +289,7 @@ export default function JasaPage() {
           price: form.price || "0",
           priceUnit: form.priceUnit,
           image: mainImage,
+          images: JSON.stringify(allImages),
           features: form.features,
           duration: form.duration,
           videoUrl: form.videoUrl,
@@ -658,7 +671,7 @@ export default function JasaPage() {
                 value={form.image}
                 onChange={(v) => setForm({ ...form, image: v })}
                 label="Gambar Jasa"
-                maxImages={1}
+                maxImages={5}
               />
             </div>
 
