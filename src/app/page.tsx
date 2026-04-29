@@ -5635,13 +5635,18 @@ function MitraPage() {
         subtitle="Developer perumahan terpilih yang bergabung dengan platform kami"
       />
 
-      {/* ── Section 1: Hero Stats (dark) ── */}
-      <section className="py-16 md:py-20 bg-gray-950 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.3) 1px, transparent 0)', backgroundSize: '40px 40px' }} />
+      {/* ── Section 1: Hero Stats (light) ── */}
+      <section className="py-16 md:py-20 bg-white relative overflow-hidden">
+        <motion.div
+          animate={{ y: [0, -15, 10, 0], x: [0, 12, -8, 0] }}
+          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-[10%] right-[-5%] w-[300px] h-[300px] rounded-full bg-gray-100/60 blur-3xl"
+        />
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-black text-white tracking-tight">
-              Platform Perumahan <span className="text-gray-400">Terpercaya</span>
+            <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Mitra Kami</span>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-black text-gray-900 mt-3 tracking-tight">
+              Platform Perumahan <span className="text-gradient-gray">Terpercaya</span>
             </h2>
             <p className="text-gray-500 mt-3 max-w-xl mx-auto">
               Menghubungkan calon pembeli dengan developer terpilih yang telah melewati proses verifikasi ketat.
@@ -5655,9 +5660,9 @@ function MitraPage() {
                 { value: "10+", label: "Proyek Perumahan", icon: LandPlot },
                 { value: "100%", label: "Legalitas Lengkap", icon: Shield },
               ].map((stat, i) => (
-                <div key={i} className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-5 text-center hover:bg-white/[0.07] transition-all">
-                  <stat.icon className="w-5 h-5 text-gray-500 mx-auto mb-2" />
-                  <p className="text-2xl md:text-3xl font-black text-white">{stat.value}</p>
+                <div key={i} className="bg-gray-50 border border-gray-100 rounded-2xl p-5 text-center hover:bg-white hover:shadow-md hover:border-gray-200 transition-all">
+                  <stat.icon className="w-5 h-5 text-gray-400 mx-auto mb-2" />
+                  <p className="text-2xl md:text-3xl font-black text-gray-900">{stat.value}</p>
                   <p className="text-xs text-gray-500 mt-1">{stat.label}</p>
                 </div>
               ))}
@@ -5666,13 +5671,8 @@ function MitraPage() {
         </div>
       </section>
 
-      {/* ── Section 2: Daftar Mitra (light) ── */}
-      <section className="py-20 md:py-28 bg-white relative overflow-hidden">
-        <motion.div
-          animate={{ y: [0, -15, 10, 0], x: [0, 12, -8, 0] }}
-          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[10%] right-[-5%] w-[300px] h-[300px] rounded-full bg-gray-100/60 blur-3xl"
-        />
+      {/* ── Section 2: Daftar Mitra (gray) ── */}
+      <section className="py-20 md:py-28 bg-gray-50 relative overflow-hidden">
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-14">
             <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Mitra Terpercaya</span>
