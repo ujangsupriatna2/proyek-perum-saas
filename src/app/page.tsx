@@ -82,6 +82,7 @@ import {
   TreePine as TreeIcon,
   MessageSquare,
   ThumbsUp,
+  SlidersHorizontal,
 } from "lucide-react";
 import MapWrapper from "@/components/map-wrapper";
 import Chatbot from "@/components/chatbot";
@@ -2134,28 +2135,45 @@ function PropertiesSection({
   onSelectProperty: (p: Property) => void;
 }) {
   const { properties: PROPERTIES } = usePropertyStore();
-  const [filter, setFilter] = useState<"semua" | "termurah" | "terlaris">(
-    "semua"
-  );
-  const [activeCategory, setActiveCategory] = useState<PropertyCategory | "all">("all");
+  const [showFilter, setShowFilter] = useState(false);
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [selectedPrices, setSelectedPrices] = useState<string[]>([]);
+  const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
   const [page, setPage] = useState(1);
-  const [prevFilterKey, setPrevFilterKey] = useState(`${activeCategory}-${filter}`);
 
-  if (prevFilterKey !== `${activeCategory}-${filter}`) {
-    setPrevFilterKey(`${activeCategory}-${filter}`);
-    setPage(1);
-  }
+  // Derive unique locations from data
+  const uniqueLocations = [...new Set(PROPERTIES.map((p) => p.location).filter(Boolean))];
+
+  // Reset page when filters change
+  const filterKey = `${selectedTypes.join(",")}-${selectedPrices.join(",")}-${selectedLocations.join(",")}`;
+  useEffect(() => { setPage(1); }, [filterKey]);
+
+  const toggleCheckbox = (arr: string[], setArr: (v: string[]) => void, val: string) => {
+    setArr(arr.includes(val) ? arr.filter((v) => v !== val) : [...arr, val]);
+  };
+
+  // Count active filters
+  const activeFilterCount = selectedTypes.length + selectedPrices.length + selectedLocations.length;
 
   const filtered = PROPERTIES.filter((p) => {
-    if (activeCategory !== "all" && p.category !== activeCategory) return false;
-    if (filter === "termurah") return p.price <= 250;
-    if (filter === "terlaris")
-      return ["Best Seller", "Populer", "Eksklusif"].includes(p.tag);
+    // Tipe filter
+    if (selectedTypes.length > 0 && !selectedTypes.includes(p.category)) return false;
+    // Harga filter
+    if (selectedPrices.includes("termurah") && p.price > 250) return false;
+    if (selectedPrices.includes("mid") && (p.price <= 250 || p.price > 500)) return false;
+    if (selectedPrices.includes("premium") && p.price <= 500) return false;
+    if (selectedPrices.includes("terlaris") && !["Best Seller", "Populer", "Eksklusif"].includes(p.tag)) return false;
+    // Lokasi filter
+    if (selectedLocations.length > 0 && !selectedLocations.includes(p.location)) return false;
     return true;
   });
 
   const totalPages = Math.ceil(filtered.length / PROYEK_PER_PAGE);
   const paged = filtered.slice((page - 1) * PROYEK_PER_PAGE, page * PROYEK_PER_PAGE);
+
+  // Checkbox styles
+  const cbBase = "w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900 focus:ring-offset-0 cursor-pointer transition-colors";
+  const cbLabel = "text-sm text-gray-600 cursor-pointer select-none hover:text-gray-900 transition-colors";
 
   return (
     <section className="py-20 md:py-28 bg-section-gray relative overflow-hidden">
@@ -2178,47 +2196,115 @@ function PropertiesSection({
           </p>
         </FadeIn>
 
-        {/* Filter */}
-        <FadeIn delay={0.1} className="mb-10">
-          <div className="flex flex-wrap justify-center gap-2">
-            {[
-              { key: "all" as const, label: "Semua" },
-              { key: "inden" as const, label: "Inden" },
-              { key: "kavling" as const, label: "Kavling" },
-              { key: "siap_huni" as const, label: "Siap Huni" },
-            ].map((cat) => (
-              <button
-                key={cat.key}
-                onClick={() => setActiveCategory(cat.key)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  activeCategory === cat.key
-                    ? "bg-gray-900 text-white"
-                    : "bg-white text-gray-500 border border-gray-200 hover:border-gray-300 hover:text-gray-900"
-                }`}
-              >
-                {cat.label}
-              </button>
-            ))}
-            <div className="w-px h-8 bg-gray-200 self-center mx-1 hidden sm:block" />
-            {[
-              { key: "semua" as const, label: "Semua Harga" },
-              { key: "termurah" as const, label: "Termurah" },
-              { key: "terlaris" as const, label: "Terlaris" },
-            ].map((f) => (
-              <button
-                key={f.key}
-                onClick={() => setFilter(f.key)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  filter === f.key
-                    ? "bg-gray-900 text-white"
-                    : "bg-white text-gray-500 border border-gray-200 hover:border-gray-300 hover:text-gray-900"
-                }`}
-              >
-                {f.label}
-              </button>
-            ))}
-          </div>
+        {/* Filter Toggle Button */}
+        <FadeIn delay={0.1} className="mb-6">
+          <button
+            onClick={() => setShowFilter(!showFilter)}
+            className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-white border border-gray-200 text-sm font-medium text-gray-700 hover:border-gray-300 hover:text-gray-900 hover:shadow-sm transition-all"
+          >
+            <SlidersHorizontal className="w-4 h-4" />
+            <span>{showFilter ? "Sembunyikan Filter" : "Tampilkan Filter"}</span>
+            {activeFilterCount > 0 && (
+              <span className="ml-1 px-2 py-0.5 bg-gray-900 text-white text-xs font-bold rounded-full">
+                {activeFilterCount}
+              </span>
+            )}
+          </button>
+          {activeFilterCount > 0 && (
+            <button
+              onClick={() => { setSelectedTypes([]); setSelectedPrices([]); setSelectedLocations([]); }}
+              className="ml-3 text-xs text-gray-400 hover:text-gray-600 underline underline-offset-2 transition-colors"
+            >
+              Reset semua
+            </button>
+          )}
         </FadeIn>
+
+        {/* Filter Panel */}
+        <AnimatePresence>
+          {showFilter && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="overflow-hidden mb-10"
+            >
+              <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-10">
+                  {/* Tipe Properti */}
+                  <div>
+                    <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider">Tipe Properti</h4>
+                    <div className="space-y-3">
+                      {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
+                        <label key={key} className="flex items-center gap-3 group">
+                          <input
+                            type="checkbox"
+                            checked={selectedTypes.includes(key)}
+                            onChange={() => toggleCheckbox(selectedTypes, setSelectedTypes, key)}
+                            className={cbBase}
+                          />
+                          <span className={cbLabel}>{label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Harga */}
+                  <div>
+                    <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider">Rentang Harga</h4>
+                    <div className="space-y-3">
+                      {[
+                        { key: "termurah", label: "Di bawah Rp 250 Juta" },
+                        { key: "mid", label: "Rp 250 Juta – Rp 500 Juta" },
+                        { key: "premium", label: "Di atas Rp 500 Juta" },
+                        { key: "terlaris", label: "★ Terlaris / Best Seller" },
+                      ].map((item) => (
+                        <label key={item.key} className="flex items-center gap-3 group">
+                          <input
+                            type="checkbox"
+                            checked={selectedPrices.includes(item.key)}
+                            onChange={() => toggleCheckbox(selectedPrices, setSelectedPrices, item.key)}
+                            className={cbBase}
+                          />
+                          <span className={cbLabel}>{item.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Lokasi */}
+                  <div>
+                    <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider">Lokasi</h4>
+                    <div className="space-y-3 max-h-48 overflow-y-auto pr-2">
+                      {uniqueLocations.length > 0 ? uniqueLocations.map((loc) => (
+                        <label key={loc} className="flex items-center gap-3 group">
+                          <input
+                            type="checkbox"
+                            checked={selectedLocations.includes(loc)}
+                            onChange={() => toggleCheckbox(selectedLocations, setSelectedLocations, loc)}
+                            className={cbBase}
+                          />
+                          <span className={cbLabel}>{loc}</span>
+                        </label>
+                      )) : (
+                        <p className="text-sm text-gray-400 italic">Belum ada data lokasi</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Results count */}
+        <div className="mb-6 text-sm text-gray-400">
+          Menampilkan <span className="font-semibold text-gray-700">{filtered.length}</span> properti
+          {activeFilterCount > 0 && (
+            <span> dengan <span className="font-semibold text-gray-700">{activeFilterCount}</span> filter aktif</span>
+          )}
+        </div>
 
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -2229,11 +2315,199 @@ function PropertiesSection({
               onSelect={onSelectProperty}
             />
           ))}
+          {paged.length === 0 && (
+            <div className="col-span-full text-center py-20">
+              <Home className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-500 font-medium">Tidak ada properti yang cocok dengan filter.</p>
+              <button
+                onClick={() => { setSelectedTypes([]); setSelectedPrices([]); setSelectedLocations([]); }}
+                className="mt-3 text-sm text-gray-900 underline underline-offset-2 hover:text-gray-600 transition-colors"
+              >
+                Reset filter
+              </button>
+            </div>
+          )}
         </div>
 
         <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+
+        {/* Cicilan Simulation Calculator */}
+        <CicilanCalculator />
       </div>
     </section>
+  );
+}
+
+/* ─────────────────────── CICILAN CALCULATOR ─────────────────────── */
+
+function CicilanCalculator() {
+  const { settings: S } = useSettingsStore();
+  const [hargaProperti, setHargaProperti] = useState<string>("300");
+  const [dpPercent, setDpPercent] = useState<string>("20");
+  const [tenor, setTenor] = useState<string>("20");
+  const [bungaPercent, setBungaPercent] = useState<string>("7");
+
+  const harga = parseFloat(hargaProperti) * 1_000_000; // convert juta to exact
+  const dp = harga * (parseFloat(dpPercent) / 100);
+  const pinjaman = harga - dp;
+  const tahun = parseInt(tenor);
+  const bulan = tahun * 12;
+  const bunga = parseFloat(bungaPercent) / 100 / 12; // monthly rate
+
+  // Fixed installment (anuitas)
+  const cicilanBulanan = bulan > 0 && bunga > 0
+    ? pinjaman * (bunga * Math.pow(1 + bunga, bulan)) / (Math.pow(1 + bunga, bulan) - 1)
+    : bulan > 0 ? pinjaman / bulan : 0;
+
+  const totalBayar = cicilanBulanan * bulan;
+  const totalBunga = totalBayar - pinjaman;
+
+  const fmtRp = (n: number) =>
+    new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.6 }}
+      className="mt-20 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden"
+    >
+      {/* Header */}
+      <div className="bg-gray-900 px-6 py-5 flex items-center gap-3">
+        <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
+          <Calculator className="w-5 h-5 text-white" />
+        </div>
+        <div>
+          <h3 className="text-white font-bold text-lg">Simulasi Cicilan</h3>
+          <p className="text-gray-400 text-xs">Hitung estimasi cicilan bulanan KPR Anda</p>
+        </div>
+      </div>
+
+      <div className="p-6 md:p-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Inputs */}
+          <div className="space-y-5">
+            {/* Harga Properti */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Harga Properti</label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400 font-medium">Rp</span>
+                <input
+                  type="number"
+                  value={hargaProperti}
+                  onChange={(e) => setHargaProperti(e.target.value)}
+                  className="w-full pl-10 pr-14 py-3 rounded-xl border border-gray-200 text-gray-900 font-semibold focus:ring-2 focus:ring-gray-900 focus:border-gray-900 outline-none transition-all"
+                  min="50"
+                  step="10"
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">Juta</span>
+              </div>
+            </div>
+
+            {/* DP */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Uang Muka (DP)</label>
+              <div className="relative">
+                <input
+                  type="range"
+                  min="10"
+                  max="50"
+                  step="5"
+                  value={dpPercent}
+                  onChange={(e) => setDpPercent(e.target.value)}
+                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-gray-900"
+                />
+                <span className="absolute right-0 top-1 text-sm font-bold text-gray-900">{dpPercent}%</span>
+              </div>
+              <p className="text-xs text-gray-400 mt-1">DP: {fmtRp(dp)}</p>
+            </div>
+
+            {/* Tenor */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Jangka Waktu (Tenor)</label>
+              <div className="grid grid-cols-4 gap-2">
+                {[5, 10, 15, 20, 25, 30].map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => setTenor(String(t))}
+                    className={`py-2.5 rounded-lg text-sm font-medium transition-all ${
+                      tenor === String(t)
+                        ? "bg-gray-900 text-white shadow-md"
+                        : "bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-700"
+                    }`}
+                  >
+                    {t} Thn
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Bunga */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Suku Bunga KPR</label>
+              <div className="relative">
+                <input
+                  type="range"
+                  min="5"
+                  max="12"
+                  step="0.5"
+                  value={bungaPercent}
+                  onChange={(e) => setBungaPercent(e.target.value)}
+                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-gray-900"
+                />
+                <span className="absolute right-0 top-1 text-sm font-bold text-gray-900">{bungaPercent}% p.a.</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Results */}
+          <div className="bg-gray-50 rounded-xl p-6 flex flex-col justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Estimasi Cicilan Bulanan</p>
+              <p className="text-3xl md:text-4xl font-black text-gray-900 tracking-tight">
+                {fmtRp(cicilanBulanan)}<span className="text-base font-medium text-gray-400">/bln</span>
+              </p>
+            </div>
+
+            <div className="mt-8 space-y-3">
+              <div className="flex items-center justify-between py-2 border-b border-gray-200">
+                <span className="text-sm text-gray-500">Harga Properti</span>
+                <span className="text-sm font-semibold text-gray-700">{fmtRp(harga)}</span>
+              </div>
+              <div className="flex items-center justify-between py-2 border-b border-gray-200">
+                <span className="text-sm text-gray-500">Uang Muka ({dpPercent}%)</span>
+                <span className="text-sm font-semibold text-gray-700">{fmtRp(dp)}</span>
+              </div>
+              <div className="flex items-center justify-between py-2 border-b border-gray-200">
+                <span className="text-sm text-gray-500">Jumlah Pinjaman</span>
+                <span className="text-sm font-semibold text-gray-700">{fmtRp(pinjaman)}</span>
+              </div>
+              <div className="flex items-center justify-between py-2 border-b border-gray-200">
+                <span className="text-sm text-gray-500">Total Bunga ({tenor} thn)</span>
+                <span className="text-sm font-semibold text-red-500">{fmtRp(totalBunga)}</span>
+              </div>
+              <div className="flex items-center justify-between py-2 border-b border-gray-200">
+                <span className="text-sm text-gray-500">Total Pembayaran</span>
+                <span className="text-sm font-bold text-gray-900">{fmtRp(totalBayar)}</span>
+              </div>
+            </div>
+
+            <a
+              href={`https://wa.me/${S.contact_wa}?text=${encodeURIComponent(
+                `Halo, saya tertarik dengan simulasi KPR.\n\nHarga: ${fmtRp(harga)}\nDP: ${dpPercent}% (${fmtRp(dp)})\nTenor: ${tenor} tahun\nCicilan: ${fmtRp(cicilanBulanan)}/bln\n\nMohon info lebih lanjut.`
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-6 w-full py-3.5 bg-gray-900 hover:bg-gray-800 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all hover:shadow-lg"
+            >
+              <MessageCircle className="w-4 h-4" />
+              Konsultasi via WhatsApp
+            </a>
+          </div>
+        </div>
+      </div>
+    </motion.div>
   );
 }
 
