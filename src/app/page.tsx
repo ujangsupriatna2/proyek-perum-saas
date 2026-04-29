@@ -4470,19 +4470,28 @@ function TentangKamiPage() {
                 { year: "2020", title: "Ekspansi Proyek", desc: "Membuka proyek kedua di kawasan Sentul. Memperluas portofolio dengan klaster baru dan konsep modern.", color: "bg-gray-500" },
                 { year: "2022", title: "Mitra Pertama Bergabung", desc: `Developer mitra pertama resmi bergabung. ${S.company_name} mulai bertransformasi dari single developer menjadi platform.`, color: "bg-gray-500" },
                 { year: "2023", title: `${S.total_units_sold} Unit Terjual`, desc: `Milestone ${S.total_units_sold} unit rumah terjual dari seluruh mitra developer. Platform terus berkembang.`, color: "bg-gray-500" },
-                { year: "2024", title: "Digital Platform Launch", desc: "Peluncuran platform digital untuk memudahkan calon pembeli menemukan dan membandingkan proyek dari berbagai mitra.", color: "bg-purple-500" },
-                { year: "2025", title: "Terus Bertumbuh", desc: "Semakin banyak mitra developer terpilih bergabung. Menyediakan jasa konstruksi lengkap bagi konsumen.", color: "bg-gray-500" },
+                { year: "2024", title: "Digital Platform Launch", desc: "Peluncuran platform digital untuk memudahkan calon pembeli menemukan dan membandingkan proyek dari berbagai mitra.", color: "bg-gray-500" },
+                { year: "2025", title: "Skalabilitas & Ekosistem", desc: "Memperkuat ekosistem mitra developer dan meluncurkan layanan jasa konstruksi terintegrasi. Basis klien terus meluas ke berbagai kota.", color: "bg-gray-500" },
+                { year: "2026", title: "Era Baru Hunian Digital", desc: `Memasuki fase baru dengan puluhan proyek aktif dan 3+ mitra developer terpilih. Platform ${S.company_name} kini menjadi destinasi utama pencari hunian syariah di Indonesia.`, color: "bg-white", highlight: true },
               ].map((item, i) => (
                 <div key={item.year} className="flex gap-6 group">
                   <div className="flex flex-col items-center">
-                    <div className={`w-14 h-14 ${item.color} rounded-full flex items-center justify-center text-white font-extrabold text-sm shrink-0 shadow-lg group-hover:scale-110 transition-transform`}>
+                    <div className={`w-14 h-14 ${item.color} ${item.highlight ? 'ring-2 ring-white/30 ring-offset-2 ring-offset-gray-900' : ''} rounded-full flex items-center justify-center ${item.highlight ? 'text-gray-900' : 'text-white'} font-extrabold text-sm shrink-0 shadow-lg group-hover:scale-110 transition-transform`}>
                       {item.year}
                     </div>
-                    {i < 5 && <div className="w-0.5 h-full bg-white/10 mt-2" />}
+                    {i < 6 && <div className="w-0.5 h-full bg-white/10 mt-2" />}
                   </div>
                   <div className="pb-10">
-                    <h4 className="text-lg font-bold text-white mb-1">{item.title}</h4>
-                    <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h4 className="text-lg font-bold text-white">{item.title}</h4>
+                      {item.highlight && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-white/10 backdrop-blur-sm rounded-full text-[10px] font-bold uppercase tracking-wider text-gray-300 border border-white/10">
+                          <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                          Sekarang
+                        </span>
+                      )}
+                    </div>
+                    <p className={`text-sm leading-relaxed ${item.highlight ? 'text-gray-300' : 'text-gray-400'}`}>{item.desc}</p>
                   </div>
                 </div>
               ))}
