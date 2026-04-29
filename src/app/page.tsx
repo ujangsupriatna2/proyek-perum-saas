@@ -648,7 +648,7 @@ function VideoOverviewSection() {
                   title={`${S.company_name} - Video Overview`}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
-                  className="absolute inset-0 w-full h-full"
+                  style={{ position: 'absolute', top: '-60px', left: 0, width: '100%', height: 'calc(100% + 120px)' }}
                 />
               </div>
             </div>
