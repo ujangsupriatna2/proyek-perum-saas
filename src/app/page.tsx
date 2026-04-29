@@ -809,7 +809,7 @@ function TentangKamiKeunggulanSection() {
       <FloatingParticles count={4} dark={false} />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-16">
-          <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Keunggulan Kami</span>
+          <span className="text-gray-500 text-xs font-bold uppercase tracking-[0.3em]">Keunggulan Kami</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-3 mb-4 tracking-tight">
             Mengapa <span className="text-gradient-accent">Berpercaya</span> pada Kami?
           </h2>
@@ -4316,7 +4316,7 @@ function TentangKamiPage() {
         <div className="absolute bottom-0 left-0 w-72 h-72 bg-gray-500/5 rounded-full blur-3xl" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-16">
-            <span className="text-gray-500 text-xs font-bold uppercase tracking-[0.3em]">Perjalanan Kami</span>
+            <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Perjalanan Kami</span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-white mt-3 mb-4 tracking-tight">
               Milestone <span className="text-amber-300">Bisnis</span>
             </h2>
