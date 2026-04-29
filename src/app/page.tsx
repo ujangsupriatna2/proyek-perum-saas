@@ -5334,25 +5334,14 @@ function JasaListingSection({
   onSelectService: (s: ServiceItem) => void;
 }) {
   const { services, fetchServices } = useServiceStore();
-  const [activeCategory, setActiveCategory] = useState<string>("all");
   const [page, setPage] = useState(1);
-  const [prevFilterKey, setPrevFilterKey] = useState(`${activeCategory}`);
 
   useEffect(() => {
     fetchServices();
   }, [fetchServices]);
 
-  if (prevFilterKey !== `${activeCategory}`) {
-    setPrevFilterKey(`${activeCategory}`);
-    setPage(1);
-  }
-
-  const filtered = activeCategory === "all"
-    ? services
-    : services.filter((s) => s.category === activeCategory);
-
-  const totalPages = Math.ceil(filtered.length / JASA_PER_PAGE);
-  const paged = filtered.slice((page - 1) * JASA_PER_PAGE, page * JASA_PER_PAGE);
+  const totalPages = Math.ceil(services.length / JASA_PER_PAGE);
+  const paged = services.slice((page - 1) * JASA_PER_PAGE, page * JASA_PER_PAGE);
 
   return (
     <section className="py-20 md:py-28 bg-section-gray relative overflow-hidden">
@@ -5364,7 +5353,7 @@ function JasaListingSection({
       />
       <FloatingParticles count={3} dark={false} />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <FadeIn className="text-center mb-12">
+        <FadeIn className="text-center mb-16">
           <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Layanan Jasa Kami</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-3 mb-4 tracking-tight">
             Solusi Bangunan <span className="text-gradient-gray">Profesional</span>
@@ -5375,38 +5364,56 @@ function JasaListingSection({
           </p>
         </FadeIn>
 
-        {/* Category Filter */}
-        <FadeIn delay={0.1} className="flex flex-wrap justify-center gap-2.5 mb-10">
-          <button
-            onClick={() => setActiveCategory("all")}
-            className={`px-5 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 ${
-              activeCategory === "all"
-                ? "bg-gray-900 text-white shadow-lg shadow-gray-900/20"
-                : "bg-white text-gray-600 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900"
-            }`}
-          >
-            Semua Jasa
-          </button>
-          {Object.entries(SERVICE_CATEGORY_LABELS).map(([key, label]) => {
-            const Icon = SERVICE_CATEGORY_ICONS[key] || Wrench;
-            return (
-              <button
-                key={key}
-                onClick={() => setActiveCategory(key)}
-                className={`px-4 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 flex items-center gap-2 ${
-                  activeCategory === key
-                    ? "bg-gray-900 text-white shadow-lg shadow-gray-900/20"
-                    : "bg-white text-gray-600 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900"
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                {label}
-              </button>
-            );
-          })}
+        {/* Stats row */}
+        <FadeIn delay={0.1}>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
+            {[
+              { value: "150+", label: "Proyek Selesai", icon: CheckCircle2 },
+              { value: "10+", label: "Tahun Pengalaman", icon: Award },
+              { value: "100%", label: "Garansi Pekerjaan", icon: Shield },
+              { value: "4.9/5", label: "Rating Klien", icon: Star },
+            ].map((stat, i) => (
+              <div key={i} className="bg-white rounded-2xl border border-gray-100 p-5 text-center shadow-sm hover:shadow-md transition-all group">
+                <stat.icon className="w-5 h-5 text-gray-400 mx-auto mb-2 group-hover:text-gray-600 transition-colors" />
+                <p className="text-2xl font-black text-gray-900">{stat.value}</p>
+                <p className="text-xs text-gray-500 mt-1">{stat.label}</p>
+              </div>
+            ))}
+          </div>
         </FadeIn>
 
-        {/* Grid */}
+        {/* Why choose our services */}
+        <FadeIn delay={0.15} className="mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              {
+                icon: HardHat,
+                title: "Tim Profesional",
+                desc: "Tenaga kerja terlatih bersertifikat dengan pengalaman bertahun-tahun di bidang konstruksi dan bangunan.",
+              },
+              {
+                icon: FileText,
+                title: "Kontrak Transparan",
+                desc: "RAB detail, timeline jelas, dan kontrak kerja resmi. Tidak ada biaya tersembunyi.",
+              },
+              {
+                icon: ThumbsUp,
+                title: "Garansi Mutu",
+                desc: "Setiap pekerjaan bergaransi. Jika tidak sesuai spesifikasi, kami perbaiki tanpa biaya tambahan.",
+              },
+            ].map((item, i) => (
+              <div key={i} className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-lg transition-all group hover:-translate-y-0.5">
+                <div className="w-12 h-12 rounded-xl bg-gray-900 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+                  <item.icon className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="font-bold text-gray-900 text-lg mb-2">{item.title}</h3>
+                <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </FadeIn>
+
+        {/* Service cards - simple grid, no tabs */}
         {paged.length > 0 ? (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -5431,6 +5438,70 @@ function JasaListingSection({
             </p>
           </div>
         )}
+
+        {/* How it works */}
+        <FadeIn delay={0.1} className="mt-20">
+          <div className="text-center mb-12">
+            <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Proses Kerja</span>
+            <h2 className="text-2xl md:text-3xl font-black text-gray-900 mt-3 mb-3 tracking-tight">
+              Bagaimana Cara <span className="text-gradient-gray">Bekerja</span> dengan Kami
+            </h2>
+            <p className="text-gray-500 max-w-xl mx-auto">Proses yang simpel dan terstruktur untuk hasil terbaik.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { num: "01", title: "Konsultasi", desc: "Ceritakan kebutuhan Anda. Tim kami akan survey dan memberikan saran terbaik.", icon: MessageSquare },
+              { num: "02", title: "RAB & Desain", desc: "Kami buatkan Rincian Anggaran Biaya dan desain pekerjaan untuk persetujuan Anda.", icon: FileText },
+              { num: "03", title: "Pengerjaan", desc: "Tim profesional mulai bekerja sesuai timeline yang sudah disepakati bersama.", icon: HardHat },
+              { num: "04", title: "Serah Terima", desc: "Quality check menyeluruh sebelum serah terima. Bergaransi untuk setiap pekerjaan.", icon: KeyRound },
+            ].map((step, i) => (
+              <div key={i} className="relative text-center group">
+                {i < 3 && (
+                  <div className="hidden lg:block absolute top-10 left-[60%] w-[80%] h-px bg-gray-200" />
+                )}
+                <div className="w-20 h-20 mx-auto rounded-2xl bg-white border border-gray-100 shadow-sm flex items-center justify-center mb-4 group-hover:shadow-md group-hover:border-gray-200 transition-all">
+                  <step.icon className="w-8 h-8 text-gray-400 group-hover:text-gray-700 transition-colors" />
+                </div>
+                <span className="text-xs font-bold text-gray-300 tracking-widest">{step.num}</span>
+                <h4 className="font-bold text-gray-900 mt-1 mb-1.5">{step.title}</h4>
+                <p className="text-gray-500 text-sm leading-relaxed">{step.desc}</p>
+              </div>
+            ))}
+          </div>
+        </FadeIn>
+
+        {/* CTA Section */}
+        <FadeIn delay={0.15} className="mt-20">
+          <div className="relative bg-gray-950 rounded-3xl overflow-hidden p-8 md:p-12 text-center">
+            <motion.div
+              animate={{ y: [0, -15, 10, 0], x: [0, 12, -8, 0] }}
+              transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute top-[-20%] right-[-10%] w-[300px] h-[300px] rounded-full bg-gray-800/30 blur-3xl"
+            />
+            <motion.div
+              animate={{ y: [0, 10, -15, 0], x: [0, -8, 12, 0] }}
+              transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute bottom-[-20%] left-[-10%] w-[250px] h-[250px] rounded-full bg-gray-700/20 blur-3xl"
+            />
+            <div className="relative">
+              <h3 className="text-2xl md:text-3xl font-black text-white mb-3">
+                Butuh Jasa Bangunan?
+              </h3>
+              <p className="text-gray-400 max-w-lg mx-auto mb-8">
+                Konsultasikan kebutuhan Anda sekarang. Tim marketing kami siap membantu dari survey hingga serah terima.
+              </p>
+              <a
+                href={`https://wa.me/${useSettingsStore.getState().settings.contact_wa}?text=${encodeURIComponent("Halo, saya ingin konsultasi tentang jasa bangunan.")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2.5 px-8 py-4 bg-white text-gray-900 font-bold rounded-xl shadow-lg hover:bg-gray-100 transition-all hover:shadow-xl active:scale-95"
+              >
+                <MessageCircle className="w-5 h-5" />
+                Konsultasi Gratis via WhatsApp
+              </a>
+            </div>
+          </div>
+        </FadeIn>
       </div>
     </section>
   );
