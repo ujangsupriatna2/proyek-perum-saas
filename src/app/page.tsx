@@ -76,6 +76,7 @@ import {
   MessageSquare,
   ThumbsUp,
   SlidersHorizontal,
+  Mail,
 } from "lucide-react";
 import MapWrapper from "@/components/map-wrapper";
 import Chatbot from "@/components/chatbot";
@@ -5164,7 +5165,7 @@ function ServiceCard({
         </div>
 
         {/* Content */}
-        <div className="relative z-10 flex flex-col justify-between h-full min-h-[340px] p-6">
+        <div className="relative z-10 flex flex-col justify-between h-full min-h-[280px] p-5">
           {/* Top: badge + video */}
           <div className="flex items-start justify-between">
             <div className="flex flex-col gap-2">
@@ -5514,7 +5515,7 @@ function JasaListingSection() {
         {/* Service cards - simple grid, no tabs */}
         {paged.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {paged.map((service) => (
                 <ServiceCard
                   key={service.id}
@@ -5634,155 +5635,115 @@ function MitraPage() {
         subtitle="Developer perumahan terpilih yang bergabung dengan platform kami"
       />
 
-      <section className="py-20 md:py-28 bg-section-gray relative overflow-hidden">
-        {/* Ambient floating orb */}
-        <motion.div
-          animate={{ y: [0, -15, 10, 0], x: [0, 12, -8, 0] }}
-          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[10%] left-[-5%] w-[300px] h-[300px] rounded-full bg-gray-200/30 blur-3xl"
-        />
-        <FloatingParticles count={3} dark={false} />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <FadeIn className="text-center mb-16">
-            <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Mitra Terpercaya</span>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-3 mb-4 tracking-tight">
-              Developer <span className="text-gradient-gray">Terpilih</span> &amp; Terverifikasi
+      {/* ── Section 1: Hero Stats (dark) ── */}
+      <section className="py-16 md:py-20 bg-gray-950 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.3) 1px, transparent 0)', backgroundSize: '40px 40px' }} />
+        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeIn className="text-center mb-12">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-black text-white tracking-tight">
+              Platform Perumahan <span className="text-gray-400">Terpercaya</span>
             </h2>
-            <p className="text-gray-500 max-w-2xl mx-auto text-lg">
-              Setiap mitra developer yang bergabung telah melalui proses kurasi ketat — dari legalitas, kualitas bangunan, hingga track record.
+            <p className="text-gray-500 mt-3 max-w-xl mx-auto">
+              Menghubungkan calon pembeli dengan developer terpilih yang telah melewati proses verifikasi ketat.
             </p>
           </FadeIn>
-
-          {/* Stats row */}
           <FadeIn delay={0.1}>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
                 { value: `${S.total_units_sold}+`, label: "Unit Terjual", icon: Home },
                 { value: `${mitraList.length || "3"}+`, label: "Mitra Developer", icon: Building2 },
                 { value: "10+", label: "Proyek Perumahan", icon: LandPlot },
-                { value: "100%", label: "Legalitas Terverifikasi", icon: Shield },
+                { value: "100%", label: "Legalitas Lengkap", icon: Shield },
               ].map((stat, i) => (
-                <div key={i} className="bg-white rounded-2xl border border-gray-100 p-5 text-center shadow-sm hover:shadow-md transition-all group">
-                  <stat.icon className="w-5 h-5 text-gray-400 mx-auto mb-2 group-hover:text-gray-600 transition-colors" />
-                  <p className="text-2xl font-black text-gray-900">{stat.value}</p>
+                <div key={i} className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-5 text-center hover:bg-white/[0.07] transition-all">
+                  <stat.icon className="w-5 h-5 text-gray-500 mx-auto mb-2" />
+                  <p className="text-2xl md:text-3xl font-black text-white">{stat.value}</p>
                   <p className="text-xs text-gray-500 mt-1">{stat.label}</p>
                 </div>
               ))}
             </div>
           </FadeIn>
+        </div>
+      </section>
 
-          {/* Why join as mitra */}
-          <FadeIn delay={0.15} className="mb-16">
-            <div className="text-center mb-10">
-              <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Keunggulan Bergabung</span>
-              <h2 className="text-2xl md:text-3xl font-black text-gray-900 mt-3 mb-3 tracking-tight">
-                Kenapa Developer <span className="text-gradient-gray">Memilih Kami</span>?
-              </h2>
-              <p className="text-gray-500 max-w-xl mx-auto">
-                Platform yang memfasilitasi developer untuk menjangkau lebih banyak calon pembeli.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[
-                {
-                  icon: TrendingUp,
-                  title: "Jangkauan Pemasaran Luas",
-                  desc: "Proyek Anda dipromosikan ke ribuan calon pembeli melalui platform digital kami. Branding profesional tanpa biaya marketing besar.",
-                },
-                {
-                  icon: Shield,
-                  title: "Verifikasi & Kepercayaan",
-                  desc: "Status terverifikasi meningkatkan kepercayaan pembeli. Tim kami bantu verifikasi legalitas dan dokumentasi proyek Anda.",
-                },
-                {
-                  icon: Users,
-                  title: "Pendampingan Penuh",
-                  desc: "Dari listing proyek, konsultasi KPR/Syariah, hingga serah terima. Tim marketing kami siap bantu closing pembeli.",
-                },
-              ].map((item, i) => (
-                <div key={i} className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-lg transition-all group hover:-translate-y-0.5">
-                  <div className="w-12 h-12 rounded-xl bg-gray-900 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-                    <item.icon className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="font-bold text-gray-900 text-lg mb-2">{item.title}</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
-                </div>
-              ))}
-            </div>
+      {/* ── Section 2: Daftar Mitra (light) ── */}
+      <section className="py-20 md:py-28 bg-white relative overflow-hidden">
+        <motion.div
+          animate={{ y: [0, -15, 10, 0], x: [0, 12, -8, 0] }}
+          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-[10%] right-[-5%] w-[300px] h-[300px] rounded-full bg-gray-100/60 blur-3xl"
+        />
+        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeIn className="text-center mb-14">
+            <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Mitra Terpercaya</span>
+            <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-3 mb-4 tracking-tight">
+              Developer <span className="text-gradient-gray">Terpilih</span> &amp; Terverifikasi
+            </h2>
+            <p className="text-gray-500 max-w-xl mx-auto">
+              Setiap mitra telah melalui proses kurasi ketat — legalitas, kualitas, dan track record.
+            </p>
           </FadeIn>
 
-          {/* Mitra Cards */}
           {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="space-y-4">
               {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="bg-white rounded-2xl shadow-lg animate-pulse h-64" />
+                <div key={i} className="bg-gray-50 rounded-2xl animate-pulse h-28" />
               ))}
             </div>
           ) : mitraList.length === 0 ? (
-            <div className="text-center py-20">
-              <Building2 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <div className="text-center py-16">
+              <Building2 className="w-14 h-14 text-gray-200 mx-auto mb-4" />
               <h3 className="text-lg font-bold text-gray-400 mb-2">Belum ada mitra terdaftar</h3>
               <p className="text-gray-400 text-sm">Developer mitra yang terdaftar akan tampil di sini.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="space-y-4">
               {mitraList.map((mitra, i) => (
-                <FadeIn key={mitra.id} delay={i * 0.08}>
-                  <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group overflow-hidden">
-                    {/* Top accent */}
-                    <div className="h-1.5 bg-gradient-to-r from-gray-800 via-gray-600 to-gray-800" />
-                    <CardContent className="p-6">
-                      {/* Logo / Initial */}
-                      <div className="flex items-start gap-4 mb-4">
-                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center shadow-lg shrink-0 overflow-hidden group-hover:scale-105 transition-transform">
-                          {mitra.logo ? (
-                            <img src={mitra.logo} alt={mitra.name} className="w-full h-full object-cover" />
-                          ) : (
-                            <span className="text-white font-extrabold text-xl">
-                              {mitra.name.charAt(0).toUpperCase()}
-                            </span>
-                          )}
-                        </div>
-                        <div className="min-w-0">
+                <FadeIn key={mitra.id} delay={i * 0.06}>
+                  <div className="group bg-gray-50 hover:bg-white border border-gray-100 hover:border-gray-200 hover:shadow-lg rounded-2xl p-5 md:p-6 transition-all duration-300">
+                    <div className="flex flex-col sm:flex-row items-start gap-4 md:gap-6">
+                      {/* Logo */}
+                      <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center shadow-md shrink-0 overflow-hidden group-hover:shadow-lg group-hover:scale-105 transition-all">
+                        {mitra.logo ? (
+                          <img src={mitra.logo} alt={mitra.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="text-white font-extrabold text-lg">{mitra.name.charAt(0).toUpperCase()}</span>
+                        )}
+                      </div>
+
+                      {/* Info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mb-1">
                           <h3 className="text-lg font-bold text-gray-900 truncate">{mitra.name}</h3>
-                          <p className="text-sm text-gray-500 flex items-center gap-1 mt-0.5">
-                            <MapPin className="w-3.5 h-3.5 shrink-0" />
-                            <span className="truncate">{mitra.address || "Indonesia"}</span>
-                          </p>
+                          <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-gray-900 text-white w-fit">Terverifikasi</span>
                         </div>
-                      </div>
-
-                      {/* Description */}
-                      {mitra.description && (
-                        <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3">
-                          {mitra.description}
+                        <p className="text-sm text-gray-500 flex items-center gap-1 mb-2">
+                          <MapPin className="w-3.5 h-3.5 shrink-0" />
+                          {mitra.address || "Indonesia"}
                         </p>
-                      )}
-
-                      {/* Stats */}
-                      <div className="flex items-center gap-4 pt-4 border-t border-gray-100">
-                        <div className="flex items-center gap-1.5 text-sm">
-                          <Building2 className="w-4 h-4 text-gray-500" />
-                          <span className="font-bold text-gray-900">{mitra.propertyCount}</span>
-                          <span className="text-gray-500">Proyek</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 text-sm">
-                          <CheckCircle2 className="w-4 h-4 text-gray-500" />
-                          <span className="text-gray-500">Terverifikasi</span>
-                        </div>
+                        {mitra.description && (
+                          <p className="text-gray-500 text-sm leading-relaxed line-clamp-2">{mitra.description}</p>
+                        )}
                       </div>
 
-                      {/* Contact */}
-                      {(mitra.phone || mitra.email || mitra.website) && (
-                        <div className="flex flex-wrap gap-2 mt-4">
+                      {/* Stats + Contact */}
+                      <div className="flex sm:flex-col items-center sm:items-end gap-3 sm:gap-2 shrink-0 sm:w-32">
+                        <div className="flex items-center gap-4 sm:gap-2 text-sm">
+                          <div className="flex items-center gap-1.5">
+                            <Building2 className="w-4 h-4 text-gray-400" />
+                            <span className="font-bold text-gray-900">{mitra.propertyCount}</span>
+                            <span className="text-gray-400 text-xs">Proyek</span>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
                           {mitra.website && (
                             <a
                               href={mitra.website.startsWith("http") ? mitra.website : `https://${mitra.website}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 transition-colors"
+                              className="w-8 h-8 rounded-lg bg-gray-200/80 hover:bg-gray-900 hover:text-white text-gray-600 flex items-center justify-center transition-all"
                             >
-                              <Globe className="w-3 h-3" /> Website
+                              <Globe className="w-4 h-4" />
                             </a>
                           )}
                           {mitra.phone && (
@@ -5790,100 +5751,87 @@ function MitraPage() {
                               href={`https://wa.me/${mitra.phone.replace(/^0/, "62")}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 transition-colors"
+                              className="w-8 h-8 rounded-lg bg-gray-200/80 hover:bg-gray-900 hover:text-white text-gray-600 flex items-center justify-center transition-all"
                             >
-                              <Phone className="w-3 h-3" /> WhatsApp
+                              <MessageCircle className="w-4 h-4" />
                             </a>
                           )}
                           {mitra.email && (
                             <a
                               href={`mailto:${mitra.email}`}
-                              className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 transition-colors"
+                              className="w-8 h-8 rounded-lg bg-gray-200/80 hover:bg-gray-900 hover:text-white text-gray-600 flex items-center justify-center transition-all"
                             >
-                              <MessageSquare className="w-3 h-3" /> Email
+                              <Mail className="w-4 h-4" />
                             </a>
                           )}
                         </div>
-                      )}
-                    </CardContent>
-                  </Card>
+                      </div>
+                    </div>
+                  </div>
                 </FadeIn>
               ))}
             </div>
           )}
+        </div>
+      </section>
 
-          {/* Proses Bergabung */}
-          <FadeIn delay={0.1} className="mt-20">
-            <div className="text-center mb-12">
-              <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Proses Bergabung</span>
-              <h2 className="text-2xl md:text-3xl font-black text-gray-900 mt-3 mb-3 tracking-tight">
-                Cara Menjadi <span className="text-gradient-gray">Mitra Developer</span>
-              </h2>
-              <p className="text-gray-500 max-w-xl mx-auto">
-                Proses kurasi yang transparan untuk menjaga kualitas setiap mitra di platform kami.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[
-                { num: "01", title: "Ajukan Pendaftaran", desc: "Hubungi tim kami dan sampaikan profil developer Anda beserta portofolio proyek.", icon: MessageCircle },
-                { num: "02", title: "Verifikasi Legalitas", desc: "Tim kami akan memverifikasi legalitas: SHM, IMB/PBG, perizinan, dan track record perusahaan.", icon: FileText },
-                { num: "03", title: "Onboarding & Listing", desc: "Setelah lolos verifikasi, proyek Anda akan langsung listing di platform kami.", icon: Building2 },
-                { num: "04", title: "Mulai Terima Lead", desc: "Calon pembeli mulai menghubungi. Tim marketing membantu proses closing dan KPR.", icon: Handshake },
-              ].map((step, i) => (
-                <div key={i} className="relative text-center group">
-                  {i < 3 && (
-                    <div className="hidden lg:block absolute top-10 left-[60%] w-[80%] h-px bg-gray-200" />
-                  )}
-                  <div className="w-20 h-20 mx-auto rounded-2xl bg-white border border-gray-100 shadow-sm flex items-center justify-center mb-4 group-hover:shadow-md group-hover:border-gray-200 transition-all">
-                    <step.icon className="w-8 h-8 text-gray-400 group-hover:text-gray-700 transition-colors" />
-                  </div>
-                  <span className="text-xs font-bold text-gray-300 tracking-widest">{step.num}</span>
-                  <h4 className="font-bold text-gray-900 mt-1 mb-1.5">{step.title}</h4>
-                  <p className="text-gray-500 text-sm leading-relaxed">{step.desc}</p>
-                </div>
-              ))}
-            </div>
+      {/* ── Section 3: Cara Bergabung (dark) ── */}
+      <section className="py-20 md:py-28 bg-gray-950 relative overflow-hidden">
+        <motion.div
+          animate={{ y: [0, -20, 15, 0], x: [0, 15, -10, 0] }}
+          transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-[-10%] left-[-5%] w-[400px] h-[400px] rounded-full bg-gray-800/20 blur-3xl"
+        />
+        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeIn className="text-center mb-14">
+            <span className="text-gray-500 text-xs font-bold uppercase tracking-[0.3em]">Bergabunglah</span>
+            <h2 className="text-3xl md:text-4xl font-black text-white mt-3 mb-4 tracking-tight">
+              Cara Menjadi <span className="text-gray-400">Mitra Developer</span>
+            </h2>
+            <p className="text-gray-500 max-w-xl mx-auto">
+              Proses kurasi transparan untuk menjaga kualitas setiap mitra di platform kami.
+            </p>
           </FadeIn>
 
-          {/* CTA Section */}
-          <FadeIn delay={0.15} className="mt-20">
-            <div className="relative bg-gray-950 rounded-3xl overflow-hidden p-8 md:p-12 text-center">
-              <motion.div
-                animate={{ y: [0, -15, 10, 0], x: [0, 12, -8, 0] }}
-                transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute top-[-20%] right-[-10%] w-[300px] h-[300px] rounded-full bg-gray-800/30 blur-3xl"
-              />
-              <motion.div
-                animate={{ y: [0, 10, -15, 0], x: [0, -8, 12, 0] }}
-                transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute bottom-[-20%] left-[-10%] w-[250px] h-[250px] rounded-full bg-gray-700/20 blur-3xl"
-              />
-              <div className="relative">
-                <h3 className="text-2xl md:text-3xl font-black text-white mb-3">
-                  Tertarik Bergabung sebagai Mitra?
-                </h3>
-                <p className="text-gray-400 max-w-lg mx-auto mb-8">
-                  Jika Anda developer perumahan dengan legalitas lengkap dan track record baik, bergabunglah dengan {S.company_name} untuk memperluas jangkauan pemasaran Anda.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                  <a
-                    href={`https://wa.me/${S.contact_wa}?text=${encodeURIComponent("Halo, saya tertarik bergabung sebagai mitra developer. Mohon info persyaratan dan prosesnya.")}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-white text-gray-900 font-bold rounded-xl shadow-lg hover:bg-gray-100 transition-all hover:shadow-xl active:scale-95"
-                  >
-                    <MessageCircle className="w-5 h-5" />
-                    Daftar via WhatsApp
-                  </a>
-                  <a
-                    href={`tel:${S.contact_phone}`}
-                    className="inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-gray-800 text-white font-bold rounded-xl hover:bg-gray-700 transition-all active:scale-95"
-                  >
-                    <Phone className="w-5 h-5" />
-                    Hubungi Kami
-                  </a>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+            {[
+              { num: "01", title: "Ajukan Pendaftaran", desc: "Hubungi tim kami via WhatsApp. Sampaikan profil developer beserta portofolio proyek.", icon: MessageCircle },
+              { num: "02", title: "Verifikasi Legalitas", desc: "Tim kami verifikasi SHM, IMB/PBG, perizinan usaha, dan track record perusahaan Anda.", icon: FileText },
+              { num: "03", title: "Onboarding & Listing", desc: "Setelah lolos verifikasi, akun developer dibuat dan proyek langsung listing di platform.", icon: Building2 },
+              { num: "04", title: "Mulai Terima Lead", desc: "Calon pembeli menghubungi langsung. Tim marketing bantu proses closing dan KPR.", icon: Handshake },
+            ].map((step, i) => (
+              <FadeIn key={i} delay={i * 0.08}>
+                <div className="relative bg-white/[0.04] border border-white/[0.08] rounded-2xl p-6 hover:bg-white/[0.07] hover:border-white/[0.12] transition-all group">
+                  <span className="text-xs font-bold text-gray-600 tracking-widest">{step.num}</span>
+                  <div className="w-11 h-11 rounded-xl bg-white/[0.08] flex items-center justify-center my-3 group-hover:bg-white/[0.12] transition-colors">
+                    <step.icon className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
+                  </div>
+                  <h4 className="font-bold text-white text-sm mb-1.5">{step.title}</h4>
+                  <p className="text-gray-500 text-xs leading-relaxed">{step.desc}</p>
                 </div>
-              </div>
+              </FadeIn>
+            ))}
+          </div>
+
+          {/* CTA */}
+          <FadeIn delay={0.3} className="mt-14">
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <a
+                href={`https://wa.me/${S.contact_wa}?text=${encodeURIComponent("Halo, saya tertarik bergabung sebagai mitra developer. Mohon info persyaratan dan prosesnya.")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-white text-gray-900 font-bold rounded-xl hover:bg-gray-100 transition-all active:scale-95"
+              >
+                <MessageCircle className="w-5 h-5" />
+                Daftar via WhatsApp
+              </a>
+              <a
+                href={`tel:${S.contact_phone}`}
+                className="inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-white/10 text-white font-bold rounded-xl border border-white/10 hover:bg-white/15 transition-all active:scale-95"
+              >
+                <Phone className="w-5 h-5" />
+                Hubungi Kami
+              </a>
             </div>
           </FadeIn>
         </div>
