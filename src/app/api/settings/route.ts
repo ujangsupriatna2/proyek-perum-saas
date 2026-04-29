@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 // Public API — no auth required
 export async function GET() {
   try {
-    const settings = await db.setting.findMany();
+    const settings = await db.setting.findMany({ where: { mitraId: null } });
     const settingsMap: Record<string, string> = {};
     settings.forEach((s) => {
       settingsMap[s.key] = s.value;

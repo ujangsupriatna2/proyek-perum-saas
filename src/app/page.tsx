@@ -504,14 +504,14 @@ function Hero() {
           >
             <button
               onClick={() => router.push("/?tab=proyek")}
-              className="btn-accent text-base px-8 py-4 rounded-xl inline-flex items-center justify-center gap-2 active:scale-[0.98]"
+              className="btn-accent text-sm px-6 py-2.5 rounded-xl inline-flex items-center justify-center gap-2 active:scale-[0.98]"
             >
               Lihat Semua Proyek
               <ArrowRight className="w-5 h-5" />
             </button>
             <button
               onClick={() => router.push("/?tab=tentang")}
-              className="btn-outline-white text-base px-8 py-4 rounded-xl inline-flex items-center justify-center gap-2"
+              className="btn-outline-white text-sm px-6 py-2.5 rounded-xl inline-flex items-center justify-center gap-2"
             >
               <Building2 className="w-5 h-5" />
               Tentang Kami
@@ -941,14 +941,14 @@ function CaraBeliSection() {
             href={`https://wa.me/${S.contact_wa}?text=Halo,%20saya%20ingin%20cek%20unit%20tersedia`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-green-600 text-white font-bold rounded-2xl shadow-lg hover:bg-green-700 transition-all active:scale-95 text-lg"
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-green-600 text-white font-semibold rounded-xl shadow-lg hover:bg-green-700 transition-all active:scale-95 text-sm"
           >
-            <MessageCircle className="w-5 h-5" />
+            <MessageCircle className="w-4 h-4" />
             Cek Unit Tersedia
           </a>
           <a
             href="/?tab=proyek"
-            className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gray-900 text-white font-bold rounded-2xl shadow-lg hover:bg-gray-800 transition-all active:scale-95 text-lg"
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gray-900 text-white font-semibold rounded-xl shadow-lg hover:bg-gray-800 transition-all active:scale-95 text-sm"
           >
             <Calculator className="w-5 h-5" />
             Hitung Cicilan Saya
@@ -1325,16 +1325,16 @@ function CTASection() {
               href={`https://wa.me/${S.contact_wa}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-green-500 text-white font-bold rounded-2xl shadow-2xl hover:bg-green-600 transition-all active:scale-95 text-lg"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-green-500 text-white font-semibold rounded-xl shadow-2xl hover:bg-green-600 transition-all active:scale-95 text-sm"
             >
-              <MessageCircle className="w-5 h-5" />
+              <MessageCircle className="w-4 h-4" />
               Booking via WhatsApp
             </a>
             <a
               href={`https://wa.me/${S.contact_wa}?text=Halo,%20saya%20ingin%20cek%20unit%20tersedia`}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-outline-white text-lg"
+              className="btn-outline-white text-sm"
             >
               <Home className="w-5 h-5" />
               Cek Unit Tersedia
