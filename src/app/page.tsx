@@ -1065,54 +1065,30 @@ function PropertyShowcaseSection({
       <FloatingParticles count={4} dark={false} />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
-          <FadeIn>
-            <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Proyek Unggulan</span>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-3 mb-3 tracking-tight">
-              Pilih Hunian <span className="text-gradient-gray">Idaman Anda</span>
-            </h2>
-            <p className="text-gray-500 max-w-lg leading-relaxed">
-              Tersedia berbagai tipe — Siap Huni, Kavling, dan Inden — dengan skema pembayaran yang fleksibel.
-            </p>
-          </FadeIn>
-          <FadeIn delay={0.2} className="flex items-center gap-3 shrink-0">
-            {/* Category pills */}
-            <div className="hidden md:flex bg-gray-100 rounded-full p-1 gap-0.5">
-              {(["all", "inden", "kavling", "siap_huni"] as const).map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setActiveCategory(cat)}
-                  className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
-                    activeCategory === cat
-                      ? "bg-gray-900 text-white shadow-md"
-                      : "text-gray-500 hover:text-gray-900"
-                  }`}
-                >
-                  {cat === "all" ? "Semua" : CATEGORY_LABELS[cat]}
-                </button>
-              ))}
-            </div>
-          </FadeIn>
-        </div>
-
-        {/* Mobile category pills */}
-        <FadeIn className="flex md:hidden justify-center mb-8 overflow-x-auto scrollbar-hide -mx-4 px-4">
-          <div className="flex bg-gray-100 rounded-full p-1 gap-0.5">
-            {(["all", "inden", "kavling", "siap_huni"] as const).map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap ${
-                  activeCategory === cat
-                    ? "bg-gray-900 text-white shadow-md"
-                    : "text-gray-500 hover:text-gray-900"
-                }`}
-              >
-                {cat === "all" ? "Semua" : CATEGORY_LABELS[cat]}
-              </button>
-            ))}
-          </div>
+        <FadeIn className="text-center mb-10">
+          <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Proyek Unggulan</span>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-3 mb-3 tracking-tight">
+            Pilih Hunian <span className="text-gradient-gray">Idaman Anda</span>
+          </h2>
+          <p className="text-gray-500 max-w-lg mx-auto leading-relaxed">
+            Tersedia berbagai tipe — Siap Huni, Kavling, dan Inden — dengan skema pembayaran yang fleksibel.
+          </p>
+        </FadeIn>
+        {/* Filter */}
+        <FadeIn delay={0.15} className="flex flex-wrap justify-center gap-2 mb-10">
+          {(["all", "inden", "kavling", "siap_huni"] as const).map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                activeCategory === cat
+                  ? "bg-gray-900 text-white"
+                  : "bg-white text-gray-500 border border-gray-200 hover:border-gray-300 hover:text-gray-900"
+              }`}
+            >
+              {cat === "all" ? "Semua" : CATEGORY_LABELS[cat]}
+            </button>
+          ))}
         </FadeIn>
 
         {/* Property Cards Grid */}
@@ -2181,13 +2157,6 @@ function PropertiesSection({
   const totalPages = Math.ceil(filtered.length / PROYEK_PER_PAGE);
   const paged = filtered.slice((page - 1) * PROYEK_PER_PAGE, page * PROYEK_PER_PAGE);
 
-  const categories: { key: PropertyCategory | "all"; label: string; icon: typeof Hammer }[] = [
-    { key: "all", label: "Semua", icon: Home },
-    { key: "inden", label: "Inden", icon: Hammer },
-    { key: "kavling", label: "Kavling", icon: LandPlot },
-    { key: "siap_huni", label: "Siap Huni", icon: KeyRound },
-  ];
-
   return (
     <section className="py-20 md:py-28 bg-section-gray relative overflow-hidden">
       {/* Ambient floating orb */}
@@ -2209,50 +2178,45 @@ function PropertiesSection({
           </p>
         </FadeIn>
 
-        {/* Filter Inputs */}
+        {/* Filter */}
         <FadeIn delay={0.1} className="mb-10">
-          <div className="flex flex-wrap justify-center gap-3">
-            {/* Category filter pills */}
+          <div className="flex flex-wrap justify-center gap-2">
             {[
-              { key: "all", label: "Semua", icon: Home },
-              { key: "inden", label: "Inden", icon: Hammer },
-              { key: "kavling", label: "Kavling", icon: LandPlot },
-              { key: "siap_huni", label: "Siap Huni", icon: KeyRound },
-            ].map((cat) => {
-              const Icon = cat.icon;
-              const isActive = activeCategory === cat.key;
-              return (
-                <button
-                  key={cat.key}
-                  onClick={() => setActiveCategory(cat.key as PropertyCategory | "all")}
-                  className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                    isActive
-                      ? "bg-gray-900 text-white shadow-lg shadow-gray-900/20"
-                      : "bg-white text-gray-600 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900"
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  {cat.label}
-                </button>
-              );
-            })}
-
-            {/* Divider */}
-            <div className="w-px bg-gray-200 self-stretch hidden sm:block" />
-
-            {/* Sort filter */}
-            <div className="relative">
-              <Select value={filter} onValueChange={(v) => setFilter(v as "semua" | "termurah" | "terlaris")}>
-                <SelectTrigger className="w-[170px] h-11 text-sm font-semibold bg-white border-gray-200 rounded-xl focus:ring-gray-400 focus:border-gray-400 shadow-sm">
-                  <SelectValue placeholder="Urutkan" />
-                </SelectTrigger>
-                <SelectContent className="rounded-xl">
-                  <SelectItem value="semua" className="rounded-lg py-2.5">Semua Harga</SelectItem>
-                  <SelectItem value="termurah" className="rounded-lg py-2.5">Termurah</SelectItem>
-                  <SelectItem value="terlaris" className="rounded-lg py-2.5">Terlaris</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+              { key: "all" as const, label: "Semua" },
+              { key: "inden" as const, label: "Inden" },
+              { key: "kavling" as const, label: "Kavling" },
+              { key: "siap_huni" as const, label: "Siap Huni" },
+            ].map((cat) => (
+              <button
+                key={cat.key}
+                onClick={() => setActiveCategory(cat.key)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  activeCategory === cat.key
+                    ? "bg-gray-900 text-white"
+                    : "bg-white text-gray-500 border border-gray-200 hover:border-gray-300 hover:text-gray-900"
+                }`}
+              >
+                {cat.label}
+              </button>
+            ))}
+            <div className="w-px h-8 bg-gray-200 self-center mx-1 hidden sm:block" />
+            {[
+              { key: "semua" as const, label: "Semua Harga" },
+              { key: "termurah" as const, label: "Termurah" },
+              { key: "terlaris" as const, label: "Terlaris" },
+            ].map((f) => (
+              <button
+                key={f.key}
+                onClick={() => setFilter(f.key)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  filter === f.key
+                    ? "bg-gray-900 text-white"
+                    : "bg-white text-gray-500 border border-gray-200 hover:border-gray-300 hover:text-gray-900"
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
           </div>
         </FadeIn>
 
