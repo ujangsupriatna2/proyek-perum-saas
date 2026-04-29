@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
-import { MapPin, Car, X, Search, LocateFixed, Route, Navigation } from "lucide-react";
+import { MapPin, Car, X, Search, LocateFixed, Route, Navigation, Lock, MapPinned } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useSettingsStore } from "@/lib/settings-store";
@@ -72,17 +72,55 @@ async function fetchRoute(
   return null;
 }
 
-function createCustomIcon(color: string, size: number = 40) {
+function createDestinationIcon(size: number = 48) {
+  const html = `
+    <div style="position:relative;width:${size}px;height:${size + 14}px;">
+      <div style="
+        width:${size}px;height:${size}px;
+        display:flex;align-items:center;justify-content:center;
+        background:linear-gradient(135deg,#111827,#374151);
+        border:3px solid white;border-radius:50% 50% 50% 0;
+        transform:rotate(-45deg);
+        box-shadow:0 4px 14px rgba(0,0,0,0.35);
+      ">
+        <svg style="width:${size * 0.35}px;height:${size * 0.35}px;transform:rotate(45deg);fill:white;" viewBox="0 0 24 24">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+        </svg>
+      </div>
+      <div style="
+        position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+        background:linear-gradient(135deg,#111827,#374151);color:white;
+        font-size:9px;font-weight:700;padding:2px 6px;border-radius:6px;
+        white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,0.2);
+        display:flex;align-items:center;gap:3px;
+      ">
+        <svg style="width:8px;height:8px;fill:white;" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+        TERKUNCI
+      </div>
+    </div>
+  `;
+  return (L as any).divIcon({
+    html,
+    className: "",
+    iconSize: [size, size + 14],
+    iconAnchor: [size / 2, size],
+    popupAnchor: [0, -size],
+  });
+}
+
+function createOriginIcon(size: number = 38) {
   const html = `
     <div style="
       width:${size}px;height:${size}px;
       display:flex;align-items:center;justify-content:center;
-      background:${color};border:3px solid white;border-radius:50% 50% 50% 0;
+      background:linear-gradient(135deg,#6B7280,#9CA3AF);
+      border:3px solid white;border-radius:50% 50% 50% 0;
       transform:rotate(-45deg);
-      box-shadow:0 3px 10px rgba(0,0,0,0.3);
+      box-shadow:0 3px 10px rgba(0,0,0,0.25);
     ">
-      <svg style="width:${size * 0.4}px;height:${size * 0.4}px;transform:rotate(45deg);fill:white;" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="3"/>
+      <svg style="width:${size * 0.38}px;height:${size * 0.38}px;transform:rotate(45deg);fill:white;" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="4" fill="none" stroke="white" stroke-width="2.5"/>
+        <circle cx="12" cy="12" r="1.5"/>
       </svg>
     </div>
   `;
@@ -112,6 +150,7 @@ export default function LeafletMap({ latitude, longitude, companyName }: Leaflet
   const cssInjectedRef = useRef(false);
 
   const [origin, setOrigin] = useState<[number, number] | null>(null);
+  const [originAddress, setOriginAddress] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [routeResult, setRouteResult] = useState<RouteResult | null>(null);
@@ -119,6 +158,7 @@ export default function LeafletMap({ latitude, longitude, companyName }: Leaflet
   const [mapReady, setMapReady] = useState(false);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [searchError, setSearchError] = useState("");
+  const [routeLocked, setRouteLocked] = useState(false);
 
   const destLat = parseFloat(latitude || S.map_latitude) || DEFAULT_DEST[0];
   const destLng = parseFloat(longitude || S.map_longitude) || DEFAULT_DEST[1];
@@ -170,29 +210,21 @@ export default function LeafletMap({ latitude, longitude, companyName }: Leaflet
         maxZoom: 19,
       }).addTo(map);
 
-      // Custom marker for destination
-      const destIcon = createCustomIcon("#1f2937", 44);
+      // Custom marker for destination (locked)
+      const destIcon = createDestinationIcon(48);
       L.marker(DEST, { icon: destIcon })
         .addTo(map)
         .bindPopup(
-          `<div style="text-align:center;padding:4px 0"><strong style="color:#1f2937;font-size:14px">${brandName}</strong><br><span style="font-size:12px;color:#666">Lokasi Perumahan</span></div>`
+          `<div style="text-align:center;padding:6px 0"><strong style="color:#1f2937;font-size:14px">${brandName}</strong><br><span style="font-size:11px;color:#6B7280;display:inline-flex;align-items:center;gap:4px;">&#128274; Lokasi Terkunci</span></div>`
         );
 
       markerGroupRef.current = L.layerGroup().addTo(map);
       routeLayerRef.current = L.layerGroup().addTo(map);
 
-      // Click handler
+      // Click handler — set origin
       map.on("click", (e: any) => {
         const clickedLatlng: [number, number] = [e.latlng.lat, e.latlng.lng];
-        setOrigin(clickedLatlng);
-        if (originMarkerRef.current) {
-          originMarkerRef.current.setLatLng(e.latlng);
-        } else {
-          const originIcon = createCustomIcon("#374151", 36);
-          originMarkerRef.current = L.marker(e.latlng, {
-            icon: originIcon,
-          }).addTo(markerGroupRef.current);
-        }
+        placeOriginMarker(clickedLatlng);
         reverseGeocode(clickedLatlng);
       });
 
@@ -225,13 +257,37 @@ export default function LeafletMap({ latitude, longitude, companyName }: Leaflet
     };
   }, []);
 
-  // Route fetching
+  // Place origin marker on map
+  const placeOriginMarker = useCallback((latlng: [number, number]) => {
+    setOrigin(latlng);
+    setRouteLocked(false);
+    setRouteResult(null);
+    if (routeLayerRef.current) {
+      routeLayerRef.current.clearLayers();
+    }
+
+    if (originMarkerRef.current) {
+      originMarkerRef.current.setLatLng(latlng);
+    } else {
+      import("leaflet").then((L) => {
+        const originIcon = createOriginIcon(38);
+        originMarkerRef.current = L.marker(latlng, {
+          icon: originIcon,
+        }).addTo(markerGroupRef.current);
+      });
+    }
+  }, []);
+
+  // Route fetching — auto-calculate when origin is set
   const calculateRoute = useCallback(async (org: [number, number]) => {
     if (!org) return;
     setIsLoadingRoute(true);
     const result = await fetchRoute(org, DEST);
     setRouteResult(result);
     setIsLoadingRoute(false);
+    if (result) {
+      setRouteLocked(true);
+    }
   }, []);
 
   useEffect(() => {
@@ -246,17 +302,28 @@ export default function LeafletMap({ latitude, longitude, companyName }: Leaflet
     routeLayerRef.current.clearLayers();
 
     import("leaflet").then((L) => {
-      const polyline = L.polyline(routeResult!.geometry, {
-        color: "#1f2937",
-        weight: 5,
-        opacity: 0.8,
+      // Shadow line
+      const shadowLine = L.polyline(routeResult!.geometry, {
+        color: "#111827",
+        weight: 8,
+        opacity: 0.15,
         lineJoin: "round",
+      });
+      routeLayerRef.current!.addLayer(shadowLine);
+
+      // Main line
+      const polyline = L.polyline(routeResult!.geometry, {
+        color: "#111827",
+        weight: 5,
+        opacity: 0.85,
+        lineJoin: "round",
+        dashArray: "0",
       });
       routeLayerRef.current!.addLayer(polyline);
 
       if (mapInstanceRef.current) {
         mapInstanceRef.current.fitBounds(polyline.getBounds(), {
-          padding: [50, 50],
+          padding: [60, 60],
         });
       }
     });
@@ -269,7 +336,9 @@ export default function LeafletMap({ latitude, longitude, companyName }: Leaflet
       );
       const data = await res.json();
       if (data.display_name) {
-        setSearchQuery(data.display_name.split(",").slice(0, 3).join(","));
+        const addr = data.display_name.split(",").slice(0, 3).join(",");
+        setSearchQuery(addr);
+        setOriginAddress(addr);
       }
     } catch {}
   }
@@ -280,19 +349,10 @@ export default function LeafletMap({ latitude, longitude, companyName }: Leaflet
     setSearchError("");
     const result = await geocodeAddress(searchQuery);
     if (result) {
-      setOrigin(result);
+      placeOriginMarker(result);
+      setOriginAddress(searchQuery);
       if (mapInstanceRef.current) {
         mapInstanceRef.current.setView(result, 14);
-      }
-      if (originMarkerRef.current) {
-        originMarkerRef.current.setLatLng(result);
-      } else {
-        import("leaflet").then((L) => {
-          const originIcon = createCustomIcon("#374151", 36);
-          originMarkerRef.current = L.marker(result, {
-            icon: originIcon,
-          }).addTo(markerGroupRef.current);
-        });
       }
     } else {
       setSearchError("Alamat tidak ditemukan. Coba lebih spesifik.");
@@ -302,27 +362,19 @@ export default function LeafletMap({ latitude, longitude, companyName }: Leaflet
 
   function handleUseMyLocation() {
     if (userLocation) {
-      setOrigin(userLocation);
+      placeOriginMarker(userLocation);
+      reverseGeocode(userLocation);
       if (mapInstanceRef.current) {
         mapInstanceRef.current.setView(userLocation, 14);
       }
-      if (originMarkerRef.current) {
-        originMarkerRef.current.setLatLng(userLocation);
-      } else {
-        import("leaflet").then((L) => {
-          const originIcon = createCustomIcon("#374151", 36);
-          originMarkerRef.current = L.marker(userLocation, {
-            icon: originIcon,
-          }).addTo(markerGroupRef.current);
-        });
-      }
-      reverseGeocode(userLocation);
     }
   }
 
   function clearRoute() {
     setOrigin(null);
+    setOriginAddress("");
     setRouteResult(null);
+    setRouteLocked(false);
     setSearchQuery("");
     setSearchError("");
     if (originMarkerRef.current) {
@@ -344,7 +396,7 @@ export default function LeafletMap({ latitude, longitude, companyName }: Leaflet
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <Input
-            placeholder="Masukkan alamat asal Anda..."
+            placeholder="Ketik alamat asal atau klik pada peta..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
@@ -390,38 +442,76 @@ export default function LeafletMap({ latitude, longitude, companyName }: Leaflet
           style={{ zIndex: 1 }}
         />
 
-        {/* Map legend overlay */}
-        <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-xl p-3 shadow-lg text-xs z-[1000]">
-          <div className="flex items-center gap-2 mb-1.5">
-            <div className="w-3 h-3 rounded-full bg-gray-800 border-2 border-white shadow" />
-            <span className="font-medium text-gray-700">
-              {brandName}
-            </span>
-          </div>
-          {origin && (
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-gray-500 border-2 border-white shadow" />
-              <span className="font-medium text-gray-700">Lokasi Anda</span>
+        {/* Destination locked badge */}
+        <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-xl px-3.5 py-2.5 shadow-lg z-[1000] border border-gray-100">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg flex items-center justify-center shrink-0">
+              <MapPinned className="w-4 h-4 text-white" />
             </div>
-          )}
+            <div>
+              <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider leading-none">Tujuan</p>
+              <p className="text-sm font-bold text-gray-900 mt-0.5 leading-tight">{brandName}</p>
+              <div className="flex items-center gap-1 mt-1">
+                <Lock className="w-2.5 h-2.5 text-gray-500" />
+                <span className="text-[10px] font-semibold text-gray-500">Terkunci</span>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Click hint */}
-        {!origin && (
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-sm rounded-full px-4 py-2 shadow-md text-xs z-[1000] flex items-center gap-1.5 text-gray-600">
-            <MapPin className="w-3.5 h-3.5 text-gray-600" />
-            Klik pada peta atau cari alamat untuk melihat rute kendaraan
+        {/* Origin info badge (shown when origin is set) */}
+        {origin && (
+          <div className="absolute top-4 left-[calc(50%+12px)] sm:left-auto sm:right-[52px] bg-white/95 backdrop-blur-sm rounded-xl px-3.5 py-2.5 shadow-lg z-[1000] border border-gray-100 max-w-[200px]">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 bg-gradient-to-br from-gray-400 to-gray-500 rounded-lg flex items-center justify-center shrink-0">
+                <MapPin className="w-4 h-4 text-white" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider leading-none">Asal</p>
+                <p className="text-xs font-semibold text-gray-700 mt-0.5 leading-tight truncate">
+                  {originAddress || `${origin[0].toFixed(4)}, ${origin[1].toFixed(4)}`}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Click hint (only show when no origin) */}
+        {!origin && !isLoadingRoute && (
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-sm rounded-full px-5 py-2.5 shadow-lg text-xs z-[1000] flex items-center gap-2 text-gray-600 border border-gray-100">
+            <MapPin className="w-3.5 h-3.5 text-gray-500" />
+            <span className="font-medium">Klik pada peta atau cari alamat untuk melihat rute</span>
+          </div>
+        )}
+
+        {/* Route locked indicator */}
+        {routeLocked && !isLoadingRoute && (
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-gray-900 text-white rounded-full px-5 py-2.5 shadow-xl text-xs z-[1000] flex items-center gap-2">
+            <Lock className="w-3.5 h-3.5" />
+            <span className="font-bold">Rute Terkunci</span>
+            <span className="text-gray-400">|</span>
+            <span className="font-medium">{formatDistance(routeResult?.distance || 0)}</span>
+            <span className="text-gray-400">|</span>
+            <span className="font-medium">{formatDuration(routeResult?.duration || 0)}</span>
           </div>
         )}
       </div>
 
-      {/* Route result - driving only */}
+      {/* Route result panel */}
       {routeResult && (
         <div className="mt-4 bg-white rounded-2xl shadow-lg border border-gray-200 p-4 sm:p-5">
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Navigation className="w-5 h-5 text-gray-600" />
-              <h3 className="font-bold text-gray-900">Petunjuk Arah Kendaraan</h3>
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
+                <Navigation className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <h3 className="font-bold text-gray-900 text-sm">Detail Rute Kendaraan</h3>
+                <div className="flex items-center gap-1 mt-0.5">
+                  <Lock className="w-3 h-3 text-gray-400" />
+                  <span className="text-[11px] font-medium text-gray-400">Rute terkunci</span>
+                </div>
+              </div>
             </div>
             <Button
               variant="ghost"
@@ -429,7 +519,8 @@ export default function LeafletMap({ latitude, longitude, companyName }: Leaflet
               onClick={clearRoute}
               className="text-gray-400 hover:text-gray-600 h-8 px-2"
             >
-              <X className="w-4 h-4" />
+              <X className="w-4 h-4 mr-1" />
+              Reset
             </Button>
           </div>
 
@@ -439,44 +530,59 @@ export default function LeafletMap({ latitude, longitude, companyName }: Leaflet
               <p className="text-sm text-gray-400 mt-2">Menghitung rute...</p>
             </div>
           ) : (
-            <div className="bg-gray-50 border-2 border-gray-200 rounded-xl p-5">
-              <div className="flex items-center gap-2 mb-3">
-                <Car className="w-6 h-6 text-gray-700" />
-                <span className="font-semibold text-gray-800">Kendaraan</span>
+            <>
+              {/* Origin → Destination summary */}
+              <div className="flex items-start gap-3 mb-4 p-3 bg-gray-50 rounded-xl">
+                <div className="flex flex-col items-center gap-1 mt-0.5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-gray-400 border-2 border-white shadow" />
+                  <div className="w-0.5 h-6 bg-gray-200" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-gray-900 border-2 border-white shadow" />
+                </div>
+                <div className="flex-1 min-w-0 space-y-2">
+                  <div>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Lokasi Asal</p>
+                    <p className="text-xs font-medium text-gray-700 truncate">{originAddress || `${origin?.[0].toFixed(4)}, ${origin?.[1].toFixed(4)}`}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Tujuan</p>
+                    <p className="text-xs font-medium text-gray-900">{brandName}</p>
+                  </div>
+                </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-3xl font-extrabold text-gray-900">
+
+              {/* Stats */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
+                  <Car className="w-5 h-5 text-gray-600 mx-auto mb-1.5" />
+                  <p className="text-2xl font-extrabold text-gray-900">
                     {formatDuration(routeResult.duration)}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">Estimasi waktu tempuh</p>
+                  <p className="text-[11px] text-gray-500 mt-1 font-medium">Waktu Tempuh</p>
                 </div>
-                <div>
-                  <p className="text-3xl font-extrabold text-gray-900">
+                <div className="bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
+                  <Route className="w-5 h-5 text-gray-600 mx-auto mb-1.5" />
+                  <p className="text-2xl font-extrabold text-gray-900">
                     {formatDistance(routeResult.distance)}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
-                    <Route className="w-3.5 h-3.5" />
-                    Jarak tempuh
-                  </p>
+                  <p className="text-[11px] text-gray-500 mt-1 font-medium">Jarak Tempuh</p>
                 </div>
               </div>
-            </div>
-          )}
 
-          {/* Open in Google Maps link */}
-          {origin && (
-            <div className="mt-4 text-center">
-              <a
-                href={`https://www.google.com/maps/dir/?api=1&origin=${origin[0]},${origin[1]}&destination=${DEST[0]},${DEST[1]}&travelmode=driving`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-sm text-gray-700 hover:text-gray-900 font-medium transition-colors"
-              >
-                <MapPin className="w-4 h-4" />
-                Buka di Google Maps
-              </a>
-            </div>
+              {/* Open in Google Maps */}
+              {origin && (
+                <div className="mt-4 text-center">
+                  <a
+                    href={`https://www.google.com/maps/dir/?api=1&origin=${origin[0]},${origin[1]}&destination=${DEST[0]},${DEST[1]}&travelmode=driving`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-gray-700 hover:text-gray-900 transition-colors bg-gray-50 hover:bg-gray-100 px-4 py-2 rounded-lg border border-gray-100"
+                  >
+                    <MapPin className="w-4 h-4" />
+                    Buka Navigasi di Google Maps
+                  </a>
+                </div>
+              )}
+            </>
           )}
         </div>
       )}
