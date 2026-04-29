@@ -2068,7 +2068,7 @@ function PropertyCard({
                 {bestKpr ? `Rp ${new Intl.NumberFormat("id-ID").format(Math.round(bestKpr.amount * 1_000_000))}/bln` : "Hubungi kami"}
               </p>
             </div>
-            <Button onClick={() => onSelect(property)} size="sm" className="bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-900 hover:to-gray-900 text-white shadow-md ">
+            <Button onClick={(e) => { e.stopPropagation(); handleClick(); }} size="sm" className="bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-900 hover:to-gray-900 text-white shadow-md ">
               Detail <ChevronRight className="w-4 h-4 ml-1" />
             </Button>
           </div>
@@ -2645,7 +2645,7 @@ function PropertyGallery({
   return (
     <>
       <div
-        className="relative h-72 sm:h-80 overflow-hidden rounded-t-2xl cursor-pointer group"
+        className="relative aspect-square overflow-hidden rounded-t-2xl cursor-pointer group"
         onClick={() => setLightboxOpen(true)}
       >
         <AnimatePresence mode="wait">
@@ -5280,7 +5280,7 @@ function ServiceDetailPage({ slug }: { slug: string }) {
       <article className="bg-white pt-20 md:pt-24">
         {/* Hero - constrained to content width */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative h-64 sm:h-80 bg-gray-200 rounded-2xl overflow-hidden">
+          <div className="relative aspect-square bg-gray-200 rounded-2xl overflow-hidden">
             {service.image ? (
               <img src={service.image} alt={service.title} className="w-full h-full object-cover" />
             ) : (
