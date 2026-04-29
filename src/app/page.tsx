@@ -2343,7 +2343,7 @@ function PropertiesSection({
 function CicilanCalculator() {
   const { settings: S } = useSettingsStore();
   const [hargaProperti, setHargaProperti] = useState<string>("300");
-  const [dpPercent, setDpPercent] = useState<string>("20");
+  const [dpPercent, setDpPercent] = useState<string>("0");
   const [tenor, setTenor] = useState<string>("20");
   const [bungaPercent, setBungaPercent] = useState<string>("7");
 
@@ -2411,8 +2411,7 @@ function CicilanCalculator() {
               <div className="relative">
                 <input
                   type="range"
-                  min="10"
-                  max="50"
+                  min="0"                  max="50"
                   step="5"
                   value={dpPercent}
                   onChange={(e) => setDpPercent(e.target.value)}
