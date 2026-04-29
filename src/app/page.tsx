@@ -5542,13 +5542,32 @@ function ServiceDetailPage({ slug }: { slug: string }) {
 function JasaListingSection() {
   const { services, fetchServices } = useServiceStore();
   const [page, setPage] = useState(1);
+  const [activeCategory, setActiveCategory] = useState("all");
 
   useEffect(() => {
     fetchServices();
   }, [fetchServices]);
 
-  const totalPages = Math.ceil(services.length / JASA_PER_PAGE);
-  const paged = services.slice((page - 1) * JASA_PER_PAGE, page * JASA_PER_PAGE);
+  // Extract unique categories
+  const categories = ["all", ...Array.from(new Set(services.map((s) => s.category).filter(Boolean)))];
+  const categoryLabels: Record<string, string> = {
+    all: "Semua",
+  };
+  categories.forEach((c) => {
+    if (c !== "all" && !categoryLabels[c]) {
+      categoryLabels[c] = c.charAt(0).toUpperCase() + c.slice(1).replace(/[_-]/g, " ");
+    }
+  });
+
+  const filtered = activeCategory === "all"
+    ? services
+    : services.filter((s) => s.category === activeCategory);
+
+  // Reset page when category changes
+  useEffect(() => { setPage(1); }, [activeCategory]);
+
+  const totalPages = Math.ceil(filtered.length / JASA_PER_PAGE);
+  const paged = filtered.slice((page - 1) * JASA_PER_PAGE, page * JASA_PER_PAGE);
 
   return (
     <section className="py-20 md:py-28 bg-section-gray relative overflow-hidden">
@@ -5560,7 +5579,7 @@ function JasaListingSection() {
       />
       <FloatingParticles count={3} dark={false} />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <FadeIn className="text-center mb-16">
+        <FadeIn className="text-center mb-10">
           <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Layanan Jasa Kami</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-3 mb-4 tracking-tight">
             Solusi Bangunan <span className="text-gradient-gray">Profesional</span>
@@ -5571,7 +5590,24 @@ function JasaListingSection() {
           </p>
         </FadeIn>
 
-        {/* Service cards - simple grid, no tabs */}
+        {/* Category Filter */}
+        <FadeIn delay={0.1} className="flex flex-wrap justify-center gap-2 mb-10">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                activeCategory === cat
+                  ? "bg-gray-900 text-white"
+                  : "bg-white text-gray-500 border border-gray-200 hover:border-gray-300 hover:text-gray-900"
+              }`}
+            >
+              {categoryLabels[cat]}
+            </button>
+          ))}
+        </FadeIn>
+
+        {/* Service cards */}
         {paged.length > 0 ? (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
