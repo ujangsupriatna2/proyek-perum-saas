@@ -510,13 +510,17 @@ function Hero() {
 
         {/* Headline */}
         <motion.h1
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          transition={{ duration: 0.9, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
           className="text-[2rem] sm:text-5xl md:text-6xl lg:text-[4.5rem] font-black text-white leading-[1.1] sm:leading-[1.1] mb-4 sm:mb-6 tracking-tight drop-shadow-[0_4px_30px_rgba(0,0,0,0.8)]"
         >
           <span className="block">Temukan Hunian</span>
-          <span className="block mt-1 sm:mt-1">Idaman Anda <span className="text-white/80">di Sini</span></span>
+          <span className="block mt-1 sm:mt-1">Idaman Anda <motion.span
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 0.8, x: 0 }}
+            transition={{ duration: 0.8, delay: 1.0 }}
+            className="text-white/80">di Sini</motion.span></span>
         </motion.h1>
 
         {/* Divider */}
@@ -539,49 +543,88 @@ function Hero() {
         </motion.p>
 
         {/* CTAs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-          className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-12 sm:mb-16 px-4 sm:px-0"
-        >
-          <a
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-12 sm:mb-16 px-4 sm:px-0">
+          <motion.a
             href={`https://wa.me/${S.contact_wa}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 bg-white text-gray-950 font-bold rounded-xl hover:bg-gray-100 transition-all active:scale-[0.98] text-sm shadow-lg shadow-white/10 overflow-hidden"
+            initial={{ opacity: 0, y: 25, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            whileHover={{ scale: 1.03, y: -2 }}
+            whileTap={{ scale: 0.97 }}
+            className="group relative inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 bg-white text-gray-950 font-bold rounded-xl hover:bg-gray-100 transition-all text-sm shadow-lg shadow-white/10 overflow-hidden"
           >
             <span className="relative z-10 flex items-center gap-2">
               <MessageCircle className="w-4 h-4" />
               Booking via WhatsApp
             </span>
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-          </a>
-          <button
+          </motion.a>
+          <motion.button
+            initial={{ opacity: 0, y: 25, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.92, ease: [0.16, 1, 0.3, 1] }}
+            whileHover={{ scale: 1.03, y: -2 }}
+            whileTap={{ scale: 0.97 }}
             onClick={() => router.push("/?tab=proyek")}
             className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 border border-white/25 text-white font-semibold rounded-xl hover:bg-white/10 hover:border-white/50 transition-all text-sm backdrop-blur-sm"
           >
             Lihat Semua Proyek
             <ArrowRight className="w-4 h-4" />
-          </button>
-        </motion.div>
+          </motion.button>
+        </div>
 
         {/* Stats Row */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 1.0 }}
-          className="grid grid-cols-3 gap-4 sm:gap-8 max-w-sm sm:max-w-xl mx-auto"
+          transition={{ duration: 0.8, delay: 1.0 }}
+          className="grid grid-cols-3 gap-3 sm:gap-5 max-w-sm sm:max-w-xl mx-auto"
         >
           {[
-            { value: `${S.total_units_sold}+`, label: "Unit Terjual" },
-            { value: "3+", label: "Mitra Developer" },
-            { value: "10+", label: "Proyek Perumahan" },
-          ].map((stat) => (
-            <div key={stat.label} className="text-center">
-              <div className="text-xl sm:text-3xl font-black text-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.5)]">{stat.value}</div>
-              <div className="text-[9px] sm:text-[11px] text-white/40 mt-1 sm:mt-1.5 font-medium uppercase tracking-wider">{stat.label}</div>
-            </div>
+            { value: `${S.total_units_sold}+`, label: "Unit Terjual", icon: "🏠" },
+            { value: "3+", label: "Mitra Developer", icon: "🤝" },
+            { value: "10+", label: "Proyek Perumahan", icon: "🏗️" },
+          ].map((stat, idx) => (
+            <motion.div
+              key={stat.label}
+              initial={{ opacity: 0, y: 20, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.6, delay: 1.1 + idx * 0.15 }}
+              whileHover={{ scale: 1.05, y: -4 }}
+              className="group relative"
+            >
+              <div className="relative bg-white/[0.07] backdrop-blur-sm border border-white/[0.12] rounded-2xl p-3 sm:p-5 text-center cursor-default overflow-hidden transition-all duration-300 group-hover:bg-white/[0.12] group-hover:border-white/25">
+                {/* Shimmer sweep */}
+                <motion.div
+                  animate={{ x: ["-200%", "200%"] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "linear", delay: idx * 0.5 }}
+                  className="absolute inset-0 w-[50%] bg-gradient-to-r from-transparent via-white/[0.06] to-transparent pointer-events-none"
+                />
+                {/* Top glow line */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[60%] h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+                {/* Icon */}
+                <motion.div
+                  animate={{ y: [0, -3, 0] }}
+                  transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: idx * 0.3 }}
+                  className="text-lg sm:text-xl mb-1 sm:mb-2"
+                >
+                  {stat.icon}
+                </motion.div>
+                {/* Value */}
+                <motion.div
+                  className="text-xl sm:text-3xl font-black text-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.5)]"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.3 + idx * 0.15 }}
+                >
+                  {stat.value}
+                </motion.div>
+                {/* Label */}
+                <div className="text-[8px] sm:text-[11px] text-white/40 mt-1 sm:mt-1.5 font-semibold uppercase tracking-wider">{stat.label}</div>
+              </div>
+            </motion.div>
           ))}
         </motion.div>
       </div>
