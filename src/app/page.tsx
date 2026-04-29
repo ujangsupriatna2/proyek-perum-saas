@@ -5085,108 +5085,97 @@ function ServiceCard({
   return (
     <FadeIn className="h-full">
       <div
-        className="group h-full relative rounded-2xl overflow-hidden cursor-pointer"
+        className="group h-full bg-white rounded-2xl border border-gray-100 overflow-hidden cursor-pointer hover:shadow-xl hover:border-gray-200 hover:-translate-y-1 transition-all duration-300"
         onClick={handleClick}
       >
-        {/* Background image or gradient */}
-        <div className="absolute inset-0">
+        {/* Image */}
+        <div className="relative h-48 overflow-hidden bg-gray-100">
           {service.image ? (
             <img
               src={service.image}
               alt={service.title}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900" />
+            <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+              <IconComponent className="w-12 h-12 text-white/15" />
+            </div>
           )}
-        </div>
-
-        {/* Overlay - always dark for glass effect */}
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-950/95 via-gray-900/80 to-gray-900/60 group-hover:from-gray-950/90 group-hover:via-gray-900/75 group-hover:to-gray-900/50 transition-all duration-500" />
-
-        {/* Decorative shimmer on hover */}
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 overflow-hidden">
-          <div className="absolute inset-0 animate-shimmer-slow bg-gradient-to-r from-transparent via-white/[0.04] to-transparent" />
+          {/* Top badges */}
+          <div className="absolute top-3 left-3 flex flex-col gap-1.5">
+            <Badge className="bg-white/90 backdrop-blur-sm text-gray-700 border-0 text-xs font-semibold shadow-sm">
+              {catLabel}
+            </Badge>
+            {service.isFeatured && (
+              <Badge className="bg-gray-900 text-white border-0 text-[10px] font-bold shadow-sm">
+                <Star className="w-3 h-3 mr-1" /> Unggulan
+              </Badge>
+            )}
+          </div>
+          {/* Video indicator */}
+          {service.videoUrl && (
+            <div className="absolute top-3 right-3">
+              <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-lg bg-black/50 text-white backdrop-blur-sm">
+                <Camera className="w-3 h-3" /> Video
+              </span>
+            </div>
+          )}
+          {/* Bottom gradient on image */}
+          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/20 to-transparent" />
         </div>
 
         {/* Content */}
-        <div className="relative z-10 flex flex-col justify-between h-full min-h-[280px] p-5">
-          {/* Top: badge + video */}
-          <div className="flex items-start justify-between">
-            <div className="flex flex-col gap-2">
-              <Badge className="w-fit bg-white/15 text-white/90 border border-white/10 backdrop-blur-sm text-xs font-semibold">
-                {catLabel}
-              </Badge>
-              {service.isFeatured && (
-                <Badge className="w-fit bg-white/15 text-white/90 border border-white/10 text-xs font-bold backdrop-blur-sm">
-                  <Star className="w-3 h-3 mr-1" /> Unggulan
-                </Badge>
-              )}
-            </div>
-            <div className="flex flex-col gap-1.5">
-              {service.videoUrl && (
-                <span className="text-[9px] font-bold px-2 py-1 rounded-lg bg-white/10 text-white/80 backdrop-blur-sm flex items-center gap-1">
-                  <Camera className="w-3 h-3" /> Video
+        <div className="p-5">
+          {/* Features */}
+          {service.features.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mb-3">
+              {service.features.slice(0, 3).map((feat, i) => (
+                <span
+                  key={i}
+                  className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-500"
+                >
+                  {feat}
+                </span>
+              ))}
+              {service.features.length > 3 && (
+                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-400">
+                  +{service.features.length - 3}
                 </span>
               )}
-              {/* Icon */}
-              <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10 flex items-center justify-center group-hover:bg-white/15 group-hover:scale-110 transition-all duration-300">
-                <IconComponent className="w-5 h-5 text-white/70 group-hover:text-white transition-colors" />
-              </div>
             </div>
-          </div>
+          )}
 
-          {/* Bottom: title, features, price */}
-          <div className="mt-auto">
-            {/* Features pills */}
-            {service.features.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 mb-3">
-                {service.features.slice(0, 3).map((feat, i) => (
-                  <span
-                    key={i}
-                    className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-white/10 text-white/70 backdrop-blur-sm"
-                  >
-                    {feat}
-                  </span>
-                ))}
-                {service.features.length > 3 && (
-                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-white/10 text-white/50 backdrop-blur-sm">
-                    +{service.features.length - 3}
-                  </span>
-                )}
-              </div>
-            )}
+          {/* Title */}
+          <h3 className="font-bold text-gray-900 text-lg leading-tight mb-1.5 group-hover:text-gray-900 transition-colors">
+            {service.title}
+          </h3>
 
-            <h3 className="font-bold text-white text-lg leading-tight mb-1.5">
-              {service.title}
-            </h3>
+          {/* Description */}
+          {service.description && (
+            <p className="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2">
+              {service.description.replace(/<[^>]*>/g, "")}
+            </p>
+          )}
 
-            {service.description && (
-              <p className="text-white/50 text-sm leading-relaxed mb-3 line-clamp-2">
-                {service.description.replace(/<[^>]*>/g, "")}
-              </p>
-            )}
-
-            {/* Price + Duration */}
-            <div className="flex items-center justify-between pt-3 border-t border-white/10">
-              <div>
-                <span className="text-lg font-extrabold text-white">
-                  {service.price > 0 ? `Rp ${new Intl.NumberFormat("id-ID").format(service.price)}` : "Hubungi Kami"}
+          {/* Price + Duration + Arrow */}
+          <div className="flex items-end justify-between pt-4 border-t border-gray-100">
+            <div>
+              <span className="text-xl font-black text-gray-900">
+                {service.price > 0 ? `Rp ${new Intl.NumberFormat("id-ID").format(service.price)}` : "Hubungi Kami"}
+              </span>
+              {service.price > 0 && (
+                <span className="text-xs text-gray-400 ml-1">/ {unitLabel}</span>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              {service.duration && (
+                <span className="text-xs font-medium text-gray-400 flex items-center gap-1">
+                  <Clock className="w-3 h-3" /> {service.duration}
                 </span>
-                {service.price > 0 && (
-                  <span className="text-xs text-white/40 ml-1">/ {unitLabel}</span>
-                )}
-              </div>
-              <div className="flex items-center gap-2">
-                {service.duration && (
-                  <span className="text-xs font-medium text-white/50 flex items-center gap-1">
-                    <Clock className="w-3 h-3" /> {service.duration}
-                  </span>
-                )}
-                <span className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center group-hover:bg-white/20 group-hover:translate-x-0.5 transition-all duration-300">
-                  <ArrowRight className="w-4 h-4 text-white/60 group-hover:text-white transition-colors" />
-                </span>
-              </div>
+              )}
+              <span className="w-9 h-9 rounded-xl bg-gray-900 flex items-center justify-center text-white group-hover:bg-gray-800 group-hover:scale-105 transition-all duration-300">
+                <ArrowRight className="w-4 h-4" />
+              </span>
             </div>
           </div>
         </div>
