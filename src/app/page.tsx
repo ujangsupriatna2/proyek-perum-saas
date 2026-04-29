@@ -3950,33 +3950,17 @@ function ProyekGallery() {
   const { galleryItems, loading: galleryLoading, fetchGalleryItems } = useGalleryStore();
   const { settings: S } = useSettingsStore();
   const [activeTab, setActiveTab] = useState<"foto" | "video">("foto");
-  const [activeCategory, setActiveCategory] = useState<GalleryCategory>("all");
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [page, setPage] = useState(1);
-  const [prevCategory, setPrevCategory] = useState(activeCategory);
-  const [prevTab, setPrevTab] = useState(activeTab);
 
   useEffect(() => { fetchGalleryItems(); }, [fetchGalleryItems]);
-
-  if (prevCategory !== activeCategory || prevTab !== activeTab) {
-    setPrevCategory(activeCategory);
-    setPrevTab(activeTab);
-    setPage(1);
-  }
 
   // Separate items into foto and video
   const photos = galleryItems.filter((item) => !!item.image);
   const videos = galleryItems.filter((item) => !!item.videoUrl);
 
-  // Filter by category
-  const filterByCategory = (items: typeof galleryItems) =>
-    activeCategory === "all" ? items : items.filter((img) => img.category === activeCategory);
-
-  const filteredPhotos = filterByCategory(photos);
-  const filteredVideos = filterByCategory(videos);
-
-  const currentItems = activeTab === "foto" ? filteredPhotos : filteredVideos;
+  const currentItems = activeTab === "foto" ? photos : videos;
   const totalPages = Math.ceil(currentItems.length / GALLERY_PER_PAGE);
   const paged = currentItems.slice((page - 1) * GALLERY_PER_PAGE, page * GALLERY_PER_PAGE);
 
@@ -4052,66 +4036,34 @@ function ProyekGallery() {
           </div>
         </FadeIn>
 
-        <FadeIn delay={0.1} className="flex flex-wrap justify-center gap-3 mb-10">
-          {/* Category filter pills */}
-          {[
-            { key: "all", label: "Semua" },
-            { key: "inden", label: "Inden" },
-            { key: "kavling", label: "Kavling" },
-            { key: "siap_huni", label: "Siap Huni" },
-            { key: "lingkungan", label: "Lingkungan" },
-            { key: "proses_bangun", label: "Proses Bangun" },
-          ].map((cat) => {
-            const isActive = activeCategory === cat.key;
-            return (
-              <button
-                key={cat.key}
-                onClick={() => setActiveCategory(cat.key as GalleryCategory)}
-                className={`px-4 py-2 text-sm font-semibold rounded-xl transition-all duration-200 ${
-                  isActive
-                    ? "bg-gray-900 text-white shadow-lg shadow-gray-900/20"
-                    : "bg-white text-gray-600 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900"
-                }`}
-              >
-                {cat.label}
-              </button>
-            );
-          })}
-        </FadeIn>
 
-        {/* Foto Tab Content */}
+
+        {/* Foto Tab Content - Masonry Grid */}
         {activeTab === "foto" && (
           <>
             {paged.length === 0 ? (
               <div className="text-center py-16">
                 <Camera className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-400 text-lg">Belum ada foto untuk kategori ini.</p>
+                <p className="text-gray-400 text-lg">Belum ada foto.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-2">
                 {paged.map((img, i) => (
-                  <FadeIn key={`${img.id}-${activeCategory}-${page}`} delay={i * 0.05}>
-                    <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all overflow-hidden group cursor-pointer" onClick={() => { setLightboxIndex((page - 1) * GALLERY_PER_PAGE + i); setLightboxOpen(true); }}>
-                      {/* Thumbnail */}
-                      <div className="relative aspect-video overflow-hidden bg-gray-100">
+                  <FadeIn key={`${img.id}-${page}`} delay={i * 0.04}>
+                    <div className="break-inside-avoid mb-2 cursor-pointer group" onClick={() => { setLightboxIndex((page - 1) * GALLERY_PER_PAGE + i); setLightboxOpen(true); }}>
+                      <div className="relative rounded-lg overflow-hidden bg-gray-100">
                         <img
                           src={img.image}
                           alt={img.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          className="w-full h-auto object-cover group-hover:scale-[1.03] transition-transform duration-500"
                         />
-                      </div>
-                      {/* Info */}
-                      <div className="p-4">
-                        <h3 className="font-bold text-gray-900 text-sm mb-1 line-clamp-2 group-hover:text-gray-900 transition-colors">
-                          {img.title}
-                        </h3>
-                        {img.description && (
-                          <p className="text-xs text-gray-500 line-clamp-2">{img.description}</p>
-                        )}
-                        <div className="mt-2">
-                          <Badge variant="secondary" className="bg-gray-100 text-gray-600 text-[10px]">
-                            {CATEGORY_LABELS[img.category] || img.category}
-                          </Badge>
+                        {/* Hover overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                          <h3 className="text-white font-bold text-sm leading-tight line-clamp-2">{img.title}</h3>
+                          {img.description && (
+                            <p className="text-white/70 text-xs line-clamp-1 mt-0.5">{img.description}</p>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -4123,7 +4075,7 @@ function ProyekGallery() {
             <AnimatePresence>
               {lightboxOpen && (
                 <LightboxOverlay
-                  images={filteredPhotos.map((img) => img.image)}
+                  images={photos.map((img) => img.image)}
                   activeIndex={lightboxIndex}
                   onClose={() => setLightboxOpen(false)}
                 />
@@ -4132,50 +4084,43 @@ function ProyekGallery() {
           </>
         )}
 
-        {/* Video Tab Content */}
+        {/* Video Tab Content - Masonry Grid */}
         {activeTab === "video" && (
           <>
             {paged.length === 0 ? (
               <div className="text-center py-16">
                 <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                <p className="text-gray-400 text-lg">Belum ada video untuk kategori ini.</p>
+                <p className="text-gray-400 text-lg">Belum ada video.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-2">
                 {paged.map((item, i) => {
                   const embedUrl = getYoutubeEmbedUrl(item.videoUrl);
                   return (
-                    <FadeIn key={`${item.id}-${activeCategory}-${page}`} delay={i * 0.05}>
-                      <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all overflow-hidden group">
-                        {/* Thumbnail */}
-                        <div className="relative aspect-video overflow-hidden bg-gray-100">
-                          {embedUrl ? (
-                            <iframe
-                              src={embedUrl}
-                              title={item.title}
-                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                              allowFullScreen
-                              className="w-full h-full"
-                              loading="lazy"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <Camera className="w-10 h-10 text-gray-300" />
-                            </div>
-                          )}
-                        </div>
-                        {/* Info */}
-                        <div className="p-4">
-                          <h3 className="font-bold text-gray-900 text-sm mb-1 line-clamp-2 group-hover:text-gray-900 transition-colors">
-                            {item.title}
-                          </h3>
-                          {item.description && (
-                            <p className="text-xs text-gray-500 line-clamp-2">{item.description}</p>
-                          )}
-                          <div className="mt-2">
-                            <Badge variant="secondary" className="bg-gray-100 text-gray-600 text-[10px]">
-                              {CATEGORY_LABELS[item.category] || item.category}
-                            </Badge>
+                    <FadeIn key={`${item.id}-${page}`} delay={i * 0.04}>
+                      <div className="break-inside-avoid mb-2 group">
+                        <div className="relative rounded-lg overflow-hidden bg-gray-100">
+                          <div className="relative aspect-video">
+                            {embedUrl ? (
+                              <iframe
+                                src={embedUrl}
+                                title={item.title}
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                                className="w-full h-full"
+                                loading="lazy"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <Camera className="w-10 h-10 text-gray-300" />
+                              </div>
+                            )}
+                          </div>
+                          <div className="px-3 py-2 bg-white">
+                            <h3 className="font-bold text-gray-900 text-sm leading-tight line-clamp-1">{item.title}</h3>
+                            {item.description && (
+                              <p className="text-xs text-gray-500 line-clamp-1 mt-0.5">{item.description}</p>
+                            )}
                           </div>
                         </div>
                       </div>
