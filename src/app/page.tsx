@@ -617,15 +617,11 @@ function MarqueeStrip() {
 function VideoOverviewSection() {
   const { settings: S } = useSettingsStore();
   const videoUrl = S.hero_video_url;
-  const embedUrl = getYoutubeEmbedUrl(videoUrl);
   const [muted, setMuted] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
-  const videoId = embedUrl ? new URL(embedUrl).pathname.split('/').pop() : null;
-  const videoSrc = videoId
-    ? `${embedUrl}?autoplay=1&mute=${muted ? 1 : 0}&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&fs=0&disablekb=1&cc_load_policy=0&enablejsapi=1`
-    : null;
-
-  if (!videoSrc) return null;
+  // Only render if video URL exists and is NOT a YouTube URL
+  if (!videoUrl || videoUrl.includes("youtube.com") || videoUrl.includes("youtu.be")) return null;
 
   return (
     <section className="py-20 md:py-28 bg-white overflow-hidden">
@@ -646,22 +642,28 @@ function VideoOverviewSection() {
             <div className="absolute -inset-4 bg-gradient-to-r from-gray-200/50 via-gray-100 to-gray-200/50 rounded-3xl blur-2xl opacity-60 group-hover:opacity-80 transition-opacity duration-700" />
 
             {/* Video container */}
-            <div className="relative rounded-2xl overflow-hidden border border-gray-200 shadow-xl shadow-gray-200/50">
-              <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                <iframe
-                  key={muted ? 'muted' : 'unmuted'}
-                  src={videoSrc}
-                  title={`${S.company_name} - Video Overview`}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                  style={{ position: 'absolute', top: '-60px', left: 0, width: '100%', height: 'calc(100% + 120px)' }}
-                />
-              </div>
+            <div className="relative rounded-2xl overflow-hidden border border-gray-200 shadow-xl shadow-gray-200/50 bg-black">
+              <video
+                ref={videoRef}
+                src={videoUrl}
+                autoPlay
+                muted={muted}
+                loop
+                playsInline
+                preload="auto"
+                className="w-full aspect-video object-cover"
+              />
 
               {/* Mute/Unmute toggle */}
               <button
                 type="button"
-                onClick={() => setMuted(!muted)}
+                onClick={() => {
+                  const next = !muted;
+                  setMuted(next);
+                  if (videoRef.current) {
+                    videoRef.current.muted = next;
+                  }
+                }}
                 className="absolute bottom-4 right-4 z-10 w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm text-white flex items-center justify-center hover:bg-black/70 transition-colors"
                 title={muted ? "Nyalakan suara" : "Matikan suara"}
               >

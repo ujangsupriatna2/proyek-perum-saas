@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { Save, Loader2, Settings as SettingsIcon, Phone, Globe, AlertCircle, MapPin, Building2, ImagePlus, X, Upload, Handshake, Youtube } from "lucide-react";
+import { Save, Loader2, Settings as SettingsIcon, Phone, Globe, AlertCircle, MapPin, Building2, ImagePlus, X, Upload, Handshake, Youtube, FileVideo } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,7 +21,7 @@ import {
 
 const IMAGE_KEYS = ["hero_bg_image", "location_bg_image"];
 
-const SETTINGS_GROUPS: { title: string; group: string; icon: React.ElementType; fields: { key: string; label: string; type?: "text" | "textarea" | "url" | "number" | "image"; placeholder?: string }[] }[] = [
+const SETTINGS_GROUPS: { title: string; group: string; icon: React.ElementType; fields: { key: string; label: string; type?: "text" | "textarea" | "url" | "number" | "image" | "video"; placeholder?: string }[] }[] = [
   {
     title: "Perusahaan",
     group: "company",
@@ -74,7 +74,7 @@ const SETTINGS_GROUPS: { title: string; group: string; icon: React.ElementType; 
     group: "video",
     icon: Youtube,
     fields: [
-      { key: "hero_video_url", label: "Link Video YouTube (Overview / Company Profile)", type: "url", placeholder: "https://www.youtube.com/watch?v=..." },
+      { key: "hero_video_url", label: "Video Overview (Company Profile)", type: "video" },
     ],
   },
 ];
@@ -158,6 +158,111 @@ function ImageUploadField({ fieldKey, label, value, onChange }: {
               <ImagePlus className="w-8 h-8" />
               <span className="text-sm font-medium">Klik untuk upload gambar</span>
               <span className="text-xs text-gray-400">JPG, PNG, WebP (max 300KB)</span>
+            </>
+          )}
+        </button>
+      )}
+    </div>
+  );
+}
+
+function VideoUploadField({ fieldKey, label, value, onChange }: {
+  fieldKey: string; label: string; value: string; onChange: (key: string, val: string) => void;
+}) {
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState("");
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("video/")) {
+      toast.error("File harus berupa video (MP4, WebM, OGG)");
+      return;
+    }
+    if (file.size > 100 * 1024 * 1024) {
+      toast.error("Ukuran video maksimal 100MB");
+      return;
+    }
+    setUploading(true);
+    setUploadProgress("Mengupload video...");
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const data = await res.json();
+      if (!res.ok) { toast.error(data.error || "Upload gagal"); return; }
+      onChange(fieldKey, data.url);
+      const mb = (data.originalSize / (1024 * 1024)).toFixed(1);
+      setUploadProgress("");
+      toast.success(`Video berhasil diupload (${mb}MB)`);
+    } catch {
+      toast.error("Gagal mengupload video");
+    } finally {
+      setUploading(false);
+      setUploadProgress("");
+      if (fileRef.current) fileRef.current.value = "";
+    }
+  };
+
+  const handleRemove = () => {
+    onChange(fieldKey, "");
+  };
+
+  return (
+    <div className="space-y-2">
+      <Label className="text-sm font-medium text-gray-700">{label}</Label>
+      <input ref={fileRef} type="file" accept="video/mp4,video/webm,video/ogg" onChange={handleUpload} className="hidden" />
+      {value ? (
+        <div className="relative group rounded-xl overflow-hidden border border-gray-200">
+          <video
+            src={value}
+            className="w-full h-48 object-cover"
+            muted
+            playsInline
+            preload="metadata"
+          />
+          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              className="gap-1.5"
+              onClick={() => fileRef.current?.click()}
+              disabled={uploading}
+            >
+              {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+              Ganti
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              size="sm"
+              className="gap-1.5"
+              onClick={handleRemove}
+            >
+              <X className="w-3.5 h-3.5" />
+              Hapus
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => fileRef.current?.click()}
+          disabled={uploading}
+          className="w-full h-48 border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center gap-2 text-gray-400 hover:border-gray-500 hover:text-gray-600 transition-colors cursor-pointer disabled:opacity-50"
+        >
+          {uploading ? (
+            <>
+              <Loader2 className="w-8 h-8 animate-spin" />
+              <span className="text-sm font-medium">{uploadProgress}</span>
+            </>
+          ) : (
+            <>
+              <FileVideo className="w-8 h-8" />
+              <span className="text-sm font-medium">Klik untuk upload video</span>
+              <span className="text-xs text-gray-400">MP4, WebM, OGG (maks 100MB)</span>
             </>
           )}
         </button>
@@ -352,6 +457,14 @@ export default function PengaturanPage() {
                   <div key={field.key}>
                     {field.type === "image" ? (
                       <ImageUploadField
+                        key={field.key}
+                        fieldKey={field.key}
+                        label={field.label}
+                        value={settings[field.key] || ""}
+                        onChange={handleChange}
+                      />
+                    ) : field.type === "video" ? (
+                      <VideoUploadField
                         key={field.key}
                         fieldKey={field.key}
                         label={field.label}

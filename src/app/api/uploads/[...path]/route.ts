@@ -11,6 +11,9 @@ const FALLBACK_TYPES: Record<string, string> = {
   ".webp": "image/webp",
   ".gif": "image/gif",
   ".svg": "image/svg+xml",
+  ".mp4": "video/mp4",
+  ".webm": "video/webm",
+  ".ogg": "video/ogg",
 };
 
 function getContentType(filename: string): string {
