@@ -5633,6 +5633,65 @@ function MitraPage() {
             </p>
           </FadeIn>
 
+          {/* Stats row */}
+          <FadeIn delay={0.1}>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
+              {[
+                { value: `${S.total_units_sold}+`, label: "Unit Terjual", icon: Home },
+                { value: `${mitraList.length || "3"}+`, label: "Mitra Developer", icon: Building2 },
+                { value: "10+", label: "Proyek Perumahan", icon: LandPlot },
+                { value: "100%", label: "Legalitas Terverifikasi", icon: Shield },
+              ].map((stat, i) => (
+                <div key={i} className="bg-white rounded-2xl border border-gray-100 p-5 text-center shadow-sm hover:shadow-md transition-all group">
+                  <stat.icon className="w-5 h-5 text-gray-400 mx-auto mb-2 group-hover:text-gray-600 transition-colors" />
+                  <p className="text-2xl font-black text-gray-900">{stat.value}</p>
+                  <p className="text-xs text-gray-500 mt-1">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+          </FadeIn>
+
+          {/* Why join as mitra */}
+          <FadeIn delay={0.15} className="mb-16">
+            <div className="text-center mb-10">
+              <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Keunggulan Bergabung</span>
+              <h2 className="text-2xl md:text-3xl font-black text-gray-900 mt-3 mb-3 tracking-tight">
+                Kenapa Developer <span className="text-gradient-gray">Memilih Kami</span>?
+              </h2>
+              <p className="text-gray-500 max-w-xl mx-auto">
+                Platform yang memfasilitasi developer untuk menjangkau lebih banyak calon pembeli.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                {
+                  icon: TrendingUp,
+                  title: "Jangkauan Pemasaran Luas",
+                  desc: "Proyek Anda dipromosikan ke ribuan calon pembeli melalui platform digital kami. Branding profesional tanpa biaya marketing besar.",
+                },
+                {
+                  icon: Shield,
+                  title: "Verifikasi & Kepercayaan",
+                  desc: "Status terverifikasi meningkatkan kepercayaan pembeli. Tim kami bantu verifikasi legalitas dan dokumentasi proyek Anda.",
+                },
+                {
+                  icon: Users,
+                  title: "Pendampingan Penuh",
+                  desc: "Dari listing proyek, konsultasi KPR/Syariah, hingga serah terima. Tim marketing kami siap bantu closing pembeli.",
+                },
+              ].map((item, i) => (
+                <div key={i} className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-lg transition-all group hover:-translate-y-0.5">
+                  <div className="w-12 h-12 rounded-xl bg-gray-900 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+                    <item.icon className="w-6 h-6 text-white" />
+                  </div>
+                  <h3 className="font-bold text-gray-900 text-lg mb-2">{item.title}</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </FadeIn>
+
+          {/* Mitra Cards */}
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {Array.from({ length: 3 }).map((_, i) => (
@@ -5719,7 +5778,7 @@ function MitraPage() {
                           {mitra.email && (
                             <a
                               href={`mailto:${mitra.email}`}
-                              className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-gray-50 text-blue-700 hover:bg-blue-100 transition-colors"
+                              className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 transition-colors"
                             >
                               <MessageSquare className="w-3 h-3" /> Email
                             </a>
@@ -5732,32 +5791,80 @@ function MitraPage() {
               ))}
             </div>
           )}
-        </div>
-      </section>
 
-      {/* CTA — Bergabung sebagai Mitra */}
-      <section className="py-20 md:py-28 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-72 h-72 bg-gray-1000/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-gray-500/10 rounded-full blur-3xl" />
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <FadeIn>
-            <span className="text-gray-500 text-xs font-bold uppercase tracking-[0.3em]">Bergabunglah</span>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-white mt-3 mb-4 tracking-tight">
-              Tertarik Bergabung sebagai <span className="text-gray-300">Mitra Developer</span>?
-            </h2>
-            <p className="text-gray-400 text-lg leading-relaxed mb-8 max-w-2xl mx-auto">
-              Jika Anda adalah developer perumahan dengan legalitas lengkap dan track record baik,
-              bergabunglah dengan {S.company_name} untuk memperluas jangkauan pemasaran Anda.
-            </p>
-            <a
-              href={`https://wa.me/${S.contact_wa}?text=Halo,%20saya%20tertarik%20bergabung%20sebagai%20mitra%20developer`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-gray-900 font-bold rounded-2xl shadow-2xl hover:bg-gray-100 transition-all active:scale-95 text-lg"
-            >
-              Hubungi Kami
-              <ArrowRight className="w-5 h-5" />
-            </a>
+          {/* Proses Bergabung */}
+          <FadeIn delay={0.1} className="mt-20">
+            <div className="text-center mb-12">
+              <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Proses Bergabung</span>
+              <h2 className="text-2xl md:text-3xl font-black text-gray-900 mt-3 mb-3 tracking-tight">
+                Cara Menjadi <span className="text-gradient-gray">Mitra Developer</span>
+              </h2>
+              <p className="text-gray-500 max-w-xl mx-auto">
+                Proses kurasi yang transparan untuk menjaga kualitas setiap mitra di platform kami.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                { num: "01", title: "Ajukan Pendaftaran", desc: "Hubungi tim kami dan sampaikan profil developer Anda beserta portofolio proyek.", icon: MessageCircle },
+                { num: "02", title: "Verifikasi Legalitas", desc: "Tim kami akan memverifikasi legalitas: SHM, IMB/PBG, perizinan, dan track record perusahaan.", icon: FileText },
+                { num: "03", title: "Onboarding & Listing", desc: "Setelah lolos verifikasi, proyek Anda akan langsung listing di platform kami.", icon: Building2 },
+                { num: "04", title: "Mulai Terima Lead", desc: "Calon pembeli mulai menghubungi. Tim marketing membantu proses closing dan KPR.", icon: Handshake },
+              ].map((step, i) => (
+                <div key={i} className="relative text-center group">
+                  {i < 3 && (
+                    <div className="hidden lg:block absolute top-10 left-[60%] w-[80%] h-px bg-gray-200" />
+                  )}
+                  <div className="w-20 h-20 mx-auto rounded-2xl bg-white border border-gray-100 shadow-sm flex items-center justify-center mb-4 group-hover:shadow-md group-hover:border-gray-200 transition-all">
+                    <step.icon className="w-8 h-8 text-gray-400 group-hover:text-gray-700 transition-colors" />
+                  </div>
+                  <span className="text-xs font-bold text-gray-300 tracking-widest">{step.num}</span>
+                  <h4 className="font-bold text-gray-900 mt-1 mb-1.5">{step.title}</h4>
+                  <p className="text-gray-500 text-sm leading-relaxed">{step.desc}</p>
+                </div>
+              ))}
+            </div>
+          </FadeIn>
+
+          {/* CTA Section */}
+          <FadeIn delay={0.15} className="mt-20">
+            <div className="relative bg-gray-950 rounded-3xl overflow-hidden p-8 md:p-12 text-center">
+              <motion.div
+                animate={{ y: [0, -15, 10, 0], x: [0, 12, -8, 0] }}
+                transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute top-[-20%] right-[-10%] w-[300px] h-[300px] rounded-full bg-gray-800/30 blur-3xl"
+              />
+              <motion.div
+                animate={{ y: [0, 10, -15, 0], x: [0, -8, 12, 0] }}
+                transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute bottom-[-20%] left-[-10%] w-[250px] h-[250px] rounded-full bg-gray-700/20 blur-3xl"
+              />
+              <div className="relative">
+                <h3 className="text-2xl md:text-3xl font-black text-white mb-3">
+                  Tertarik Bergabung sebagai Mitra?
+                </h3>
+                <p className="text-gray-400 max-w-lg mx-auto mb-8">
+                  Jika Anda developer perumahan dengan legalitas lengkap dan track record baik, bergabunglah dengan {S.company_name} untuk memperluas jangkauan pemasaran Anda.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <a
+                    href={`https://wa.me/${S.contact_wa}?text=${encodeURIComponent("Halo, saya tertarik bergabung sebagai mitra developer. Mohon info persyaratan dan prosesnya.")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-white text-gray-900 font-bold rounded-xl shadow-lg hover:bg-gray-100 transition-all hover:shadow-xl active:scale-95"
+                  >
+                    <MessageCircle className="w-5 h-5" />
+                    Daftar via WhatsApp
+                  </a>
+                  <a
+                    href={`tel:${S.contact_phone}`}
+                    className="inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-gray-800 text-white font-bold rounded-xl hover:bg-gray-700 transition-all active:scale-95"
+                  >
+                    <Phone className="w-5 h-5" />
+                    Hubungi Kami
+                  </a>
+                </div>
+              </div>
+            </div>
           </FadeIn>
         </div>
       </section>
