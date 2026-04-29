@@ -390,16 +390,14 @@ function Navbar({ activeTab }: { activeTab: string }) {
                   onClick={(e) => { e.preventDefault(); handleNav(link.tab); }}
                   className={`px-4 py-2 text-[13px] font-medium rounded-lg transition-all relative ${
                     isActive
-                      ? isSolid
-                        ? "text-gray-900"
-                        : "text-white"
+                      ? "text-gray-900"
                       : isSolid
                         ? "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
-                        : "text-white/80 hover:text-white"
+                        : "text-white/80 hover:text-white hover:bg-white/10"
                   }`}
                 >
                   {link.label}
-                  {isActive && <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-5 h-0.5 rounded-full ${isSolid ? 'bg-gray-900' : 'bg-white'}`} />}
+                  {isActive && <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-5 h-0.5 rounded-full bg-gray-900" />}
                 </a>
               );
             })}
@@ -450,7 +448,7 @@ function Navbar({ activeTab }: { activeTab: string }) {
                     key={link.tab}
                     onClick={() => handleNav(link.tab)}
                     className={`px-4 py-3 font-medium rounded-xl transition-colors text-left ${
-                      isActive ? "bg-gray-100 text-gray-900" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                      isActive ? "bg-gray-900 text-white" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                     }`}
                   >
                     {link.label}
