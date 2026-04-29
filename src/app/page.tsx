@@ -5542,32 +5542,38 @@ function ServiceDetailPage({ slug }: { slug: string }) {
 function JasaListingSection() {
   const { services, fetchServices } = useServiceStore();
   const [page, setPage] = useState(1);
-  const [activeCategory, setActiveCategory] = useState("all");
+  const [showFilter, setShowFilter] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   useEffect(() => {
     fetchServices();
   }, [fetchServices]);
 
   // Extract unique categories
-  const categories = ["all", ...Array.from(new Set(services.map((s) => s.category).filter(Boolean)))];
-  const categoryLabels: Record<string, string> = {
-    all: "Semua",
-  };
+  const categories = Array.from(new Set(services.map((s) => s.category).filter(Boolean)));
+  const categoryLabels: Record<string, string> = {};
   categories.forEach((c) => {
-    if (c !== "all" && !categoryLabels[c]) {
-      categoryLabels[c] = c.charAt(0).toUpperCase() + c.slice(1).replace(/[_-]/g, " ");
-    }
+    categoryLabels[c] = c.charAt(0).toUpperCase() + c.slice(1).replace(/[_-]/g, " ");
   });
 
-  const filtered = activeCategory === "all"
-    ? services
-    : services.filter((s) => s.category === activeCategory);
+  const toggleCheckbox = (arr: string[], setArr: (v: string[]) => void, val: string) => {
+    setArr(arr.includes(val) ? arr.filter((v) => v !== val) : [...arr, val]);
+  };
 
-  // Reset page when category changes
-  useEffect(() => { setPage(1); }, [activeCategory]);
+  const filtered = selectedCategories.length === 0
+    ? services
+    : services.filter((s) => selectedCategories.includes(s.category));
+
+  // Reset page when filter changes
+  const filterKey = selectedCategories.join(",");
+  useEffect(() => { setPage(1); }, [filterKey]);
 
   const totalPages = Math.ceil(filtered.length / JASA_PER_PAGE);
   const paged = filtered.slice((page - 1) * JASA_PER_PAGE, page * JASA_PER_PAGE);
+
+  // Checkbox styles
+  const cbBase = "w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900 focus:ring-offset-0 cursor-pointer transition-colors";
+  const cbLabel = "text-sm text-gray-600 cursor-pointer select-none hover:text-gray-900 transition-colors";
 
   return (
     <section className="py-20 md:py-28 bg-section-gray relative overflow-hidden">
@@ -5590,22 +5596,74 @@ function JasaListingSection() {
           </p>
         </FadeIn>
 
-        {/* Category Filter */}
-        <FadeIn delay={0.1} className="flex flex-wrap justify-center gap-2 mb-10">
-          {categories.map((cat) => (
+        {/* Filter Toggle Button */}
+        <FadeIn delay={0.1} className="mb-6">
+          <button
+            onClick={() => setShowFilter(!showFilter)}
+            className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-white border border-gray-200 text-sm font-medium text-gray-700 hover:border-gray-300 hover:text-gray-900 hover:shadow-sm transition-all"
+          >
+            <SlidersHorizontal className="w-4 h-4" />
+            <span>{showFilter ? "Sembunyikan Filter" : "Tampilkan Filter"}</span>
+            {selectedCategories.length > 0 && (
+              <span className="ml-1 px-2 py-0.5 bg-gray-900 text-white text-xs font-bold rounded-full">
+                {selectedCategories.length}
+              </span>
+            )}
+          </button>
+          {selectedCategories.length > 0 && (
             <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                activeCategory === cat
-                  ? "bg-gray-900 text-white"
-                  : "bg-white text-gray-500 border border-gray-200 hover:border-gray-300 hover:text-gray-900"
-              }`}
+              onClick={() => setSelectedCategories([])}
+              className="ml-3 text-xs text-gray-400 hover:text-gray-600 underline underline-offset-2 transition-colors"
             >
-              {categoryLabels[cat]}
+              Reset semua
             </button>
-          ))}
+          )}
         </FadeIn>
+
+        {/* Filter Panel */}
+        <AnimatePresence>
+          {showFilter && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="overflow-hidden mb-10"
+            >
+              <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-10">
+                  {/* Kategori */}
+                  <div>
+                    <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider">Kategori Jasa</h4>
+                    <div className="space-y-3">
+                      {categories.length > 0 ? categories.map((cat) => (
+                        <label key={cat} className="flex items-center gap-3 group">
+                          <input
+                            type="checkbox"
+                            checked={selectedCategories.includes(cat)}
+                            onChange={() => toggleCheckbox(selectedCategories, setSelectedCategories, cat)}
+                            className={cbBase}
+                          />
+                          <span className={cbLabel}>{categoryLabels[cat]}</span>
+                        </label>
+                      )) : (
+                        <p className="text-sm text-gray-400 italic">Belum ada kategori</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Results count */}
+        <div className="mb-6 text-sm text-gray-400">
+          Menampilkan <span className="font-semibold text-gray-700">{filtered.length}</span> jasa
+          {selectedCategories.length > 0 && (
+            <span> dengan <span className="font-semibold text-gray-700">{selectedCategories.length}</span> filter aktif</span>
+          )}
+        </div>
 
         {/* Service cards */}
         {paged.length > 0 ? (
