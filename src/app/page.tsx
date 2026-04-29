@@ -144,7 +144,7 @@ const FEATURES_TENTANG = [
       "Penilaian kinerja developer setiap kuartal",
     ],
     proof: "Hanya developer dengan track record minimal 2 tahun dan legalitas lengkap yang diterima bergabung",
-    gradient: "from-green-500 to-green-600",
+    gradient: "from-gray-700 to-gray-800",
   },
   {
     icon: Building2,
@@ -1607,19 +1607,33 @@ function BlogPreviewSection() {
 
 /* ─────────────────────────── PAGE BANNER ─────────────────────────── */
 
-function PageBanner({ title, subtitle, bgImage }: { title: string; subtitle?: string; bgImage?: string }) {
+function PageBanner({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
-    <section className="relative h-[40vh] min-h-[280px] flex items-center overflow-hidden bg-gray-950">
-      <div className="absolute inset-0">
-        <img src={bgImage || "/images/properties/hero_cover.png"} alt={title} className="w-full h-full object-cover opacity-40" />
-      </div>
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="h-px w-10 bg-gray-400" />
-            <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.2em]">{subtitle}</span>
+    <section className="relative py-24 md:py-32 flex items-center justify-center overflow-hidden bg-gray-950">
+      {/* Animated gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950" />
+      {/* Animated floating orbs */}
+      <motion.div
+        animate={{ scale: [1, 1.2, 1], opacity: [0.03, 0.06, 0.03] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-white blur-3xl"
+      />
+      <motion.div
+        animate={{ scale: [1.2, 1, 1.2], opacity: [0.04, 0.02, 0.04] }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-white blur-3xl"
+      />
+      {/* Subtle grid pattern */}
+      <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.5) 1px, transparent 0)', backgroundSize: '40px 40px' }} />
+
+      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <div className="h-px w-10 bg-gray-500" />
+            <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.25em]">{subtitle}</span>
+            <div className="h-px w-10 bg-gray-500" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-black text-white leading-tight">{title}</h1>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight">{title}</h1>
         </motion.div>
       </div>
     </section>
@@ -2391,7 +2405,7 @@ function DetailSimulasiCicilan({ property }: { property: Property }) {
           href={`https://wa.me/${S.contact_wa}?text=Halo,%20saya%20tertarik%20simulasi%20cicilan:%0AProperti:%20${encodeURIComponent(property.name)}%0AHarga:%20Rp%20${property.price}%20Juta%0ATipe:%20${isKpr ? "KPR" : "Syariah"}%0ADP:%20${encodeURIComponent(formatDpLabel(dpNum))}%0ATenor:%20${tenor}%20tahun%0ACicilan:%20Rp%20${formatRp(monthly * 1_000_000)}/bulan`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition-colors"
+          className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-lg hover:bg-gray-800 transition-colors"
         >
           <MessageCircle className="w-4 h-4" />
           Konsultasi via WhatsApp
@@ -2455,10 +2469,10 @@ function PropertyDetailDialog({
               )}
               <div className="flex gap-1">
                 {(property.financingTypes ?? []).includes("syariah") && (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-green-100 text-gray-600">Syariah</span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-600">Syariah</span>
                 )}
                 {(property.financingTypes ?? []).includes("kpr") && (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-700">KPR Bank</span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-gray-200 text-gray-700">KPR Bank</span>
                 )}
               </div>
             </div>
@@ -3047,65 +3061,114 @@ function CalculatorSection() {
 function LocationSection() {
   const { settings: S } = useSettingsStore();
   return (
-    <section className="py-20 md:py-28 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <FadeIn direction="left">
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-              <img
-                src={S.location_bg_image || "/images/location.png"}
-                alt={`Lokasi ${S.company_name}`}
-                className="w-full h-[400px] object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-              <div className="absolute bottom-6 left-6 right-6">
-                <div className="flex items-center gap-2 text-white">
-                  <MapPin className="w-5 h-5 text-gray-400" />
-                  <span className="font-bold text-lg">{S.contact_address}</span>
+    <section className="py-20 md:py-28 bg-white relative overflow-hidden">
+      {/* Animated background decoration */}
+      <div className="absolute top-0 right-0 w-72 h-72 bg-gray-100/50 rounded-full blur-3xl" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-gray-100/50 rounded-full blur-3xl" />
+
+      <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <FadeIn className="text-center mb-14">
+          <Badge variant="secondary" className="mb-4 bg-gray-100 text-gray-600 border-gray-200">
+            <MapPin className="w-3.5 h-3.5 mr-1.5" />
+            Lokasi Strategis
+          </Badge>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
+            Berlokasi di <span className="text-gray-900">Jantung Bandung</span>
+          </h2>
+          <p className="text-gray-500 text-lg mb-8 leading-relaxed max-w-2xl mx-auto">
+            {S.company_name} berlokasi di {S.contact_address} dengan akses mudah ke berbagai fasilitas penting.
+          </p>
+        </FadeIn>
+
+        <FadeIn delay={0.15} className="mb-14">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {[
+              { icon: Building2, text: "Dekat Pusat Kota" },
+              { icon: Home, text: "Dekat Sekolah & Kampus" },
+              { icon: Heart, text: "Dekat Rumah Sakit" },
+              { icon: Car, text: "Akses Tol & Jalan Utama" },
+              { icon: Users, text: "Dekat Pusat Perbelanjaan" },
+              { icon: TreePine, text: "Lingkungan Asri & Hijau" },
+            ].map((item, i) => (
+              <motion.div
+                key={item.text}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: i * 0.08 }}
+                className="flex flex-col items-center gap-2.5 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors group"
+              >
+                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm group-hover:shadow-md group-hover:scale-110 transition-all">
+                  <item.icon className="w-5 h-5 text-gray-700" />
                 </div>
+                <span className="text-sm font-medium text-gray-600 text-center">{item.text}</span>
+              </motion.div>
+            ))}
+          </div>
+        </FadeIn>
+
+        {/* Contact cards centered */}
+        <FadeIn delay={0.25}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <a
+              href={`https://wa.me/${S.contact_wa}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col items-center gap-2.5 p-5 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-gray-100 hover:border-gray-200 transition-all group"
+            >
+              <div className="w-11 h-11 bg-gray-900 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                <MessageCircle className="w-5 h-5 text-white" />
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">WhatsApp</p>
+                <p className="font-bold text-gray-900 text-sm">{S.contact_phone}</p>
+              </div>
+            </a>
+
+            <a
+              href={`tel:${S.contact_phone.replace(/-/g, "")}`}
+              className="flex flex-col items-center gap-2.5 p-5 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-gray-100 hover:border-gray-200 transition-all group"
+            >
+              <div className="w-11 h-11 bg-gray-700 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Phone className="w-5 h-5 text-white" />
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Telepon</p>
+                <p className="font-bold text-gray-900 text-sm">{S.contact_phone}</p>
+              </div>
+            </a>
+
+            <a
+              href={`https://instagram.com/${S.social_instagram}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col items-center gap-2.5 p-5 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-gray-100 hover:border-gray-200 transition-all group"
+            >
+              <div className="w-11 h-11 bg-gray-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Instagram className="w-5 h-5 text-white" />
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Instagram</p>
+                <p className="font-bold text-gray-900 text-sm">{`@${S.social_instagram}`}</p>
+              </div>
+            </a>
+
+            <div className="flex flex-col items-center gap-2.5 p-5 bg-gray-50 border border-gray-100 rounded-2xl">
+              <div className="w-11 h-11 bg-gray-500 rounded-xl flex items-center justify-center">
+                <MapPin className="w-5 h-5 text-white" />
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Alamat</p>
+                <p className="font-bold text-gray-900 text-sm leading-tight">{S.contact_address}</p>
               </div>
             </div>
-          </FadeIn>
+          </div>
+        </FadeIn>
 
-          <FadeIn direction="right">
-            <Badge
-              variant="secondary"
-              className="mb-4 bg-gray-100 text-gray-600 border-gray-200"
-            >
-              <MapPin className="w-3.5 h-3.5 mr-1.5" />
-              Lokasi Strategis
-            </Badge>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-6">
-              Berlokasi di <span className="text-gray-900">Jantung Bandung</span>
-            </h2>
-            <p className="text-gray-500 text-lg mb-8 leading-relaxed">
-              {S.company_name} berlokasi di {S.contact_address} dengan akses mudah ke berbagai fasilitas penting.
-            </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {[
-                { icon: Building2, text: "Dekat Pusat Kota" },
-                { icon: Home, text: "Dekat Sekolah & Kampus" },
-                { icon: Heart, text: "Dekat Rumah Sakit" },
-                { icon: Car, text: "Akses Tol & Jalan Utama" },
-                { icon: Users, text: "Dekat Pusat Perbelanjaan" },
-                { icon: TreePine, text: "Lingkungan Asri & Hijau" },
-              ].map((item) => (
-                <div
-                  key={item.text}
-                  className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl"
-                >
-                  <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <item.icon className="w-5 h-5 text-gray-900" />
-                  </div>
-                  <span className="text-sm font-medium text-gray-700">
-                    {item.text}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </FadeIn>
-        </div>
+        {/* Map */}
+        <FadeIn delay={0.35} className="mt-12">
+          <MapWrapper latitude={S.map_latitude} longitude={S.map_longitude} companyName={S.company_name} />
+        </FadeIn>
       </div>
     </section>
   );
@@ -3133,187 +3196,160 @@ function ContactSection() {
   };
 
   return (
-    <section className="py-20 md:py-28 bg-section-gray">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 md:py-28 bg-section-gray relative overflow-hidden">
+      {/* Animated background */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-gray-200/30 rounded-full blur-3xl" />
+
+      <div className="relative max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-12">
-          <Badge
-            variant="secondary"
-            className="mb-4 bg-gray-100 text-gray-600 border-gray-200"
-          >
+          <Badge variant="secondary" className="mb-4 bg-gray-100 text-gray-600 border-gray-200">
             <Phone className="w-3.5 h-3.5 mr-1.5" />
             Hubungi Kami
           </Badge>
           <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-            Kami Siap <span className="text-gray-900">Membantu</span> Anda
+            Tim Marketing Kami Siap <span className="text-gray-900">Melayani</span> Anda
           </h2>
-          <p className="text-gray-500 max-w-2xl mx-auto text-lg">
-            Isi form di bawah atau hubungi kami langsung. Pesan Anda akan dikirim ke WhatsApp kami.
+          <p className="text-gray-500 max-w-xl mx-auto text-lg">
+            Isi form di bawah, pesan otomatis dikirim ke WhatsApp kami.
           </p>
         </FadeIn>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-          {/* Contact Info */}
-          <FadeIn delay={0.1} className="lg:col-span-2 flex flex-col gap-4">
+        {/* Contact Form - centered */}
+        <FadeIn delay={0.1}>
+          <Card className="border-0 shadow-xl">
+            <CardContent className="p-6 md:p-8">
+              <div className="flex items-center justify-center gap-3 mb-8">
+                <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center shadow-md">
+                  <Send className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900">Kirim Pesan via WhatsApp</h3>
+                  <p className="text-xs text-gray-400">Respon cepat dari tim marketing kami</p>
+                </div>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">
+                      Nama Lengkap <span className="text-gray-500">*</span>
+                    </Label>
+                    <div className="relative">
+                      <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <Input
+                        required
+                        placeholder="Masukkan nama Anda"
+                        value={formData.nama}
+                        onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+                        className="pl-11 h-11 rounded-xl border-gray-200 shadow-sm focus:ring-gray-400 focus:border-gray-400"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">
+                      Nomor WhatsApp <span className="text-gray-500">*</span>
+                    </Label>
+                    <div className="relative">
+                      <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <Input
+                        required
+                        type="tel"
+                        placeholder="08xxxxxxxxxx"
+                        value={formData.nomor}
+                        onChange={(e) => setFormData({ ...formData, nomor: e.target.value })}
+                        className="pl-11 h-11 rounded-xl border-gray-200 shadow-sm focus:ring-gray-400 focus:border-gray-400"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="text-sm font-semibold text-gray-700 mb-2 block">
+                    Saya Tertarik Dengan
+                  </Label>
+                  <Select value={formData.minat} onValueChange={(v) => setFormData({ ...formData, minat: v })}>
+                    <SelectTrigger className="h-11 rounded-xl border-gray-200 shadow-sm focus:ring-gray-400 focus:border-gray-400">
+                      <SelectValue placeholder="Pilih topik..." />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl">
+                      <SelectItem value="Info Properti" className="py-2.5 rounded-lg">Info Properti / Tipe Rumah</SelectItem>
+                      <SelectItem value="Simulasi Cicilan" className="py-2.5 rounded-lg">Simulasi Cicilan</SelectItem>
+                      <SelectItem value="Jadwal Survey" className="py-2.5 rounded-lg">Jadwal Survey Lokasi</SelectItem>
+                      <SelectItem value="Syariah" className="py-2.5 rounded-lg">Skema Pembayaran Syariah</SelectItem>
+                      <SelectItem value="KPR" className="py-2.5 rounded-lg">Skema Pembayaran KPR Bank</SelectItem>
+                      <SelectItem value="Promo" className="py-2.5 rounded-lg">Info Promo / Diskon</SelectItem>
+                      <SelectItem value="Lainnya" className="py-2.5 rounded-lg">Lainnya</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label className="text-sm font-semibold text-gray-700 mb-2 block">
+                    Pesan <span className="text-gray-500">*</span>
+                  </Label>
+                  <Textarea
+                    required
+                    rows={4}
+                    placeholder="Tulis pesan atau pertanyaan Anda di sini..."
+                    value={formData.pesan}
+                    onChange={(e) => setFormData({ ...formData, pesan: e.target.value })}
+                    className="resize-none rounded-xl border-gray-200 shadow-sm focus:ring-gray-400 focus:border-gray-400"
+                  />
+                </div>
+
+                {sent && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center justify-center gap-2 p-3 bg-gray-50 border border-gray-200 rounded-xl"
+                  >
+                    <CheckCircle2 className="w-5 h-5 text-gray-600 shrink-0" />
+                    <p className="text-sm text-gray-600 font-medium">Pesan berhasil dikirim ke WhatsApp!</p>
+                  </motion.div>
+                )}
+
+                <button
+                  type="submit"
+                  className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-gray-900 text-white font-bold rounded-xl hover:bg-gray-800 transition-all active:scale-[0.98] shadow-lg hover:shadow-xl text-base"
+                >
+                  <Send className="w-5 h-5" />
+                  Kirim via WhatsApp
+                </button>
+              </form>
+            </CardContent>
+          </Card>
+        </FadeIn>
+
+        {/* Quick contact buttons - centered */}
+        <FadeIn delay={0.2} className="mt-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <a
               href={`https://wa.me/${S.contact_wa}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-4 p-5 bg-gray-50 border border-gray-200 rounded-2xl hover:bg-gray-100 transition-colors group"
+              className="flex items-center justify-center gap-2.5 py-3 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors shadow-sm"
             >
-              <div className="w-12 h-12 bg-gray-500 rounded-xl flex items-center justify-center shadow-md  group-hover:scale-105 transition-transform">
-                <MessageCircle className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-xs text-gray-600 font-semibold uppercase tracking-wider">WhatsApp</p>
-                <p className="font-bold text-gray-900">{S.contact_phone}</p>
-                <p className="text-xs text-gray-400">({S.contact_person})</p>
-              </div>
+              <MessageCircle className="w-4 h-4" />
+              WhatsApp
             </a>
-
             <a
               href={`tel:${S.contact_phone.replace(/-/g, "")}`}
-              className="flex items-center gap-4 p-5 bg-gray-100 border border-gray-200 rounded-2xl hover:bg-gray-100 transition-colors group"
+              className="flex items-center justify-center gap-2.5 py-3 bg-gray-700 text-white font-semibold rounded-xl hover:bg-gray-600 transition-colors shadow-sm"
             >
-              <div className="w-12 h-12 bg-gray-1000 rounded-xl flex items-center justify-center shadow-md  group-hover:scale-105 transition-transform">
-                <Phone className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-xs text-gray-900 font-semibold uppercase tracking-wider">Telepon</p>
-                <p className="font-bold text-gray-900">{S.contact_phone}</p>
-                <p className="text-xs text-gray-400">Senin - Sabtu</p>
-              </div>
+              <Phone className="w-4 h-4" />
+              Telepon
             </a>
-
             <a
               href={`https://instagram.com/${S.social_instagram}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-4 p-5 bg-gray-50 border border-gray-200 rounded-2xl hover:bg-gray-100 transition-colors group"
+              className="flex items-center justify-center gap-2.5 py-3 bg-gray-500 text-white font-semibold rounded-xl hover:bg-gray-400 transition-colors shadow-sm"
             >
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-md  group-hover:scale-105 transition-transform">
-                <Instagram className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-xs text-gray-600 font-semibold uppercase tracking-wider">Instagram</p>
-                <p className="font-bold text-gray-900">{`@${S.social_instagram}`}</p>
-                <p className="text-xs text-gray-400">Follow untuk update</p>
-              </div>
+              <Instagram className="w-4 h-4" />
+              Instagram
             </a>
-
-            <div className="flex items-center gap-4 p-5 bg-gray-50 border border-gray-200 rounded-2xl">
-              <div className="w-12 h-12 bg-gradient-to-br from-gray-600 to-gray-700 rounded-xl flex items-center justify-center shadow-md ">
-                <MapPin className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-xs text-gray-700 font-semibold uppercase tracking-wider">Alamat</p>
-                <p className="font-bold text-gray-900">{S.company_name}</p>
-                <p className="text-xs text-gray-400">{S.contact_address}</p>
-              </div>
-            </div>
-          </FadeIn>
-
-          {/* Contact Form */}
-          <FadeIn delay={0.2} className="lg:col-span-3">
-            <Card className="border-0 shadow-xl">
-              <CardContent className="p-6 md:p-8">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center shadow-md ">
-                    <Send className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900">Kirim Pesan via WhatsApp</h3>
-                    <p className="text-xs text-gray-400">Isi form, pesan otomatis dikirim ke WhatsApp kami</p>
-                  </div>
-                </div>
-
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <Label className="text-sm font-semibold text-gray-700 mb-2 block">
-                        Nama Lengkap <span className="text-gray-500">*</span>
-                      </Label>
-                      <div className="relative">
-                        <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                        <Input
-                          required
-                          placeholder="Masukkan nama Anda"
-                          value={formData.nama}
-                          onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
-                          className="pl-11 h-11 rounded-xl border-gray-200 shadow-sm focus:ring-gray-400 focus:border-gray-400"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-semibold text-gray-700 mb-2 block">
-                        Nomor WhatsApp <span className="text-gray-500">*</span>
-                      </Label>
-                      <div className="relative">
-                        <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                        <Input
-                          required
-                          type="tel"
-                          placeholder="08xxxxxxxxxx"
-                          value={formData.nomor}
-                          onChange={(e) => setFormData({ ...formData, nomor: e.target.value })}
-                          className="pl-11 h-11 rounded-xl border-gray-200 shadow-sm focus:ring-gray-400 focus:border-gray-400"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">
-                      Saya Tertarik Dengan
-                    </Label>
-                    <Select value={formData.minat} onValueChange={(v) => setFormData({ ...formData, minat: v })}>
-                      <SelectTrigger className="h-11 rounded-xl border-gray-200 shadow-sm focus:ring-gray-400 focus:border-gray-400">
-                        <SelectValue placeholder="Pilih topik..." />
-                      </SelectTrigger>
-                      <SelectContent className="rounded-xl">
-                        <SelectItem value="Info Properti" className="py-2.5 rounded-lg">Info Properti / Tipe Rumah</SelectItem>
-                        <SelectItem value="Simulasi Cicilan" className="py-2.5 rounded-lg">Simulasi Cicilan</SelectItem>
-                        <SelectItem value="Jadwal Survey" className="py-2.5 rounded-lg">Jadwal Survey Lokasi</SelectItem>
-                        <SelectItem value="Syariah" className="py-2.5 rounded-lg">Skema Pembayaran Syariah</SelectItem>
-                        <SelectItem value="KPR" className="py-2.5 rounded-lg">Skema Pembayaran KPR Bank</SelectItem>
-                        <SelectItem value="Promo" className="py-2.5 rounded-lg">Info Promo / Diskon</SelectItem>
-                        <SelectItem value="Lainnya" className="py-2.5 rounded-lg">Lainnya</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">
-                      Pesan <span className="text-gray-500">*</span>
-                    </Label>
-                    <Textarea
-                      required
-                      rows={4}
-                      placeholder="Tulis pesan atau pertanyaan Anda di sini..."
-                      value={formData.pesan}
-                      onChange={(e) => setFormData({ ...formData, pesan: e.target.value })}
-                      className="resize-none rounded-xl border-gray-200 shadow-sm focus:ring-gray-400 focus:border-gray-400"
-                    />
-                  </div>
-
-                  {sent && (
-                    <div className="flex items-center gap-2 p-3 bg-gray-50 border border-gray-200 rounded-xl">
-                      <CheckCircle2 className="w-5 h-5 text-gray-600 shrink-0" />
-                      <p className="text-sm text-gray-600 font-medium">Pesan berhasil dikirim ke WhatsApp!</p>
-                    </div>
-                  )}
-
-                  <button
-                    type="submit"
-                    className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-gray-900 text-white font-bold rounded-xl hover:bg-gray-800 transition-all active:scale-[0.98] shadow-lg hover:shadow-xl text-base"
-                  >
-                    <Send className="w-5 h-5" />
-                    Kirim via WhatsApp
-                  </button>
-                </form>
-              </CardContent>
-            </Card>
-          </FadeIn>
-        </div>
+          </div>
+        </FadeIn>
 
         {/* Map */}
         <FadeIn delay={0.3} className="mt-12">
@@ -3584,7 +3620,7 @@ function TentangKamiPage() {
   return (
     <>
       {/* Banner */}
-      <PageBanner title="Tentang Kami" subtitle={`Mengenal lebih dekat ${S.company_name}`} bgImage={S.page_banner_image} />
+      <PageBanner title="Tentang Kami" subtitle={`Mengenal lebih dekat ${S.company_name}`} />
 
       {/* ═══════ PROFIL PERUSAHAAN ═══════ */}
       <section className="py-20 md:py-28 bg-section-gray">
@@ -3701,7 +3737,7 @@ function TentangKamiPage() {
             {[
               { icon: Shield, title: "Profesional", desc: "Tim berpengalaman dengan standar layanan tertinggi. Setiap proses dijalankan secara sistematis dan terstruktur.", gradient: "from-gray-800 to-gray-900" },
               { icon: Eye, title: "Transparan", desc: "Harga jelas, legalitas terbuka, progres proyek bisa dipantau. Tidak ada biaya tersembunyi.", gradient: "from-blue-500 to-blue-600" },
-              { icon: CheckCircle2, title: "Terpercaya", desc: "Setiap mitra developer telah melalui proses verifikasi ketat. Reputasi adalah fondasi bisnis kami.", gradient: "from-green-500 to-green-600" },
+              { icon: CheckCircle2, title: "Terpercaya", desc: "Setiap mitra developer telah melalui proses verifikasi ketat. Reputasi adalah fondasi bisnis kami.", gradient: "from-gray-600 to-gray-700" },
               { icon: HeartHandshake, title: "Kolaboratif", desc: "Sinergi antara platform, developer, dan pembeli. Semua pihak mendapatkan manfaat.", gradient: "from-amber-500 to-amber-600" },
               { icon: Sparkles, title: "Inovatif", desc: "Terus beradaptasi dengan teknologi dan tren properti terbaru untuk pengalaman yang lebih baik.", gradient: "from-purple-500 to-purple-600" },
               { icon: Users, title: "Berorientasi Keluarga", desc: "Setiap rumah yang kami tawarkan dirancang untuk kenyamanan dan kebahagiaan keluarga.", gradient: "from-pink-500 to-pink-600" },
@@ -3825,7 +3861,7 @@ function TentangKamiPage() {
                 <FadeIn key={item.title} delay={i * 0.08}>
                   <Card className="h-full border-0 shadow-md hover:shadow-lg transition-shadow text-center">
                     <CardContent className="p-5">
-                      <div className="w-12 h-12 mx-auto bg-green-100 rounded-xl flex items-center justify-center mb-3">
+                      <div className="w-12 h-12 mx-auto bg-gray-100 rounded-xl flex items-center justify-center mb-3">
                         <Icon className="w-6 h-6 text-gray-600" />
                       </div>
                       <h4 className="font-bold text-gray-900 text-sm mb-1">{item.title}</h4>
@@ -3839,7 +3875,7 @@ function TentangKamiPage() {
           <FadeIn>
             <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 md:p-8">
               <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-                <div className="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center shrink-0">
+                <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center shrink-0">
                   <CheckCircle2 className="w-7 h-7 text-gray-600" />
                 </div>
                 <div>
@@ -4098,7 +4134,7 @@ function BlogArticlePage({ slug }: { slug: string }) {
                 href={`https://wa.me/${S.contact_wa}?text=Halo,%20saya%20tertarik%20dengan%20properti%20${encodeURIComponent(S.company_name)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-500 hover:bg-green-600 text-white font-semibold rounded-xl text-sm transition-colors whitespace-nowrap"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-xl text-sm transition-colors whitespace-nowrap"
               >
                 <MessageCircle className="w-4 h-4" />
                 Hubungi via WhatsApp
@@ -4188,7 +4224,7 @@ function BlogPage() {
 
   return (
     <>
-      <PageBanner title="Blog & Artikel" subtitle="Tips, panduan, dan informasi seputar properti, KPR, dan investasi rumah" bgImage={S.page_banner_image} />
+      <PageBanner title="Blog & Artikel" subtitle="Tips, panduan, dan informasi seputar properti, KPR, dan investasi rumah" />
       <section className="py-16 md:py-24 bg-section-gray">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {articles.length === 0 ? (
@@ -4396,7 +4432,7 @@ function BlogPage() {
                       href={`https://wa.me/${S.contact_wa}?text=Halo,%20saya%20ingin%20konsultasi%20tentang%20rumah`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-500 hover:bg-green-600 text-white font-semibold rounded-xl text-sm transition-colors w-full justify-center"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-xl text-sm transition-colors w-full justify-center"
                     >
                       <Phone className="w-4 h-4" />
                       Hubungi via WhatsApp
@@ -4419,7 +4455,7 @@ function KontakPage() {
   const { settings: S } = useSettingsStore();
   return (
     <>
-      <PageBanner title="Hubungi Kami" subtitle="Tim marketing kami siap melayani Anda" bgImage={S.page_banner_image} />
+      <PageBanner title="Hubungi Kami" subtitle="Tim marketing kami siap melayani Anda" />
       <ContactSection />
     </>
   );
@@ -4431,7 +4467,7 @@ function GalleryPage() {
   const { settings: S } = useSettingsStore();
   return (
     <>
-      <PageBanner title="Gallery" subtitle="Dokumentasi foto proyek dan lingkungan kami" bgImage={S.page_banner_image} />
+      <PageBanner title="Gallery" subtitle="Dokumentasi foto proyek dan lingkungan kami" />
       <ProyekGallery />
     </>
   );
@@ -4659,9 +4695,9 @@ function ServiceDetailDialog({
               )}
             </div>
             {service.duration && (
-              <div className="flex-1 min-w-[200px] bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-4 border border-blue-100">
+              <div className="flex-1 min-w-[200px] bg-gray-50 rounded-xl p-4 border border-gray-200">
                 <p className="text-xs text-gray-500 mb-1 font-medium">Estimasi Durasi</p>
-                <p className="text-xl font-extrabold text-blue-600">{service.duration}</p>
+                <p className="text-xl font-extrabold text-gray-900">{service.duration}</p>
                 <p className="text-xs text-gray-400 mt-0.5">Waktu pengerjaan</p>
               </div>
             )}
@@ -4685,13 +4721,13 @@ function ServiceDetailDialog({
           {service.features.length > 0 && (
             <div>
               <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-green-500" />
+                <CheckCircle2 className="w-4 h-4 text-gray-500" />
                 Keunggulan
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {service.features.map((feat, i) => (
                   <div key={i} className="flex items-start gap-2.5 bg-gray-50 rounded-lg p-3">
-                    <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-gray-500 mt-0.5 shrink-0" />
                     <span className="text-sm text-gray-700">{feat}</span>
                   </div>
                 ))}
@@ -4724,7 +4760,7 @@ function ServiceDetailDialog({
               href={`https://wa.me/${S.contact_wa}?text=${waText}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-green-600 text-white font-bold rounded-xl shadow-lg hover:bg-green-700 transition-all active:scale-95"
+              className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-gray-900 text-white font-bold rounded-xl shadow-lg hover:bg-gray-800 transition-all active:scale-95"
             >
               <MessageCircle className="w-5 h-5" />
               Tanya via WhatsApp
@@ -4860,7 +4896,6 @@ function JasaPage({
       <PageBanner
         title="Jasa & Layanan"
         subtitle="Solusi bangunan profesional dari konstruksi hingga desain interior"
-        bgImage={S.page_banner_image}
       />
       <JasaListingSection onSelectService={onSelectService} />
     </>
@@ -4882,7 +4917,6 @@ function MitraPage() {
       <PageBanner
         title="Mitra Developer"
         subtitle="Developer perumahan terpilih yang bergabung dengan platform kami"
-        bgImage={S.page_banner_image}
       />
 
       <section className="py-20 md:py-28 bg-section-gray">
@@ -4955,7 +4989,7 @@ function MitraPage() {
                           <span className="text-gray-500">Proyek</span>
                         </div>
                         <div className="flex items-center gap-1.5 text-sm">
-                          <CheckCircle2 className="w-4 h-4 text-green-500" />
+                          <CheckCircle2 className="w-4 h-4 text-gray-500" />
                           <span className="text-gray-500">Terverifikasi</span>
                         </div>
                       </div>
@@ -5045,7 +5079,7 @@ function ProyekPage({
   const { settings: S } = useSettingsStore();
   return (
     <>
-      <PageBanner title="Proyek Kami" subtitle="Pilih rumah idaman Anda dari berbagai tipe yang tersedia" bgImage={S.page_banner_image} />
+      <PageBanner title="Proyek Kami" subtitle="Pilih rumah idaman Anda dari berbagai tipe yang tersedia" />
       <PropertiesSection onSelectProperty={onSelectProperty} />
     </>
   );
