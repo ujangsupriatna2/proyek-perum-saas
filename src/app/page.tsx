@@ -582,8 +582,8 @@ function Hero() {
           className="grid grid-cols-3 gap-3 sm:gap-5 max-w-sm sm:max-w-xl mx-auto"
         >
           {[
-            { value: `${S.total_units_sold}+`, label: "Unit Terjual", icon: "🏠" },
             { value: "3+", label: "Mitra Developer", icon: "🤝" },
+            { value: `${S.total_units_sold}+`, label: "Unit Terjual", icon: "🏠" },
             { value: "10+", label: "Proyek Perumahan", icon: "🏗️" },
           ].map((stat, idx) => (
             <motion.div
