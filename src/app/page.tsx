@@ -618,8 +618,9 @@ function VideoOverviewSection() {
   const { settings: S } = useSettingsStore();
   const videoUrl = S.hero_video_url;
   const embedUrl = getYoutubeEmbedUrl(videoUrl);
+  const autoplayUrl = embedUrl ? `${embedUrl}?autoplay=1&mute=1&loop=1&playlist=${new URL(embedUrl).pathname.split('/').pop()}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1` : null;
 
-  if (!embedUrl) return null;
+  if (!autoplayUrl) return null;
 
   return (
     <section className="py-20 md:py-28 bg-white overflow-hidden">
@@ -643,7 +644,7 @@ function VideoOverviewSection() {
             <div className="relative rounded-2xl overflow-hidden border border-gray-200 shadow-xl shadow-gray-200/50">
               <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
                 <iframe
-                  src={embedUrl}
+                  src={autoplayUrl}
                   title={`${S.company_name} - Video Overview`}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
