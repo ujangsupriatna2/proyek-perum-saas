@@ -1687,10 +1687,21 @@ function BlogPreviewSection() {
 /* ─────────────────────────── PAGE BANNER ─────────────────────────── */
 
 function PageBanner({ title, subtitle }: { title: string; subtitle?: string }) {
+  const { settings: S } = useSettingsStore();
+  const bannerImg = S.page_banner_image;
   return (
     <section className="relative py-24 md:py-32 flex items-center justify-center overflow-hidden bg-gray-950">
-      {/* Animated gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950" />
+      {/* Background image from settings */}
+      {bannerImg && (
+        <>
+          <img src={bannerImg} alt="" className="absolute inset-0 w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gray-950/75" />
+        </>
+      )}
+      {/* Animated gradient background (fallback when no image) */}
+      {!bannerImg && (
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950" />
+      )}
       {/* Animated floating orbs */}
       <motion.div
         animate={{ scale: [1, 1.2, 1], opacity: [0.03, 0.06, 0.03] }}
@@ -1712,7 +1723,7 @@ function PageBanner({ title, subtitle }: { title: string; subtitle?: string }) {
             <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.25em]">{subtitle}</span>
             <div className="h-px w-10 bg-gray-500" />
           </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight">{title}</h1>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">{title}</h1>
         </motion.div>
       </div>
     </section>
