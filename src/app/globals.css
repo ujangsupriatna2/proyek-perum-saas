@@ -386,7 +386,7 @@ section, header, footer, nav, main {
 }
 
 .text-gradient-accent {
-  background: linear-gradient(135deg, #C41E3A, #E8334F);
+  background: linear-gradient(135deg, #374151, #111827);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
