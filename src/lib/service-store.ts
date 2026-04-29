@@ -9,6 +9,7 @@ export interface ServiceItem {
   price: number;
   priceUnit: string;
   image: string;
+  images: string[];
   features: string[];
   duration: string;
   videoUrl: string;

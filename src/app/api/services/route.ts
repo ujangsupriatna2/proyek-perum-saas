@@ -10,7 +10,7 @@ export async function GET(req: Request) {
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
 
-    const where: Record<string, unknown> = { isPublished: true, mitraId: null };
+    const where: Record<string, unknown> = { isPublished: true };
     if (slug) where.slug = slug;
     if (category && category !== "all") where.category = category;
 
@@ -36,6 +36,13 @@ export async function GET(req: Request) {
         }
       }
 
+      // Parse images from JSON string to array
+      let images: string[] = [];
+      try {
+        const raw = typeof s.images === "string" ? JSON.parse(s.images) : s.images;
+        images = Array.isArray(raw) ? raw.filter(Boolean) : [];
+      } catch { /* ignore */ }
+
       return {
         id: s.id,
         title: s.title,
@@ -45,6 +52,7 @@ export async function GET(req: Request) {
         price: s.price || 0,
         priceUnit: s.priceUnit || "proyek",
         image: s.image || "",
+        images,
         features,
         duration: s.duration || "",
         videoUrl: s.videoUrl || "",

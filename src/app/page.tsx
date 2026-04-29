@@ -5363,12 +5363,26 @@ function ServiceDetailPage({ slug }: { slug: string }) {
   const { settings: S } = useSettingsStore();
   const { services, fetchServices } = useServiceStore();
   const router = useRouter();
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   useEffect(() => {
     fetchServices();
   }, [fetchServices]);
 
   const service = services.find((s) => s.slug === slug);
+
+  // Build all images array (main image + images array)
+  const allImages = service ? (() => {
+    const imgs = service.images && service.images.length > 0
+      ? [...service.images]
+      : service.image ? [service.image] : [];
+    // Ensure main image is first
+    if (service.image && !imgs.includes(service.image)) {
+      imgs.unshift(service.image);
+    }
+    return imgs;
+  })() : [];
 
   if (!service) {
     return (
@@ -5408,26 +5422,88 @@ function ServiceDetailPage({ slug }: { slug: string }) {
     <>
       <Navbar activeTab="jasa" />
       <article className="bg-white pt-20 md:pt-24">
-        {/* Hero - constrained to content width */}
+        {/* Hero - Image Gallery */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative aspect-square bg-gray-200 rounded-2xl overflow-hidden">
-            {service.image ? (
-              <img src={service.image} alt={service.title} className="w-full h-full object-cover" />
+          {allImages.length > 0 ? (
+            allImages.length === 1 ? (
+              <div className="relative aspect-square bg-gray-200 rounded-2xl overflow-hidden cursor-pointer" onClick={() => { setLightboxIndex(0); setLightboxOpen(true); }}>
+                <img src={allImages[0]} alt={service.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-5 md:p-8">
+                  <Badge className="mb-3 bg-white/90 text-gray-700 border-0 shadow-lg text-xs font-semibold">
+                    {catLabel}
+                  </Badge>
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight">
+                    {service.title}
+                  </h1>
+                </div>
+              </div>
             ) : (
+              <div className="space-y-3">
+                {/* Main image */}
+                <div
+                  className="relative aspect-[4/3] sm:aspect-video bg-gray-200 rounded-2xl overflow-hidden cursor-pointer group"
+                  onClick={() => { setLightboxIndex(0); setLightboxOpen(true); }}
+                >
+                  <img src={allImages[0]} alt={service.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-5 md:p-8">
+                    <Badge className="mb-3 bg-white/90 text-gray-700 border-0 shadow-lg text-xs font-semibold">
+                      {catLabel}
+                    </Badge>
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight">
+                      {service.title}
+                    </h1>
+                  </div>
+                  <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-lg">
+                    <Camera className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
+                    {allImages.length} foto
+                  </div>
+                </div>
+                {/* Thumbnail grid */}
+                {allImages.length > 1 && (
+                  <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
+                    {allImages.slice(1, 6).map((img, i) => (
+                      <div
+                        key={i}
+                        className="aspect-square rounded-lg overflow-hidden cursor-pointer group relative"
+                        onClick={() => { setLightboxIndex(i + 1); setLightboxOpen(true); }}
+                      >
+                        <img src={img} alt={`${service.title} ${i + 2}`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors" />
+                      </div>
+                    ))}
+                    {allImages.length > 6 && (
+                      <div
+                        className="aspect-square rounded-lg overflow-hidden cursor-pointer relative"
+                        onClick={() => { setLightboxIndex(0); setLightboxOpen(true); }}
+                      >
+                        <img src={allImages[5]} alt="" className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                          <span className="text-white font-bold text-sm">+{allImages.length - 6}</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )
+          ) : (
+            <div className="relative aspect-[4/3] sm:aspect-video rounded-2xl overflow-hidden">
               <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center`}>
                 <IconComponent className="w-24 h-24 text-white/20" />
               </div>
-            )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-5 md:p-8">
-              <Badge className="mb-3 bg-white/90 text-gray-700 border-0 shadow-lg text-xs font-semibold">
-                {catLabel}
-              </Badge>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight">
-                {service.title}
-              </h1>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-5 md:p-8">
+                <Badge className="mb-3 bg-white/90 text-gray-700 border-0 shadow-lg text-xs font-semibold">
+                  {catLabel}
+                </Badge>
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight">
+                  {service.title}
+                </h1>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -5533,6 +5609,16 @@ function ServiceDetailPage({ slug }: { slug: string }) {
           </div>
         </div>
       </article>
+
+      {/* Lightbox */}
+      {lightboxOpen && allImages.length > 0 && (
+        <LightboxOverlay
+          images={allImages}
+          activeIndex={lightboxIndex}
+          onClose={() => setLightboxOpen(false)}
+        />
+      )}
+
       <Footer />
       <Chatbot />
     </>
