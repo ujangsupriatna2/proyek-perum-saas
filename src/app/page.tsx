@@ -19,13 +19,6 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import {
   Accordion,
   AccordionContent,
   AccordionItem,
@@ -935,16 +928,25 @@ function PremiumPropertyCard({
   onSelect,
 }: {
   property: Property;
-  onSelect: (p: Property) => void;
+  onSelect?: (p: Property) => void;
 }) {
+  const router = useRouter();
   const finTypes = property.financingTypes ?? ["syariah", "kpr"];
   const bestKpr = getCheapestKprInstallment(property);
+
+  const handleClick = () => {
+    if (onSelect) {
+      onSelect(property);
+    } else {
+      router.push(`/?tab=proyek/${property.slug}`);
+    }
+  };
 
   return (
     <FadeIn className="h-full">
       <div
         className="group h-full bg-white rounded-2xl border border-gray-200/80 hover:border-gray-300 hover:shadow-2xl transition-all duration-500 overflow-hidden cursor-pointer"
-        onClick={() => onSelect(property)}
+        onClick={handleClick}
       >
         {/* Image with overlay */}
         <div className="relative h-64 overflow-hidden bg-gray-100">
@@ -1037,11 +1039,7 @@ function PremiumPropertyCard({
 
 /* ─────────────────────────── PROPERTY SHOWCASE (Home) ─────────────────────────── */
 
-function PropertyShowcaseSection({
-  onSelectProperty,
-}: {
-  onSelectProperty: (p: Property) => void;
-}) {
+function PropertyShowcaseSection() {
   const { properties: PROPERTIES } = usePropertyStore();
   const [activeCategory, setActiveCategory] = useState<PropertyCategory | "all">("all");
   const router = useRouter();
@@ -1095,7 +1093,7 @@ function PropertyShowcaseSection({
         {/* Property Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.slice(0, 6).map((property) => (
-            <PremiumPropertyCard key={property.id} property={property} onSelect={onSelectProperty} />
+            <PremiumPropertyCard key={property.id} property={property} />
           ))}
         </div>
 
@@ -1622,11 +1620,7 @@ function CTASection() {
 
 /* ─────────────────────────── JASA PREVIEW (Home) ─────────────────────────── */
 
-function ServicePreviewSection({
-  onSelectService,
-}: {
-  onSelectService: (s: ServiceItem) => void;
-}) {
+function ServicePreviewSection() {
   const { services, fetchServices } = useServiceStore();
   const router = useRouter();
 
@@ -1671,7 +1665,7 @@ function ServicePreviewSection({
             <FadeIn key={service.id} className="h-full">
               <Card
                 className="group h-full overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
-                onClick={() => onSelectService(service)}
+                onClick={() => router.push(`/?tab=jasa/${service.slug}`)}
               >
                 <div className="relative h-44 overflow-hidden bg-gray-200">
                   {service.image ? (
@@ -1927,15 +1921,24 @@ function PropertyCard({
   onSelect,
 }: {
   property: Property;
-  onSelect: (p: Property) => void;
+  onSelect?: (p: Property) => void;
 }) {
+  const router = useRouter();
   const finTypes = property.financingTypes ?? ["syariah", "kpr"];
   // Get cheapest KPR installment (longest tenor preferred)
   const bestKpr = getCheapestKprInstallment(property);
 
+  const handleClick = () => {
+    if (onSelect) {
+      onSelect(property);
+    } else {
+      router.push(`/?tab=proyek/${property.slug}`);
+    }
+  };
+
   return (
     <FadeIn className="h-full">
-      <Card className="group h-full overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+      <Card className="group h-full overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 cursor-pointer" onClick={handleClick}>
         {/* Image */}
         <div className="relative h-52 overflow-hidden bg-gray-200">
           {property.image ? (
@@ -2129,11 +2132,7 @@ function Pagination({ currentPage, totalPages, onPageChange }: { currentPage: nu
   );
 }
 
-function PropertiesSection({
-  onSelectProperty,
-}: {
-  onSelectProperty: (p: Property) => void;
-}) {
+function PropertiesSection() {
   const { properties: PROPERTIES } = usePropertyStore();
   const [showFilter, setShowFilter] = useState(false);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
@@ -2312,7 +2311,6 @@ function PropertiesSection({
             <PropertyCard
               key={property.id}
               property={property}
-              onSelect={onSelectProperty}
             />
           ))}
           {paged.length === 0 && (
@@ -2958,131 +2956,156 @@ function DetailSimulasiCicilan({ property }: { property: Property }) {
 
 /* ─────────────────────────── PROPERTY DETAIL DIALOG ─────────────────────────── */
 
-function PropertyDetailDialog({
-  property,
-  open,
-  onClose,
-}: {
-  property: Property | null;
-  open: boolean;
-  onClose: () => void;
-}) {
+function PropertyDetailPage({ slug }: { slug: string }) {
+  const { properties: PROPERTIES } = usePropertyStore();
   const { settings: S } = useSettingsStore();
-  const images = property?.gallery || (property ? [property.image] : []);
+  const property = PROPERTIES.find((p) => p.slug === slug);
+  const router = useRouter();
 
-  if (!property) return null;
+  if (!property) {
+    return (
+      <>
+        <Navbar activeTab="proyek" />
+        <div className="min-h-[60vh] flex items-center justify-center">
+          <div className="text-center">
+            <Home className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Properti Tidak Ditemukan</h2>
+            <p className="text-gray-500 mb-6">Properti yang Anda cari tidak tersedia atau sudah dihapus.</p>
+            <button
+              onClick={() => router.push("/?tab=proyek")}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white font-bold rounded-xl hover:bg-gray-800 transition-all"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Kembali ke Proyek
+            </button>
+          </div>
+        </div>
+        <Footer />
+        <Chatbot />
+      </>
+    );
+  }
 
+  const images = property.gallery || [property.image].filter(Boolean);
   const formatRp = (n: number) =>
     new Intl.NumberFormat("id-ID").format(Math.round(n));
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0">
-        <DialogHeader className="sr-only">
-          <DialogTitle>{property.name} - {property.type}</DialogTitle>
-          <DialogDescription>Detail properti {property.name} tipe {property.type} di {property.location}</DialogDescription>
-        </DialogHeader>
-        <PropertyGallery
-          images={images}
-          name={property.name}
-          tag={property.tag}
-          location={property.location}
-        />
+    <>
+      <Navbar activeTab="proyek" />
+      <article className="bg-white">
+        {/* Hero gallery */}
+        <div className="relative">
+          <PropertyGallery
+            images={images}
+            name={property.name}
+            tag={property.tag}
+            location={property.location}
+          />
+        </div>
 
-        <div className="p-6">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          {/* Breadcrumb */}
+          <nav className="flex items-center gap-2 text-sm text-gray-400 mb-8">
+            <button onClick={() => router.push("/?tab=proyek")} className="hover:text-gray-700 transition-colors">Proyek</button>
+            <ChevronRight className="w-3.5 h-3.5" />
+            <span className="text-gray-700 font-medium truncate max-w-xs">{property.name}</span>
+          </nav>
+
           {/* Title & Badges */}
-          <div className="flex items-start gap-2 mb-4">
+          <div className="flex flex-col md:flex-row md:items-start gap-4 mb-8">
             <div className="flex-1">
-              <h3 className="text-xl font-extrabold text-gray-900">{property.name}</h3>
-              <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
-                <MapPin className="w-3.5 h-3.5" />
+              <h1 className="text-2xl md:text-3xl font-black text-gray-900 mb-2">{property.name}</h1>
+              <p className="text-gray-500 flex items-center gap-1.5">
+                <MapPin className="w-4 h-4 shrink-0" />
                 {property.location}
               </p>
             </div>
-            <div className="flex flex-col gap-1.5">
-              <Badge variant="secondary" className="bg-gray-100 text-gray-600 text-xs font-semibold w-fit">
+            <div className="flex flex-wrap gap-2">
+              <Badge variant="secondary" className="bg-gray-100 text-gray-600 text-xs font-semibold">
                 {CATEGORY_LABELS[property.category as PropertyCategory] || property.category}
               </Badge>
               {property.category !== "kavling" && (
-              <Badge variant="secondary" className="bg-gray-100 text-gray-600 text-xs w-fit">
-                {property.type}
-              </Badge>
+                <Badge variant="secondary" className="bg-gray-100 text-gray-600 text-xs">
+                  {property.type}
+                </Badge>
               )}
-              <div className="flex gap-1">
-                {(property.financingTypes ?? []).includes("syariah") && (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-600">Syariah</span>
-                )}
-                {(property.financingTypes ?? []).includes("kpr") && (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-gray-200 text-gray-700">KPR Bank</span>
-                )}
-              </div>
+              {(property.financingTypes ?? []).includes("syariah") && (
+                <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-gray-100 text-gray-600">Syariah</span>
+              )}
+              {(property.financingTypes ?? []).includes("kpr") && (
+                <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-gray-200 text-gray-700">KPR Bank</span>
+              )}
             </div>
           </div>
 
           {/* Price & Type */}
-          <div className="grid grid-cols-2 gap-4 mb-5">
-            <div className="bg-gray-100 rounded-xl p-4 text-center">
-              <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">{property.category === "kavling" ? "Harga Tanah" : "Harga Rumah"}</p>
-              <p className="text-base font-extrabold text-gray-600">Rp {new Intl.NumberFormat("id-ID").format(property.price)} Juta</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+            <div className="bg-gray-50 rounded-2xl p-6 text-center border border-gray-100">
+              <p className="text-xs text-gray-400 uppercase tracking-wider mb-2 font-semibold">{property.category === "kavling" ? "Harga Tanah" : "Harga Rumah"}</p>
+              <p className="text-2xl font-black text-gray-900">Rp {new Intl.NumberFormat("id-ID").format(property.price)} Juta</p>
             </div>
             {property.category === "kavling" ? (
-              <div className="bg-gray-50 rounded-xl p-4 text-center">
-                <p className="text-xs text-gray-700 uppercase tracking-wider mb-1">Luas Tanah</p>
-                <p className="text-xl font-extrabold text-gray-600">{property.landArea} Meter²</p>
+              <div className="bg-gray-50 rounded-2xl p-6 text-center border border-gray-100">
+                <p className="text-xs text-gray-400 uppercase tracking-wider mb-2 font-semibold">Luas Tanah</p>
+                <p className="text-2xl font-black text-gray-900">{property.landArea} m²</p>
                 {property.landArea > 0 && (
-                  <p className="text-[11px] text-gray-400 mt-0.5">
-                    Harga per m²: Rp {new Intl.NumberFormat("id-ID").format(Math.round(property.price / property.landArea * 10) / 10)} Juta
+                  <p className="text-xs text-gray-400 mt-1">
+                    Rp {new Intl.NumberFormat("id-ID").format(Math.round(property.price / property.landArea * 10) / 10)} Juta/m²
                   </p>
                 )}
               </div>
             ) : (
-              <div className="bg-gray-50 rounded-xl p-4 text-center">
-                <p className="text-xs text-gray-700 uppercase tracking-wider mb-1">Tipe Bangunan</p>
-                <p className="text-xl font-extrabold text-gray-600">{property.type}</p>
-                <p className="text-[11px] text-gray-400 mt-0.5">LB {property.buildingArea} m² / LT {property.landArea} m²</p>
+              <div className="bg-gray-50 rounded-2xl p-6 text-center border border-gray-100">
+                <p className="text-xs text-gray-400 uppercase tracking-wider mb-2 font-semibold">Tipe Bangunan</p>
+                <p className="text-2xl font-black text-gray-900">{property.type}</p>
+                <p className="text-xs text-gray-400 mt-1">LB {property.buildingArea} m² / LT {property.landArea} m²</p>
               </div>
             )}
           </div>
 
-          {/* Spec Grid: only for non-kavling */}
+          {/* Spec Grid */}
           {property.category !== "kavling" && (
-          <div className="grid grid-cols-4 gap-2 mb-5">
-            <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl">
-              <Building2 className="w-5 h-5 text-gray-500 shrink-0" />
-              <div>
-                <p className="text-[10px] text-gray-400">Luas Bangun</p>
-                <p className="font-bold text-sm">{property.buildingArea} m²</p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+              <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                <Building2 className="w-5 h-5 text-gray-400 shrink-0" />
+                <div>
+                  <p className="text-[10px] text-gray-400 uppercase tracking-wider">Luas Bangun</p>
+                  <p className="font-bold text-sm text-gray-900">{property.buildingArea} m²</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                <LandPlot className="w-5 h-5 text-gray-400 shrink-0" />
+                <div>
+                  <p className="text-[10px] text-gray-400 uppercase tracking-wider">Luas Tanah</p>
+                  <p className="font-bold text-sm text-gray-900">{property.landArea} m²</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                <Home className="w-5 h-5 text-gray-400 shrink-0" />
+                <div>
+                  <p className="text-[10px] text-gray-400 uppercase tracking-wider">Kamar Tidur</p>
+                  <p className="font-bold text-sm text-gray-900">{property.bedrooms}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                <Users className="w-5 h-5 text-gray-400 shrink-0" />
+                <div>
+                  <p className="text-[10px] text-gray-400 uppercase tracking-wider">Kamar Mandi</p>
+                  <p className="font-bold text-sm text-gray-900">{property.bathrooms}</p>
+                </div>
               </div>
             </div>
-            <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl">
-              <LandPlot className="w-5 h-5 text-gray-500 shrink-0" />
-              <div>
-                <p className="text-[10px] text-gray-400">Luas Tanah</p>
-                <p className="font-bold text-sm">{property.landArea} m²</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl">
-              <Home className="w-5 h-5 text-gray-500 shrink-0" />
-              <div>
-                <p className="text-[10px] text-gray-400">Kamar Tidur</p>
-                <p className="font-bold text-sm">{property.bedrooms}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl">
-              <Users className="w-5 h-5 text-gray-500 shrink-0" />
-              <div>
-                <p className="text-[10px] text-gray-400">Kamar Mandi</p>
-                <p className="font-bold text-sm">{property.bathrooms}</p>
-              </div>
-            </div>
-          </div>
           )}
 
           {/* Description */}
           {property.description && (
-            <div className="mb-5">
-              <h4 className="font-bold text-gray-900 mb-2">Deskripsi</h4>
-              <p className="text-sm text-gray-600 leading-relaxed">{property.description}</p>
+            <div className="mb-8">
+              <h2 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                <FileText className="w-4 h-4 text-gray-400" />
+                Deskripsi
+              </h2>
+              <p className="text-gray-600 leading-relaxed">{property.description}</p>
             </div>
           )}
 
@@ -3091,16 +3114,19 @@ function PropertyDetailDialog({
             const embedUrl = getYoutubeEmbedUrl(property.videoUrl || "");
             if (!embedUrl) return null;
             return (
-              <div className="mb-5">
-                <h4 className="font-bold text-gray-900 mb-2">Video Proyek</h4>
-                <p className="text-sm text-gray-500 mb-3">Simak video dokumentasi dan review proyek {property.name} berikut ini.</p>
-                <div className="relative w-full overflow-hidden rounded-xl" style={{ paddingBottom: "56.25%" }}>
+              <div className="mb-8">
+                <h2 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                  <Camera className="w-4 h-4 text-gray-400" />
+                  Video Proyek
+                </h2>
+                <p className="text-sm text-gray-500 mb-4">Simak video dokumentasi dan review proyek {property.name}.</p>
+                <div className="relative w-full overflow-hidden rounded-2xl" style={{ paddingBottom: "56.25%" }}>
                   <iframe
                     src={embedUrl}
                     title={property.name}
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowFullScreen
-                    className="absolute inset-0 w-full h-full rounded-xl"
+                    className="absolute inset-0 w-full h-full rounded-2xl"
                   />
                 </div>
               </div>
@@ -3116,12 +3142,15 @@ function PropertyDetailDialog({
             } catch { featList = []; }
             if (featList.length === 0) return null;
             return (
-              <div className="mb-5">
-                <h4 className="font-bold text-gray-900 mb-2">Fitur Unggulan</h4>
-                <div className="flex flex-wrap gap-2">
+              <div className="mb-8">
+                <h2 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-gray-400" />
+                  Fitur Unggulan
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {featList.map((f) => (
-                    <div key={f} className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 text-gray-600 rounded-lg text-sm">
-                      <CheckCircle2 className="w-3.5 h-3.5" />
+                    <div key={f} className="flex items-center gap-2.5 px-4 py-3 bg-gray-50 text-gray-700 rounded-xl text-sm border border-gray-100">
+                      <CheckCircle2 className="w-4 h-4 text-gray-500 shrink-0" />
                       {f}
                     </div>
                   ))}
@@ -3130,13 +3159,28 @@ function PropertyDetailDialog({
             );
           })()}
 
-          {/* Simulasi Cicilan Calculator */}
+          {/* Simulasi Cicilan */}
           <DetailSimulasiCicilan property={property} />
 
-
+          {/* WhatsApp CTA */}
+          <div className="mt-10 bg-gray-950 rounded-2xl p-6 md:p-8 text-center">
+            <h3 className="text-lg md:text-xl font-bold text-white mb-2">Tertarik dengan {property.name}?</h3>
+            <p className="text-gray-400 text-sm mb-6">Hubungi tim marketing kami untuk info lebih lanjut dan jadwal survey lokasi.</p>
+            <a
+              href={`https://wa.me/${S.contact_wa}?text=${encodeURIComponent(`Halo, saya tertarik dengan properti *${property.name}* (${property.type}) di ${property.location}. Mohon info lebih lanjut.`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2.5 px-8 py-3.5 bg-white text-gray-900 font-bold rounded-xl hover:bg-gray-100 transition-all shadow-lg"
+            >
+              <MessageCircle className="w-5 h-5" />
+              Tanya via WhatsApp
+            </a>
+          </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </article>
+      <Footer />
+      <Chatbot />
+    </>
   );
 }
 
@@ -5075,18 +5119,27 @@ function ServiceCard({
   onSelect,
 }: {
   service: ServiceItem;
-  onSelect: (s: ServiceItem) => void;
+  onSelect?: (s: ServiceItem) => void;
 }) {
+  const router = useRouter();
   const catLabel = SERVICE_CATEGORY_LABELS[service.category] || service.category;
   const unitLabel = SERVICE_PRICE_UNIT_MAP[service.priceUnit] || service.priceUnit;
   const IconComponent = SERVICE_CATEGORY_ICONS[service.category] || Wrench;
   const gradient = SERVICE_CATEGORY_GRADIENTS[service.category] || "from-gray-800 to-gray-900";
 
+  const handleClick = () => {
+    if (onSelect) {
+      onSelect(service);
+    } else {
+      router.push(`/?tab=jasa/${service.slug}`);
+    }
+  };
+
   return (
     <FadeIn className="h-full">
       <Card
         className="group h-full overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
-        onClick={() => onSelect(service)}
+        onClick={handleClick}
       >
         {/* Image */}
         <div className="relative h-48 overflow-hidden bg-gray-200">
@@ -5174,17 +5227,41 @@ function ServiceCard({
   );
 }
 
-function ServiceDetailDialog({
-  service,
-  open,
-  onClose,
-}: {
-  service: ServiceItem | null;
-  open: boolean;
-  onClose: () => void;
-}) {
+function ServiceDetailPage({ slug }: { slug: string }) {
   const { settings: S } = useSettingsStore();
-  if (!service) return null;
+  const { services, fetchServices } = useServiceStore();
+  const router = useRouter();
+
+  useEffect(() => {
+    fetchServices();
+  }, [fetchServices]);
+
+  const service = services.find((s) => s.slug === slug);
+
+  if (!service) {
+    return (
+      <>
+        <Navbar activeTab="jasa" />
+        <div className="min-h-[60vh] flex items-center justify-center">
+          <div className="text-center">
+            <Wrench className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Jasa Tidak Ditemukan</h2>
+            <p className="text-gray-500 mb-6">Jasa yang Anda cari tidak tersedia atau sudah dihapus.</p>
+            <button
+              onClick={() => router.push("/?tab=jasa")}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white font-bold rounded-xl hover:bg-gray-800 transition-all"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Kembali ke Jasa
+            </button>
+          </div>
+        </div>
+        <Footer />
+        <Chatbot />
+      </>
+    );
+  }
+
   const catLabel = SERVICE_CATEGORY_LABELS[service.category] || service.category;
   const unitLabel = SERVICE_PRICE_UNIT_MAP[service.priceUnit] || service.priceUnit;
   const IconComponent = SERVICE_CATEGORY_ICONS[service.category] || Wrench;
@@ -5196,67 +5273,64 @@ function ServiceDetailDialog({
   );
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent aria-describedby={undefined} className="sm:max-w-3xl max-h-[90vh] overflow-y-auto p-0 gap-0">
-        <DialogTitle className="sr-only">{service.title}</DialogTitle>
-        {/* Hero Image */}
-        <div className="relative h-64 sm:h-80 bg-gray-200">
+    <>
+      <Navbar activeTab="jasa" />
+      <article className="bg-white">
+        {/* Hero */}
+        <div className="relative h-72 sm:h-96 bg-gray-200">
           {service.image ? (
-            <img
-              src={service.image}
-              alt={service.title}
-              className="w-full h-full object-cover"
-            />
+            <img src={service.image} alt={service.title} className="w-full h-full object-cover" />
           ) : (
             <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center`}>
               <IconComponent className="w-24 h-24 text-white/20" />
             </div>
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 p-6">
+          <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 max-w-4xl mx-auto">
             <Badge className="mb-3 bg-white/90 text-gray-700 border-0 shadow-lg text-xs font-semibold">
               {catLabel}
             </Badge>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white leading-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight">
               {service.title}
-            </h2>
+            </h1>
           </div>
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 w-9 h-9 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
         </div>
 
-        <div className="p-6 space-y-6">
-          {/* Price + Duration row */}
-          <div className="flex flex-wrap gap-4">
-            <div className="flex-1 min-w-[200px] bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-4 border border-gray-200">
-              <p className="text-xs text-gray-500 mb-1 font-medium">Harga</p>
-              <p className="text-xl font-extrabold text-gray-900">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          {/* Breadcrumb */}
+          <nav className="flex items-center gap-2 text-sm text-gray-400 mb-8">
+            <button onClick={() => router.push("/?tab=jasa")} className="hover:text-gray-700 transition-colors">Jasa</button>
+            <ChevronRight className="w-3.5 h-3.5" />
+            <span className="text-gray-700 font-medium truncate max-w-xs">{service.title}</span>
+          </nav>
+
+          {/* Price + Duration */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+            <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100">
+              <p className="text-xs text-gray-400 uppercase tracking-wider mb-2 font-semibold">Harga</p>
+              <p className="text-2xl font-black text-gray-900">
                 {service.price > 0 ? `Rp ${new Intl.NumberFormat("id-ID").format(service.price)}` : "Hubungi Kami"}
               </p>
               {service.price > 0 && (
-                <p className="text-xs text-gray-400 mt-0.5">/ {unitLabel}</p>
+                <p className="text-xs text-gray-400 mt-1">/ {unitLabel}</p>
               )}
             </div>
             {service.duration && (
-              <div className="flex-1 min-w-[200px] bg-gray-50 rounded-xl p-4 border border-gray-200">
-                <p className="text-xs text-gray-500 mb-1 font-medium">Estimasi Durasi</p>
-                <p className="text-xl font-extrabold text-gray-900">{service.duration}</p>
-                <p className="text-xs text-gray-400 mt-0.5">Waktu pengerjaan</p>
+              <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100">
+                <p className="text-xs text-gray-400 uppercase tracking-wider mb-2 font-semibold">Estimasi Durasi</p>
+                <p className="text-2xl font-black text-gray-900">{service.duration}</p>
+                <p className="text-xs text-gray-400 mt-1">Waktu pengerjaan</p>
               </div>
             )}
           </div>
 
           {/* Description */}
           {service.description && (
-            <div>
-              <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                <FileText className="w-4 h-4 text-gray-500" />
+            <div className="mb-10">
+              <h2 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                <FileText className="w-4 h-4 text-gray-400" />
                 Deskripsi
-              </h3>
+              </h2>
               <div
                 className="prose prose-sm max-w-none text-gray-600 leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: service.description }}
@@ -5266,14 +5340,14 @@ function ServiceDetailDialog({
 
           {/* Features */}
           {service.features.length > 0 && (
-            <div>
-              <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-gray-500" />
+            <div className="mb-10">
+              <h2 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-gray-400" />
                 Keunggulan
-              </h3>
+              </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {service.features.map((feat, i) => (
-                  <div key={i} className="flex items-start gap-2.5 bg-gray-50 rounded-lg p-3">
+                  <div key={i} className="flex items-start gap-2.5 bg-gray-50 rounded-xl p-4 border border-gray-100">
                     <CheckCircle2 className="w-4 h-4 text-gray-500 mt-0.5 shrink-0" />
                     <span className="text-sm text-gray-700">{feat}</span>
                   </div>
@@ -5284,12 +5358,12 @@ function ServiceDetailDialog({
 
           {/* Video */}
           {embedUrl && (
-            <div>
-              <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                <Camera className="w-4 h-4 text-gray-500" />
+            <div className="mb-10">
+              <h2 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                <Camera className="w-4 h-4 text-gray-400" />
                 Video Preview
-              </h3>
-              <div className="aspect-video rounded-xl overflow-hidden shadow-lg">
+              </h2>
+              <div className="aspect-video rounded-2xl overflow-hidden shadow-lg">
                 <iframe
                   src={embedUrl}
                   title={service.title}
@@ -5302,37 +5376,37 @@ function ServiceDetailDialog({
           )}
 
           {/* CTA */}
-          <div className="flex flex-col sm:flex-row gap-3 pt-2">
-            <a
-              href={`https://wa.me/${S.contact_wa}?text=${waText}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-gray-900 text-white font-bold rounded-xl shadow-lg hover:bg-gray-800 transition-all active:scale-95"
-            >
-              <MessageCircle className="w-5 h-5" />
-              Tanya via WhatsApp
-            </a>
-            <a
-              href={`https://wa.me/${S.contact_wa}?text=${waText}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-gray-900 text-white font-bold rounded-xl shadow-lg hover:bg-gray-800 transition-all active:scale-95"
-            >
-              <Phone className="w-5 h-5" />
-              Hubungi Kami
-            </a>
+          <div className="bg-gray-950 rounded-2xl p-6 md:p-8 text-center">
+            <h3 className="text-lg md:text-xl font-bold text-white mb-2">Butuh Jasa {service.title}?</h3>
+            <p className="text-gray-400 text-sm mb-6">Hubungi kami untuk konsultasi dan survei gratis.</p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <a
+                href={`https://wa.me/${S.contact_wa}?text=${waText}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white text-gray-900 font-bold rounded-xl hover:bg-gray-100 transition-all shadow-lg"
+              >
+                <MessageCircle className="w-5 h-5" />
+                Tanya via WhatsApp
+              </a>
+              <a
+                href={`tel:${S.contact_phone}`}
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-gray-800 text-white font-bold rounded-xl hover:bg-gray-700 transition-all"
+              >
+                <Phone className="w-5 h-5" />
+                Hubungi Kami
+              </a>
+            </div>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </article>
+      <Footer />
+      <Chatbot />
+    </>
   );
 }
 
-function JasaListingSection({
-  onSelectService,
-}: {
-  onSelectService: (s: ServiceItem) => void;
-}) {
+function JasaListingSection() {
   const { services, fetchServices } = useServiceStore();
   const [page, setPage] = useState(1);
 
@@ -5421,7 +5495,6 @@ function JasaListingSection({
                 <ServiceCard
                   key={service.id}
                   service={service}
-                  onSelect={onSelectService}
                 />
               ))}
             </div>
@@ -5507,11 +5580,7 @@ function JasaListingSection({
   );
 }
 
-function JasaPage({
-  onSelectService,
-}: {
-  onSelectService: (s: ServiceItem) => void;
-}) {
+function JasaPage() {
   const { settings: S } = useSettingsStore();
   return (
     <>
@@ -5519,7 +5588,7 @@ function JasaPage({
         title="Jasa & Layanan"
         subtitle="Solusi bangunan profesional dari konstruksi hingga desain interior"
       />
-      <JasaListingSection onSelectService={onSelectService} />
+      <JasaListingSection />
     </>
   );
 }
@@ -5694,16 +5763,12 @@ function MitraPage() {
 
 /* ─────────────────────────── PROYEK PAGE ─────────────────────────── */
 
-function ProyekPage({
-  onSelectProperty,
-}: {
-  onSelectProperty: (p: Property) => void;
-}) {
+function ProyekPage() {
   const { settings: S } = useSettingsStore();
   return (
     <>
       <PageBanner title="Proyek Kami" subtitle="Pilih rumah idaman Anda dari berbagai tipe yang tersedia" />
-      <PropertiesSection onSelectProperty={onSelectProperty} />
+      <PropertiesSection />
     </>
   );
 }
@@ -5785,12 +5850,6 @@ function PageContent() {
   const tab = searchParams.get("tab") || "home";
   const { settings: S, fetchSettings } = useSettingsStore();
   const { properties: PROPERTIES, loading: propertiesLoading, refetchProperties } = usePropertyStore();
-  const [selectedProperty, setSelectedProperty] = useState<
-    Property | null
-  >(null);
-  const [selectedService, setSelectedService] = useState<
-    ServiceItem | null
-  >(null);
 
   useEffect(() => {
     fetchSettings();
@@ -5804,19 +5863,28 @@ function PageContent() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [tab]);
 
-  const handleSelectProperty = useCallback((p: Property) => {
-    setSelectedProperty(p);
-  }, []);
-
-  const handleSelectService = useCallback((s: ServiceItem) => {
-    setSelectedService(s);
-  }, []);
-
   const renderContent = () => {
-    // Check if it's a blog article URL: ?tab=blog/slug (before switch since switch uses strict ===)
+    // Check slug-based routes (before switch since switch uses strict ===)
     const blogSlugMatch = tab.match(/^blog\/(.+)$/);
     if (blogSlugMatch) {
-      return <BlogArticlePage slug={blogSlugMatch[1]} />;
+      return (
+        <>
+          <Navbar activeTab="blog" />
+          <BlogArticlePage slug={blogSlugMatch[1]} />
+          <Footer />
+          <Chatbot />
+        </>
+      );
+    }
+
+    const proyekSlugMatch = tab.match(/^proyek\/(.+)$/);
+    if (proyekSlugMatch) {
+      return <PropertyDetailPage slug={proyekSlugMatch[1]} />;
+    }
+
+    const jasaSlugMatch = tab.match(/^jasa\/(.+)$/);
+    if (jasaSlugMatch) {
+      return <ServiceDetailPage slug={jasaSlugMatch[1]} />;
     }
 
     switch (tab) {
@@ -5833,12 +5901,7 @@ function PageContent() {
         return (
           <>
             <Navbar activeTab={tab} />
-            <ProyekPage onSelectProperty={handleSelectProperty} />
-            <PropertyDetailDialog
-              property={selectedProperty}
-              open={!!selectedProperty}
-              onClose={() => setSelectedProperty(null)}
-            />
+            <ProyekPage />
             <Footer />
             <Chatbot />
           </>
@@ -5847,12 +5910,7 @@ function PageContent() {
         return (
           <>
             <Navbar activeTab={tab} />
-            <JasaPage onSelectService={handleSelectService} />
-            <ServiceDetailDialog
-              service={selectedService!}
-              open={!!selectedService}
-              onClose={() => setSelectedService(null)}
-            />
+            <JasaPage />
             <Footer />
             <Chatbot />
           </>
@@ -5901,23 +5959,13 @@ function PageContent() {
             <MarqueeStrip />
             <VideoOverviewSection />
             <WhyChooseSection />
-            <PropertyShowcaseSection onSelectProperty={handleSelectProperty} />
+            <PropertyShowcaseSection />
             <HowToBuySection />
-            <ServicePreviewSection onSelectService={handleSelectService} />
+            <ServicePreviewSection />
             <TestimonialsCarousel limit={6} />
             <BlogPreviewSection />
             <FAQSection />
             <CTASection />
-            <PropertyDetailDialog
-              property={selectedProperty}
-              open={!!selectedProperty}
-              onClose={() => setSelectedProperty(null)}
-            />
-            <ServiceDetailDialog
-              service={selectedService!}
-              open={!!selectedService}
-              onClose={() => setSelectedService(null)}
-            />
             <Footer />
             <Chatbot />
           </>
