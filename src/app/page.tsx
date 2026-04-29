@@ -5396,55 +5396,6 @@ function JasaListingSection() {
           </p>
         </FadeIn>
 
-        {/* Stats row */}
-        <FadeIn delay={0.1}>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
-            {[
-              { value: "150+", label: "Proyek Selesai", icon: CheckCircle2 },
-              { value: "10+", label: "Tahun Pengalaman", icon: Award },
-              { value: "100%", label: "Garansi Pekerjaan", icon: Shield },
-              { value: "4.9/5", label: "Rating Klien", icon: Star },
-            ].map((stat, i) => (
-              <div key={i} className="bg-white rounded-2xl border border-gray-100 p-5 text-center shadow-sm hover:shadow-md transition-all group">
-                <stat.icon className="w-5 h-5 text-gray-400 mx-auto mb-2 group-hover:text-gray-600 transition-colors" />
-                <p className="text-2xl font-black text-gray-900">{stat.value}</p>
-                <p className="text-xs text-gray-500 mt-1">{stat.label}</p>
-              </div>
-            ))}
-          </div>
-        </FadeIn>
-
-        {/* Why choose our services */}
-        <FadeIn delay={0.15} className="mb-16">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                icon: HardHat,
-                title: "Tim Profesional",
-                desc: "Tenaga kerja terlatih bersertifikat dengan pengalaman bertahun-tahun di bidang konstruksi dan bangunan.",
-              },
-              {
-                icon: FileText,
-                title: "Kontrak Transparan",
-                desc: "RAB detail, timeline jelas, dan kontrak kerja resmi. Tidak ada biaya tersembunyi.",
-              },
-              {
-                icon: ThumbsUp,
-                title: "Garansi Mutu",
-                desc: "Setiap pekerjaan bergaransi. Jika tidak sesuai spesifikasi, kami perbaiki tanpa biaya tambahan.",
-              },
-            ].map((item, i) => (
-              <div key={i} className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-lg transition-all group hover:-translate-y-0.5">
-                <div className="w-12 h-12 rounded-xl bg-gray-900 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-                  <item.icon className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="font-bold text-gray-900 text-lg mb-2">{item.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </FadeIn>
-
         {/* Service cards - simple grid, no tabs */}
         {paged.length > 0 ? (
           <>
