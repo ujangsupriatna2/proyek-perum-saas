@@ -903,7 +903,7 @@ function PremiumPropertyCard({
           {/* Price */}
           <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between">
             <div>
-              <p className="text-white font-black text-xl leading-none">Rp {property.price}</p>
+              <p className="text-white font-black text-xl leading-none">Rp {new Intl.NumberFormat("id-ID").format(property.price)}</p>
               <p className="text-white/60 text-[11px] font-medium mt-0.5">Juta</p>
             </div>
             {bestKpr && (
@@ -1788,8 +1788,8 @@ function PropertyCard({
           </h3>
 
           <div className="flex items-baseline gap-1 mb-3">
-            <span className="text-2xl font-extrabold text-gray-900">
-              Rp {property.price}{" "}
+            <span className="text-lg font-extrabold text-gray-900">
+              Rp {new Intl.NumberFormat("id-ID").format(property.price)}{" "}
               <span className="text-sm font-medium text-gray-500">Juta</span>
             </span>
           </div>
@@ -1803,7 +1803,7 @@ function PropertyCard({
               </div>
               <div className="text-center p-2 bg-gray-50 rounded-lg">
                 <p className="text-[10px] text-gray-700">Harga/m²</p>
-                <p className="text-xs font-bold text-gray-700">{property.landArea > 0 ? new Intl.NumberFormat("id-ID").format(Math.round(property.price * 1_000_000 / property.landArea)) : "-"}</p>
+                <p className="text-xs font-bold text-gray-700">{property.landArea > 0 ? `${new Intl.NumberFormat("id-ID").format(Math.round(property.price / property.landArea * 10) / 10)} Jt/m²` : "-"}</p>
               </div>
             </div>
           ) : (
@@ -2463,7 +2463,7 @@ function DetailSimulasiCicilan({ property }: { property: Property }) {
         <div className="grid grid-cols-3 gap-2 text-center">
           <div className="bg-gray-50 rounded-lg p-2">
             <p className="text-[10px] text-gray-400">Harga</p>
-            <p className="text-xs font-bold text-gray-700">{property.price} jt</p>
+            <p className="text-xs font-bold text-gray-700">{new Intl.NumberFormat("id-ID").format(property.price)} jt</p>
           </div>
           <div className="bg-gray-50 rounded-lg p-2">
             <p className="text-[10px] text-gray-400">DP</p>
@@ -2557,8 +2557,7 @@ function PropertyDetailDialog({
           <div className="grid grid-cols-2 gap-4 mb-5">
             <div className="bg-gray-100 rounded-xl p-4 text-center">
               <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">{property.category === "kavling" ? "Harga Tanah" : "Harga Rumah"}</p>
-              <p className="text-xl font-extrabold text-gray-600">Rp {formatRp(property.price * 1_000_000)}</p>
-              <p className="text-[11px] text-gray-400 mt-0.5">({property.price} Juta)</p>
+              <p className="text-base font-extrabold text-gray-600">Rp {new Intl.NumberFormat("id-ID").format(property.price)} Juta</p>
             </div>
             {property.category === "kavling" ? (
               <div className="bg-gray-50 rounded-xl p-4 text-center">
@@ -2566,7 +2565,7 @@ function PropertyDetailDialog({
                 <p className="text-xl font-extrabold text-gray-600">{property.landArea} Meter²</p>
                 {property.landArea > 0 && (
                   <p className="text-[11px] text-gray-400 mt-0.5">
-                    Harga per m²: Rp {formatRp(Math.round(property.price * 1_000_000 / property.landArea))}
+                    Harga per m²: Rp {new Intl.NumberFormat("id-ID").format(Math.round(property.price / property.landArea * 10) / 10)} Juta
                   </p>
                 )}
               </div>
@@ -2855,7 +2854,7 @@ function CalculatorSection() {
                         <SelectItem key={p.id} value={p.id} className="py-3 rounded-lg">
                           <div className="flex flex-col gap-0.5">
                             <span className="font-semibold text-sm leading-tight">{p.name}</span>
-                            <span className="text-xs text-gray-500">Rp {p.price} Juta</span>
+                            <span className="text-xs text-gray-500">Rp {new Intl.NumberFormat("id-ID").format(p.price)} Juta</span>
                           </div>
                         </SelectItem>
                       ))}
@@ -2999,9 +2998,9 @@ function CalculatorSection() {
 
                 <div className="space-y-4">
                   {[
-                    { label: "Harga Rumah", value: `Rp ${prop ? formatRp(prop.price * 1_000_000) : "0"}` },
-                    { label: `Uang Muka (${formatDpLabel(dpNum)})`, value: `Rp ${formatRp(dpAmountJuta * 1_000_000)}` },
-                    { label: "Sisa Pembayaran", value: `Rp ${formatRp(remainingJuta * 1_000_000)}` },
+                    { label: "Harga Rumah", value: `Rp ${prop ? new Intl.NumberFormat("id-ID").format(prop.price) : "0"} Juta` },
+                    { label: `Uang Muka (${formatDpLabel(dpNum)})`, value: `Rp ${new Intl.NumberFormat("id-ID").format(dpAmountJuta)} Juta` },
+                    { label: "Sisa Pembayaran", value: `Rp ${new Intl.NumberFormat("id-ID").format(remainingJuta)} Juta` },
                     { label: `Tenor (${tenor} tahun)`, value: `${tenorNum * 12} bulan` },
                   ].map((row) => (
                     <div key={row.label} className="flex justify-between items-center gap-2 min-w-0">
@@ -3036,7 +3035,7 @@ function CalculatorSection() {
                   Tabel Cicilan {effectiveFinType === "syariah" ? "Syariah" : "KPR"} — {prop.name}
                 </h3>
                 <p className="text-sm text-gray-500 mb-6">
-                  Rp {prop.price} Juta
+                  Rp {new Intl.NumberFormat("id-ID").format(prop.price)} Juta
                   {effectiveFinType === "syariah"
                     ? ` · Margin ${(prop.syariahMargin ?? 15)}% · Otomatis dihitung`
                     : " · Bunga fluktuatif per bank"}

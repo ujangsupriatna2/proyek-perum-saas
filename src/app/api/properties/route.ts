@@ -9,7 +9,7 @@ export async function GET(req: Request) {
     const search = searchParams.get("search") || "";
     const slug = searchParams.get("slug") || "";
 
-    const where: Record<string, unknown> = { status: "available", mitraId: null };
+    const where: Record<string, unknown> = { status: "available" };
     if (category && category !== "all") where.category = category;
     if (search) {
       where.OR = [
