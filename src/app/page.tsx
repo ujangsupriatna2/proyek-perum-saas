@@ -808,8 +808,8 @@ function TentangKamiKeunggulanSection() {
       <FloatingParticles count={4} dark={false} />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-16">
-          <p className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Keunggulan Kami</p>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
+          <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Keunggulan Kami</span>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-3 mb-4 tracking-tight">
             Mengapa <span className="text-gradient-accent">Berpercaya</span> pada Kami?
           </h2>
           <p className="text-gray-500 max-w-2xl mx-auto text-lg">
@@ -2199,15 +2199,9 @@ function PropertiesSection({
       <FloatingParticles count={4} dark={false} />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-12">
-          <Badge
-            variant="secondary"
-            className="mb-4 bg-gray-100 text-gray-600 border-gray-200"
-          >
-            <Home className="w-3.5 h-3.5 mr-1.5" />
-            Katalog Properti
-          </Badge>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-            Pilih Rumah <span className="text-gray-900">Idaman</span> Anda
+          <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Katalog Properti</span>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-3 mb-4 tracking-tight">
+            Pilih Rumah <span className="text-gradient-gray">Idaman</span> Anda
           </h2>
           <p className="text-gray-500 max-w-2xl mx-auto text-lg">
             Tersedia berbagai tipe rumah dengan harga terjangkau dan skema
@@ -3036,15 +3030,9 @@ function CalculatorSection() {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-8">
-          <Badge
-            variant="secondary"
-            className="mb-4 bg-gray-100 text-gray-600 border-gray-200"
-          >
-            <Calculator className="w-3.5 h-3.5 mr-1.5" />
-            Simulasi Cicilan
-          </Badge>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-            Hitung <span className="text-gray-900">Cicilan</span> Anda
+          <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Simulasi Cicilan</span>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-3 mb-4 tracking-tight">
+            Hitung <span className="text-gradient-gray">Cicilan</span> Anda
           </h2>
           <p className="text-gray-500 max-w-2xl mx-auto text-lg">
             Kalkulator simulasi cicilan {effectiveFinType === "syariah" ? "syariah" : "KPR"}. Tentukan DP dan tenor sesuai
@@ -3383,12 +3371,9 @@ function LocationSection() {
 
       <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-14">
-          <Badge variant="secondary" className="mb-4 bg-gray-100 text-gray-600 border-gray-200">
-            <MapPin className="w-3.5 h-3.5 mr-1.5" />
-            Lokasi Strategis
-          </Badge>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-            Berlokasi di <span className="text-gray-900">Jantung Bandung</span>
+          <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Lokasi Strategis</span>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-3 mb-4 tracking-tight">
+            Berlokasi di <span className="text-gradient-gray">Jantung Bandung</span>
           </h2>
           <p className="text-gray-500 text-lg mb-8 leading-relaxed max-w-2xl mx-auto">
             {S.company_name} berlokasi di {S.contact_address} dengan akses mudah ke berbagai fasilitas penting.
@@ -3522,12 +3507,9 @@ function ContactSection() {
 
       <div className="relative max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-12">
-          <Badge variant="secondary" className="mb-4 bg-gray-100 text-gray-600 border-gray-200">
-            <Phone className="w-3.5 h-3.5 mr-1.5" />
-            Hubungi Kami
-          </Badge>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-            Tim Marketing Kami Siap <span className="text-gray-900">Melayani</span> Anda
+          <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Hubungi Kami</span>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-3 mb-4 tracking-tight">
+            Tim Marketing Kami Siap <span className="text-gradient-gray">Melayani</span> Anda
           </h2>
           <p className="text-gray-500 max-w-xl mx-auto text-lg">
             Isi form di bawah, pesan otomatis dikirim ke WhatsApp kami.
@@ -3721,12 +3703,9 @@ function ProyekGallery() {
       <section className="py-20 md:py-28 bg-section-gray">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4 bg-gray-100 text-gray-600 border-gray-200">
-              <Camera className="w-3.5 h-3.5 mr-1.5" />
-              Gallery
-            </Badge>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-              Dokumentasi <span className="text-gray-900">Proyek</span> Kami
+            <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Gallery</span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-3 mb-4 tracking-tight">
+              Dokumentasi <span className="text-gradient-gray">Proyek</span> Kami
             </h2>
           </FadeIn>
           <div className="flex justify-center py-20">
@@ -3748,12 +3727,9 @@ function ProyekGallery() {
       <FloatingParticles count={3} dark={false} />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-12">
-          <Badge variant="secondary" className="mb-4 bg-gray-100 text-gray-600 border-gray-200">
-            <Camera className="w-3.5 h-3.5 mr-1.5" />
-            Gallery
-          </Badge>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-            Dokumentasi <span className="text-gray-900">Proyek</span> Kami
+          <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Gallery</span>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-3 mb-4 tracking-tight">
+            Dokumentasi <span className="text-gradient-gray">Proyek</span> Kami
           </h2>
           <p className="text-gray-500 max-w-2xl mx-auto text-lg">
             Lihat foto dan video proyek serta lingkungan {S.company_name}.
@@ -3973,12 +3949,9 @@ function TentangKamiPage() {
               </div>
             </FadeIn>
             <FadeIn direction="right">
-              <Badge variant="secondary" className="mb-4 bg-gray-100 text-gray-600 border-gray-200">
-                <Building2 className="w-3.5 h-3.5 mr-1.5" />
-                Profil Perusahaan
-              </Badge>
-              <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-6">
-                Platform Perumahan <span className="text-gray-900">Terpercaya</span> di Indonesia
+              <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Profil Perusahaan</span>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-3 mb-6 tracking-tight">
+                Platform Perumahan <span className="text-gradient-gray">Terpercaya</span> di Indonesia
               </h2>
               <p className="text-gray-600 text-lg leading-relaxed mb-4">
                 {S.company_name} adalah platform perumahan yang menghimpun developer-developer perumahan terpilih di bawah naungan {S.company_legal_name}. Kami berperan sebagai jembatan antara pengembang properti berkualitas dan calon pembeli rumah yang mencari hunian terbaik.
@@ -3998,12 +3971,9 @@ function TentangKamiPage() {
       <section className="py-20 md:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4 bg-gray-50 text-gray-600 border-gray-200">
-              <Sparkles className="w-3.5 h-3.5 mr-1.5" />
-              Visi & Misi
-            </Badge>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-              Arah & <span className="text-gray-900">Tujuan</span> Kami
+            <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Visi &amp; Misi</span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-3 mb-4 tracking-tight">
+              Arah &amp; <span className="text-gradient-gray">Tujuan</span> Kami
             </h2>
           </FadeIn>
           <div className="grid md:grid-cols-2 gap-8">
@@ -4063,12 +4033,9 @@ function TentangKamiPage() {
         <FloatingParticles count={4} dark={false} />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-16">
-            <Badge variant="secondary" className="mb-4 bg-gray-100 text-gray-600 border-gray-200">
-              <Award className="w-3.5 h-3.5 mr-1.5" />
-              Nilai-Nilai Kami
-            </Badge>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-              Prinsip yang <span className="text-gray-900">Kami Pegang</span>
+            <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Nilai-Nilai Kami</span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-3 mb-4 tracking-tight">
+              Prinsip yang <span className="text-gradient-gray">Kami Pegang</span>
             </h2>
             <p className="text-gray-500 max-w-2xl mx-auto text-lg">
               Setiap keputusan yang kami ambil berlandaskan pada nilai-nilai inti yang memastikan kepercayaan dan kenyamanan Anda.
@@ -4111,11 +4078,8 @@ function TentangKamiPage() {
         <div className="absolute bottom-0 left-0 w-72 h-72 bg-gray-500/5 rounded-full blur-3xl" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-16">
-            <Badge variant="secondary" className="mb-4 bg-white/10 text-amber-300 border-white/20">
-              <Clock className="w-3.5 h-3.5 mr-1.5" />
-              Perjalanan Kami
-            </Badge>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">
+            <span className="text-gray-500 text-xs font-bold uppercase tracking-[0.3em]">Perjalanan Kami</span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-white mt-3 mb-4 tracking-tight">
               Milestone <span className="text-amber-300">Bisnis</span>
             </h2>
             <p className="text-gray-400 max-w-2xl mx-auto text-lg">
@@ -4177,12 +4141,9 @@ function TentangKamiPage() {
       <section className="py-20 md:py-28 bg-section-gray">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4 bg-gray-50 text-gray-600 border-gray-200">
-              <Shield className="w-3.5 h-3.5 mr-1.5" />
-              Legalitas Perusahaan
-            </Badge>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-              Dokumen <span className="text-gray-900">Lengkap & Terverifikasi</span>
+            <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Legalitas Perusahaan</span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-3 mb-4 tracking-tight">
+              Dokumen <span className="text-gradient-gray">Lengkap &amp; Terverifikasi</span>
             </h2>
             <p className="text-gray-500 max-w-2xl mx-auto text-lg">
               {S.company_legal_name} beroperasi secara legal dengan seluruh dokumen perizinan lengkap.
@@ -4237,12 +4198,9 @@ function TentangKamiPage() {
       <section className="py-16 md:py-20 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-10">
-            <Badge variant="secondary" className="mb-4 bg-gray-50 text-gray-600 border-gray-200">
-              <Handshake className="w-3.5 h-3.5 mr-1.5" />
-              Mitra Perbankan
-            </Badge>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-              Didukung <span className="text-gray-900">Bank & Lembaga Keuangan</span> Terpercaya
+            <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Mitra Perbankan</span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-3 mb-4 tracking-tight">
+              Didukung <span className="text-gradient-gray">Bank &amp; Lembaga Keuangan</span> Terpercaya
             </h2>
           </FadeIn>
           {bankLoading ? (
@@ -4298,12 +4256,9 @@ function TentangKamiPage() {
       <section className="py-20 md:py-28 bg-section-gray">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-12">
-            <Badge variant="secondary" className="mb-4 bg-gray-100 text-gray-600 border-gray-200">
-              <Camera className="w-3.5 h-3.5 mr-1.5" />
-              Dokumentasi
-            </Badge>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-              Galeri <span className="text-gray-900">Foto</span>
+            <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Dokumentasi</span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-3 mb-4 tracking-tight">
+              Galeri <span className="text-gradient-gray">Foto</span>
             </h2>
           </FadeIn>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -5173,12 +5128,9 @@ function JasaListingSection({
       <FloatingParticles count={3} dark={false} />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-12">
-          <Badge variant="secondary" className="mb-4 bg-gray-50 text-gray-600 border-gray-200">
-            <HardHat className="w-3.5 h-3.5 mr-1.5" />
-            Layanan Jasa Kami
-          </Badge>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-            Solusi Bangunan <span className="text-gray-900">Profesional</span>
+          <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Layanan Jasa Kami</span>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-3 mb-4 tracking-tight">
+            Solusi Bangunan <span className="text-gradient-gray">Profesional</span>
           </h2>
           <p className="text-gray-500 max-w-2xl mx-auto text-lg">
             Dari konstruksi hingga desain interior — semua kebutuhan bangunan Anda
@@ -5291,12 +5243,9 @@ function MitraPage() {
         <FloatingParticles count={3} dark={false} />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-16">
-            <Badge variant="secondary" className="mb-4 bg-gray-100 text-gray-600 border-gray-200">
-              <Handshake className="w-3.5 h-3.5 mr-1.5" />
-              Mitra Terpercaya
-            </Badge>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-              Developer <span className="text-gray-900">Terpilih</span> & Terverifikasi
+            <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Mitra Terpercaya</span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-3 mb-4 tracking-tight">
+              Developer <span className="text-gradient-gray">Terpilih</span> &amp; Terverifikasi
             </h2>
             <p className="text-gray-500 max-w-2xl mx-auto text-lg">
               Setiap mitra developer yang bergabung telah melalui proses kurasi ketat — dari legalitas, kualitas bangunan, hingga track record.
@@ -5411,11 +5360,8 @@ function MitraPage() {
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-gray-500/10 rounded-full blur-3xl" />
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <FadeIn>
-            <Badge variant="secondary" className="mb-6 bg-white/10 text-gray-300 border-white/20">
-              <Handshake className="w-3.5 h-3.5 mr-1.5" />
-              Bergabunglah
-            </Badge>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">
+            <span className="text-gray-500 text-xs font-bold uppercase tracking-[0.3em]">Bergabunglah</span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-white mt-3 mb-4 tracking-tight">
               Tertarik Bergabung sebagai <span className="text-gray-300">Mitra Developer</span>?
             </h2>
             <p className="text-gray-400 text-lg leading-relaxed mb-8 max-w-2xl mx-auto">
