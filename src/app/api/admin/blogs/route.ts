@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { getMitraFilter, isSuperadmin } from "@/lib/permissions";
+import { isSuperadmin } from "@/lib/permissions";
 
 /** Clean Quill HTML: replace &nbsp; with normal spaces so text wraps properly */
 function cleanHtml(html: string): string {
@@ -18,16 +18,13 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const mitraId = (session.user as { mitraId?: string | null })?.mitraId;
-    const mitraFilter = getMitraFilter(mitraId);
-
     const { searchParams } = new URL(req.url);
     const search = searchParams.get("search") || "";
     const category = searchParams.get("category") || "";
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "50");
 
-    const where: Record<string, unknown> = { ...mitraFilter };
+    const where: Record<string, unknown> = {};
     if (search) {
       where.OR = [
         { title: { contains: search } },

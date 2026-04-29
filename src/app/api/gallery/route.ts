@@ -8,7 +8,7 @@ export async function GET(req: Request) {
     const category = searchParams.get("category") || "";
     const limit = parseInt(searchParams.get("limit") || "100");
 
-    const where: Record<string, unknown> = { mitraId: null };
+    const where: Record<string, unknown> = {};
     if (category && category !== "all") where.category = category;
 
     const items = await db.galleryItem.findMany({
