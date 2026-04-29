@@ -452,32 +452,27 @@ function Hero() {
           alt={S.company_name}
           className="w-full h-full object-cover animate-ken-burns"
         />
-        {/* Refined gradient overlay — softer, lets image breathe */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/80" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-black/40" />
-        {/* Vignette corners for cinematic depth */}
-        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.5) 100%)' }} />
-        {/* Subtle grain */}
-        <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")' }} />
+        {/* Dark overlay — ensure text always readable */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/85" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/50" />
+        {/* Vignette */}
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.6) 100%)' }} />
       </div>
 
-      {/* Soft ambient glow behind text */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-white/[0.03] blur-[120px] rounded-full" />
-
       {/* Content */}
-      <div className="relative z-10 max-w-5xl mx-auto px-6 sm:px-10 text-center">
+      <div className="relative z-10 max-w-4xl mx-auto px-6 sm:px-10 text-center">
         {/* Eyebrow */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-          className="inline-flex items-center gap-3 mb-8"
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="inline-flex items-center gap-3 mb-6"
         >
-          <div className="h-px w-10 bg-white/30" />
-          <span className="text-white/50 text-xs font-semibold uppercase tracking-[0.25em]">
+          <div className="h-px w-8 bg-white/40" />
+          <span className="text-white/60 text-[11px] font-semibold uppercase tracking-[0.25em]">
             {S.company_legal_name || "Platform Perumahan"}
           </span>
-          <div className="h-px w-10 bg-white/30" />
+          <div className="h-px w-8 bg-white/40" />
         </motion.div>
 
         {/* Headline */}
@@ -485,40 +480,36 @@ function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-[1.08] mb-8 tracking-tight"
+          className="text-[2.75rem] sm:text-5xl md:text-6xl lg:text-[4.5rem] font-black text-white leading-[1.1] mb-6 tracking-tight drop-shadow-[0_4px_30px_rgba(0,0,0,0.8)]"
         >
-          <span className="text-white drop-shadow-[0_2px_20px_rgba(255,255,255,0.15)]">Temukan Hunian</span>
-          <br />
-          <span className="text-white drop-shadow-[0_2px_30px_rgba(255,255,255,0.25)]">Idaman Anda</span>
-          <br />
-          <span className="text-white/70 text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-light tracking-wide">di Sini</span>
+          Temukan Hunian{" "}
+          <span className="block mt-1">Idaman Anda <span className="text-white/80">di Sini</span></span>
         </motion.h1>
 
-        {/* Divider line */}
+        {/* Divider */}
         <motion.div
           initial={{ opacity: 0, scaleX: 0 }}
           animate={{ opacity: 1, scaleX: 1 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="w-16 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent mx-auto mb-8"
+          transition={{ duration: 0.6, delay: 0.55 }}
+          className="w-12 h-0.5 bg-white/50 mx-auto mb-6"
         />
 
         {/* Subtitle */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.7 }}
-          className="text-base sm:text-lg text-white/60 leading-relaxed mb-12 max-w-2xl mx-auto font-light"
+          transition={{ duration: 0.6, delay: 0.65 }}
+          className="text-base sm:text-lg text-white/75 leading-relaxed mb-12 max-w-xl mx-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]"
         >
-          Platform perumahan terpercaya yang menghubungkan Anda dengan developer terpilih.
-          <br className="hidden sm:block" />
-          <span className="text-white/80 font-normal">Skema pembayaran fleksibel</span> — Syariah &amp; KPR Bank.
+          Platform perumahan terpercaya yang menghubungkan Anda dengan developer terpilih.{" "}
+          <span className="text-white font-medium">Skema pembayaran fleksibel</span> — Syariah &amp; KPR Bank.
         </motion.p>
 
         {/* CTAs */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.9 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
           className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
         >
           <a
