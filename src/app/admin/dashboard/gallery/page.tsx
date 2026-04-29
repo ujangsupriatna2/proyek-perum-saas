@@ -179,7 +179,7 @@ export default function GalleryPage() {
           <h1 className="text-2xl font-bold text-gray-900">Gallery</h1>
           <p className="text-sm text-gray-500 mt-1">Kelola galeri foto dan video</p>
         </div>
-        <Button onClick={openCreate} className="bg-red-600 hover:bg-red-700 text-white gap-2">
+        <Button onClick={openCreate} className="bg-gray-900 hover:bg-gray-800 text-white gap-2">
           <Plus className="w-4 h-4" /> Tambah Gallery
         </Button>
       </div>
@@ -235,8 +235,8 @@ export default function GalleryPage() {
                         )}
                         <TableCell>
                           {item.videoUrl ? (
-                            <div className="w-14 h-10 rounded-lg bg-red-50 flex items-center justify-center border border-red-200">
-                              <svg className="w-5 h-5 text-red-500" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                            <div className="w-14 h-10 rounded-lg bg-gray-100 flex items-center justify-center border border-gray-300">
+                              <svg className="w-5 h-5 text-gray-700" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
                             </div>
                           ) : item.image ? (
                             <div className="relative w-14 h-10">
@@ -271,7 +271,7 @@ export default function GalleryPage() {
                             <Button variant="ghost" size="icon" onClick={() => openEdit(item)} className="text-gray-400 hover:text-blue-600">
                               <Pencil className="w-4 h-4" />
                             </Button>
-                            <Button variant="ghost" size="icon" onClick={() => openDelete(item)} className="text-gray-400 hover:text-red-600">
+                            <Button variant="ghost" size="icon" onClick={() => openDelete(item)} className="text-gray-400 hover:text-gray-700">
                               <Trash2 className="w-4 h-4" />
                             </Button>
                           </div>
@@ -312,15 +312,15 @@ export default function GalleryPage() {
             )}
             <div className="space-y-2">
               <Label>
-                Judul <span className="text-red-500">*</span>
+                Judul <span className="text-gray-700">*</span>
               </Label>
               <Input
                 value={form.title}
                 onChange={(e) => { clearFieldError("title"); setForm({ ...form, title: e.target.value }); }}
-                className={errors.title ? "border-red-400 focus-visible:ring-red-400" : ""}
+                className={errors.title ? "border-gray-400 focus-visible:ring-gray-400" : ""}
               />
               {errors.title && (
-                <p className="text-xs text-red-500 flex items-center gap-1">
+                <p className="text-xs text-gray-700 flex items-center gap-1">
                   <AlertCircle className="w-3 h-3" /> {errors.title}
                 </p>
               )}
@@ -352,7 +352,7 @@ export default function GalleryPage() {
                 maxImages={1}
               />
               {errors.image && (
-                <p className="text-xs text-red-500 flex items-center gap-1">
+                <p className="text-xs text-gray-700 flex items-center gap-1">
                   <AlertCircle className="w-3 h-3" /> {errors.image}
                 </p>
               )}
@@ -364,7 +364,7 @@ export default function GalleryPage() {
             <div className="space-y-2">
               <Label className="flex items-center gap-1">
                 Link Video YouTube
-                <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="text-red-500 hover:text-red-600">
+                <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-800">
                   <ExternalLink className="w-3 h-3" />
                 </a>
               </Label>
@@ -378,7 +378,7 @@ export default function GalleryPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setFormOpen(false)}>Batal</Button>
-            <Button onClick={handleSave} disabled={saving} className="bg-red-600 hover:bg-red-700 text-white">
+            <Button onClick={handleSave} disabled={saving} className="bg-gray-900 hover:bg-gray-800 text-white">
               {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               {editing ? "Simpan" : "Tambah"}
             </Button>
@@ -397,7 +397,7 @@ export default function GalleryPage() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Batal</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700 text-white">Hapus</AlertDialogAction>
+            <AlertDialogAction onClick={handleDelete} className="bg-gray-900 hover:bg-gray-800 text-white">Hapus</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

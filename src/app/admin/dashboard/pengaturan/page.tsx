@@ -134,9 +134,9 @@ function ImageUploadField({ fieldKey, label, value, onChange }: {
             </Button>
             <Button
               type="button"
-              variant="destructive"
+              variant="outline"
               size="sm"
-              className="gap-1.5"
+              className="gap-1.5 text-gray-700 border-gray-300 hover:bg-gray-100"
               onClick={handleRemove}
             >
               <X className="w-3.5 h-3.5" />
@@ -149,7 +149,7 @@ function ImageUploadField({ fieldKey, label, value, onChange }: {
           type="button"
           onClick={() => fileRef.current?.click()}
           disabled={uploading}
-          className="w-full h-40 border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center gap-2 text-gray-400 hover:border-red-400 hover:text-red-500 transition-colors cursor-pointer disabled:opacity-50"
+          className="w-full h-40 border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center gap-2 text-gray-400 hover:border-gray-400 hover:text-gray-500 transition-colors cursor-pointer disabled:opacity-50"
         >
           {uploading ? (
             <Loader2 className="w-8 h-8 animate-spin" />
@@ -236,9 +236,9 @@ function VideoUploadField({ fieldKey, label, value, onChange }: {
             </Button>
             <Button
               type="button"
-              variant="destructive"
+              variant="outline"
               size="sm"
-              className="gap-1.5"
+              className="gap-1.5 text-gray-700 border-gray-300 hover:bg-gray-100"
               onClick={handleRemove}
             >
               <X className="w-3.5 h-3.5" />
@@ -381,7 +381,7 @@ export default function PengaturanPage() {
               : `Konfigurasi website ${settings.company_name || "Admin"}`}
           </p>
         </div>
-        <Button onClick={handleSave} disabled={saving} className="bg-red-600 hover:bg-red-700 text-white gap-2">
+        <Button onClick={handleSave} disabled={saving} className="bg-gray-900 hover:bg-gray-800 text-white gap-2">
           {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
           Simpan Pengaturan
         </Button>
@@ -446,8 +446,8 @@ export default function PengaturanPage() {
             <Card key={group.group} className="border-0 shadow-sm">
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center">
-                    <group.icon className="w-4 h-4 text-red-600" />
+                  <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
+                    <group.icon className="w-4 h-4 text-gray-700" />
                   </div>
                   {group.title}
                 </CardTitle>
@@ -482,7 +482,7 @@ export default function PengaturanPage() {
                             value={settings[field.key] || ""}
                             onChange={(e) => handleChange(field.key, e.target.value)}
                             rows={3}
-                            className={errors[field.key] ? "resize-none border-red-500 focus-visible:ring-red-500" : "resize-none"}
+                            className={errors[field.key] ? "resize-none border-gray-400 focus-visible:ring-gray-400" : "resize-none"}
                           />
                         ) : (
                           <Input
@@ -491,11 +491,11 @@ export default function PengaturanPage() {
                             value={settings[field.key] || ""}
                             onChange={(e) => handleChange(field.key, e.target.value)}
                             placeholder={field.placeholder || (field.type === "url" ? "https://..." : "")}
-                            className={errors[field.key] ? "border-red-500 focus-visible:ring-red-500" : ""}
+                            className={errors[field.key] ? "border-gray-400 focus-visible:ring-gray-400" : ""}
                           />
                         )}
                         {errors[field.key] && (
-                          <p className="flex items-center gap-1 text-sm text-red-500">
+                          <p className="flex items-center gap-1 text-sm text-gray-700">
                             <AlertCircle className="w-3.5 h-3.5" />
                             {errors[field.key]}
                           </p>

@@ -27,7 +27,7 @@ interface Stats {
 }
 
 const STAT_CARDS = [
-  { key: "totalProperties" as const, label: "Total Produk", icon: Building2, gradient: "from-red-500 to-red-600", bg: "bg-red-50" },
+  { key: "totalProperties" as const, label: "Total Produk", icon: Building2, gradient: "from-gray-700 to-gray-800", bg: "bg-gray-100" },
   { key: "publishedBlogs" as const, label: "Blog Published", icon: FileText, gradient: "from-amber-500 to-amber-600", bg: "bg-amber-50" },
   { key: "totalTestimonials" as const, label: "Testimoni", icon: MessageSquare, gradient: "from-emerald-500 to-emerald-600", bg: "bg-emerald-50" },
   { key: "totalBanks" as const, label: "Mitra Bank", icon: LandPlot, gradient: "from-orange-500 to-orange-600", bg: "bg-orange-50" },

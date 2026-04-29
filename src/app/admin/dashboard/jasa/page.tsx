@@ -333,7 +333,7 @@ export default function JasaPage() {
         </div>
         <Button
           onClick={openCreate}
-          className="bg-red-600 hover:bg-red-700 text-white gap-2"
+          className="bg-gray-900 hover:bg-gray-800 text-white gap-2"
         >
           <Plus className="w-4 h-4" /> Tambah Jasa
         </Button>
@@ -446,7 +446,7 @@ export default function JasaPage() {
                                       <Star className="w-3 h-3 text-amber-500 fill-amber-500 shrink-0" />
                                     )}
                                     {s.videoUrl && (
-                                      <Video className="w-3 h-3 text-red-500 shrink-0" />
+                                      <Video className="w-3 h-3 text-gray-700 shrink-0" />
                                     )}
                                     <p className="font-medium text-sm">{s.title}</p>
                                   </div>
@@ -479,7 +479,7 @@ export default function JasaPage() {
                                   variant="ghost"
                                   size="icon"
                                   onClick={() => openEdit(s)}
-                                  className="text-gray-400 hover:text-red-600"
+                                  className="text-gray-400 hover:text-gray-700"
                                 >
                                   <Pencil className="w-4 h-4" />
                                 </Button>
@@ -487,7 +487,7 @@ export default function JasaPage() {
                                   variant="ghost"
                                   size="icon"
                                   onClick={() => openDelete(s)}
-                                  className="text-gray-400 hover:text-red-600"
+                                  className="text-gray-400 hover:text-gray-700"
                                 >
                                   <Trash2 className="w-4 h-4" />
                                 </Button>
@@ -514,7 +514,7 @@ export default function JasaPage() {
             {/* Title */}
             <div className="space-y-2 sm:col-span-2">
               <Label className="flex items-center gap-0.5">
-                Nama Jasa <span className="text-red-500">*</span>
+                Nama Jasa <span className="text-gray-700">*</span>
               </Label>
               <Input
                 value={form.title}
@@ -522,12 +522,12 @@ export default function JasaPage() {
                 placeholder="Konstruksi Rumah 2 Lantai"
                 className={
                   hasError("title")
-                    ? "border-red-400 focus-visible:ring-red-400"
+                    ? "border-gray-400 focus-visible:ring-gray-400"
                     : ""
                 }
               />
               {errors.title && (
-                <p className="text-xs text-red-500 flex items-center gap-1">
+                <p className="text-xs text-gray-700 flex items-center gap-1">
                   <AlertCircle className="w-3 h-3" /> {errors.title}
                 </p>
               )}
@@ -539,7 +539,7 @@ export default function JasaPage() {
             {/* Category */}
             <div className="space-y-2">
               <Label className="flex items-center gap-0.5">
-                Kategori <span className="text-red-500">*</span>
+                Kategori <span className="text-gray-700">*</span>
               </Label>
               <Select
                 value={form.category}
@@ -549,7 +549,7 @@ export default function JasaPage() {
                 }}
               >
                 <SelectTrigger
-                  className={hasError("category") ? "border-red-400 focus:ring-red-400" : ""}
+                  className={hasError("category") ? "border-gray-400 focus:ring-gray-400" : ""}
                 >
                   <SelectValue placeholder="Pilih kategori..." />
                 </SelectTrigger>
@@ -562,7 +562,7 @@ export default function JasaPage() {
                 </SelectContent>
               </Select>
               {errors.category && (
-                <p className="text-xs text-red-500 flex items-center gap-1">
+                <p className="text-xs text-gray-700 flex items-center gap-1">
                   <AlertCircle className="w-3 h-3" /> {errors.category}
                 </p>
               )}
@@ -584,7 +584,7 @@ export default function JasaPage() {
                       setForm({ ...form, price: raw });
                     }}
                     placeholder="600000"
-                    className={hasError("price") ? "border-red-400 focus-visible:ring-red-400" : ""}
+                    className={hasError("price") ? "border-gray-400 focus-visible:ring-gray-400" : ""}
                   />
                   {form.price && (
                     <p className="text-xs text-gray-500 font-medium">
@@ -725,7 +725,7 @@ export default function JasaPage() {
             <Button
               onClick={handleSave}
               disabled={saving}
-              className="bg-red-600 hover:bg-red-700 text-white gap-2"
+              className="bg-gray-900 hover:bg-gray-800 text-white gap-2"
             >
               {saving && <Loader2 className="w-4 h-4 animate-spin" />}
               {editing ? "Update" : "Simpan"}
@@ -749,7 +749,7 @@ export default function JasaPage() {
             <AlertDialogAction
               onClick={handleDelete}
               disabled={deletingLoading}
-              className="bg-red-600 hover:bg-red-700 text-white"
+              className="bg-gray-900 hover:bg-gray-800 text-white"
             >
               {deletingLoading && <Loader2 className="w-4 h-4 animate-spin" />}
               Hapus

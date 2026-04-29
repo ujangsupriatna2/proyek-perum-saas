@@ -284,7 +284,7 @@ export default function MitraPage() {
         </div>
         <Button
           onClick={openCreate}
-          className="bg-red-600 hover:bg-red-700 text-white gap-2"
+          className="bg-gray-900 hover:bg-gray-800 text-white gap-2"
         >
           <Plus className="w-4 h-4" /> Tambah Mitra
         </Button>
@@ -449,7 +449,7 @@ export default function MitraPage() {
                                 variant="ghost"
                                 size="icon"
                                 onClick={() => openEdit(m)}
-                                className="text-gray-400 hover:text-red-600"
+                                className="text-gray-400 hover:text-gray-700"
                                 title="Edit"
                               >
                                 <Pencil className="w-4 h-4" />
@@ -458,7 +458,7 @@ export default function MitraPage() {
                                 variant="ghost"
                                 size="icon"
                                 onClick={() => openDelete(m)}
-                                className="text-gray-400 hover:text-red-600"
+                                className="text-gray-400 hover:text-gray-700"
                                 title="Hapus"
                               >
                                 <Trash2 className="w-4 h-4" />
@@ -492,7 +492,7 @@ export default function MitraPage() {
             {/* Name */}
             <div className="space-y-2">
               <Label className="flex items-center gap-0.5">
-                Nama Mitra <span className="text-red-500">*</span>
+                Nama Mitra <span className="text-gray-700">*</span>
               </Label>
               <div className="relative">
                 <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -500,11 +500,11 @@ export default function MitraPage() {
                   value={form.name}
                   onChange={(e) => updateName(e.target.value)}
                   placeholder="Bandung Raya Residence"
-                  className={`pl-9 ${hasError("name") ? "border-red-400 focus-visible:ring-red-400" : ""}`}
+                  className={`pl-9 ${hasError("name") ? "border-gray-400 focus-visible:ring-gray-400" : ""}`}
                 />
               </div>
               {errors.name && (
-                <p className="text-xs text-red-500 flex items-center gap-1">
+                <p className="text-xs text-gray-700 flex items-center gap-1">
                   <AlertCircle className="w-3 h-3" /> {errors.name}
                 </p>
               )}
@@ -513,7 +513,7 @@ export default function MitraPage() {
             {/* Slug */}
             <div className="space-y-2">
               <Label className="flex items-center gap-0.5">
-                Slug <span className="text-red-500">*</span>
+                Slug <span className="text-gray-700">*</span>
                 {!editing && (
                   <span className="text-[10px] text-gray-400 font-normal ml-1">
                     (otomatis)
@@ -538,11 +538,11 @@ export default function MitraPage() {
                     }));
                   }}
                   placeholder="bandung-raya-residence"
-                  className={`pl-9 ${hasError("slug") ? "border-red-400 focus-visible:ring-red-400" : ""}`}
+                  className={`pl-9 ${hasError("slug") ? "border-gray-400 focus-visible:ring-gray-400" : ""}`}
                 />
               </div>
               {errors.slug && (
-                <p className="text-xs text-red-500 flex items-center gap-1">
+                <p className="text-xs text-gray-700 flex items-center gap-1">
                   <AlertCircle className="w-3 h-3" /> {errors.slug}
                 </p>
               )}
@@ -551,7 +551,7 @@ export default function MitraPage() {
             {/* Subdomain */}
             <div className="space-y-2">
               <Label className="flex items-center gap-0.5">
-                Subdomain <span className="text-red-500">*</span>
+                Subdomain <span className="text-gray-700">*</span>
                 {!editing && (
                   <span className="text-[10px] text-gray-400 font-normal ml-1">
                     (otomatis)
@@ -570,11 +570,11 @@ export default function MitraPage() {
                     setForm((prev) => ({ ...prev, subdomain: val }));
                   }}
                   placeholder="bandungrayaresidence"
-                  className={`pl-9 ${hasError("subdomain") ? "border-red-400 focus-visible:ring-red-400" : ""}`}
+                  className={`pl-9 ${hasError("subdomain") ? "border-gray-400 focus-visible:ring-gray-400" : ""}`}
                 />
               </div>
               {errors.subdomain && (
-                <p className="text-xs text-red-500 flex items-center gap-1">
+                <p className="text-xs text-gray-700 flex items-center gap-1">
                   <AlertCircle className="w-3 h-3" /> {errors.subdomain}
                 </p>
               )}
@@ -593,11 +593,11 @@ export default function MitraPage() {
                     setForm((prev) => ({ ...prev, email: e.target.value }));
                   }}
                   placeholder="info@bandungraya.id"
-                  className={`pl-9 ${hasError("email") ? "border-red-400 focus-visible:ring-red-400" : ""}`}
+                  className={`pl-9 ${hasError("email") ? "border-gray-400 focus-visible:ring-gray-400" : ""}`}
                 />
               </div>
               {errors.email && (
-                <p className="text-xs text-red-500 flex items-center gap-1">
+                <p className="text-xs text-gray-700 flex items-center gap-1">
                   <AlertCircle className="w-3 h-3" /> {errors.email}
                 </p>
               )}
@@ -734,7 +734,7 @@ export default function MitraPage() {
             <Button
               onClick={handleSave}
               disabled={saving}
-              className="bg-red-600 hover:bg-red-700 text-white gap-2"
+              className="bg-gray-900 hover:bg-gray-800 text-white gap-2"
             >
               {saving && <Loader2 className="w-4 h-4 animate-spin" />}
               {editing ? "Simpan Perubahan" : "Tambah Mitra"}
@@ -782,7 +782,7 @@ export default function MitraPage() {
                 deletingLoading ||
                 (deleting && (deleting._count?.properties ?? 0) > 0)
               }
-              className="bg-red-600 hover:bg-red-700 text-white focus:ring-red-600"
+              className="bg-gray-900 hover:bg-gray-800 text-white focus:ring-gray-500"
             >
               {deletingLoading && (
                 <Loader2 className="w-4 h-4 animate-spin mr-1" />

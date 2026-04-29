@@ -249,7 +249,7 @@ export default function UsersPage() {
           <h1 className="text-2xl font-bold text-gray-900">Manajemen User</h1>
           <p className="text-sm text-gray-500 mt-1">Kelola akun admin ({admins.length} user)</p>
         </div>
-        <Button onClick={openCreate} className="bg-red-600 hover:bg-red-700 text-white gap-2">
+        <Button onClick={openCreate} className="bg-gray-900 hover:bg-gray-800 text-white gap-2">
           <Plus className="w-4 h-4" /> Tambah User
         </Button>
       </div>
@@ -294,7 +294,7 @@ export default function UsersPage() {
                         <TableCell className="font-medium">{a.name}</TableCell>
                         <TableCell className="text-gray-500">{a.email}</TableCell>
                         <TableCell>
-                          <Badge variant={a.role === "superadmin" ? "default" : "secondary"} className={a.role === "superadmin" ? "bg-red-600 text-white" : "bg-gray-100 text-gray-700"}>
+                          <Badge variant={a.role === "superadmin" ? "default" : "secondary"} className={a.role === "superadmin" ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-700"}>
                             <Shield className="w-3 h-3 mr-1" />
                             {a.role === "superadmin" ? "Superadmin" : "Admin"}
                           </Badge>
@@ -319,7 +319,7 @@ export default function UsersPage() {
                               variant="ghost"
                               size="icon"
                               onClick={() => openDelete(a)}
-                              className="text-gray-400 hover:text-red-600 disabled:opacity-30"
+                              className="text-gray-400 hover:text-gray-700 disabled:opacity-30"
                               disabled={a.id === currentUserId}
                               title={a.id === currentUserId ? "Tidak bisa hapus akun sendiri" : "Hapus"}
                             >
@@ -347,17 +347,17 @@ export default function UsersPage() {
             {/* Nama */}
             <div className="space-y-1.5">
               <Label htmlFor="user-name" className="text-xs font-medium">
-                Nama <span className="text-red-500">*</span>
+                Nama <span className="text-gray-700">*</span>
               </Label>
               <Input
                 id="user-name"
                 value={form.name}
                 onChange={(e) => { setForm({ ...form, name: e.target.value }); setErrors((p) => ({ ...p, name: undefined })); }}
                 placeholder="Nama lengkap"
-                className={`h-9 text-sm ${errors.name ? "border-red-400 focus-visible:ring-red-400" : ""}`}
+                className={`h-9 text-sm ${errors.name ? "border-gray-400 focus-visible:ring-gray-400" : ""}`}
               />
               {errors.name && (
-                <p className="text-xs text-red-500 flex items-center gap-1">
+                <p className="text-xs text-gray-700 flex items-center gap-1">
                   <AlertCircle className="w-3 h-3" /> {errors.name}
                 </p>
               )}
@@ -366,7 +366,7 @@ export default function UsersPage() {
             {/* Email */}
             <div className="space-y-1.5">
               <Label htmlFor="user-email" className="text-xs font-medium">
-                Email <span className="text-red-500">*</span>
+                Email <span className="text-gray-700">*</span>
               </Label>
               <Input
                 id="user-email"
@@ -374,10 +374,10 @@ export default function UsersPage() {
                 value={form.email}
                 onChange={(e) => { setForm({ ...form, email: e.target.value }); setErrors((p) => ({ ...p, email: undefined })); }}
                 placeholder="admin@brr.co.id"
-                className={`h-9 text-sm ${errors.email ? "border-red-400 focus-visible:ring-red-400" : ""}`}
+                className={`h-9 text-sm ${errors.email ? "border-gray-400 focus-visible:ring-gray-400" : ""}`}
               />
               {errors.email && (
-                <p className="text-xs text-red-500 flex items-center gap-1">
+                <p className="text-xs text-gray-700 flex items-center gap-1">
                   <AlertCircle className="w-3 h-3" /> {errors.email}
                 </p>
               )}
@@ -386,7 +386,7 @@ export default function UsersPage() {
             {/* Password */}
             <div className="space-y-1.5">
               <Label htmlFor="user-password" className="text-xs font-medium">
-                {editing ? "Password" : "Password"} {!editing && <span className="text-red-500">*</span>}
+                {editing ? "Password" : "Password"} {!editing && <span className="text-gray-700">*</span>}
               </Label>
               <div className="relative">
                 <Input
@@ -395,7 +395,7 @@ export default function UsersPage() {
                   value={form.password}
                   onChange={(e) => { setForm({ ...form, password: e.target.value }); setErrors((p) => ({ ...p, password: undefined })); }}
                   placeholder={editing ? "Kosongkan jika tidak diubah" : "Minimal 6 karakter"}
-                  className={`h-9 text-sm pr-9 ${errors.password ? "border-red-400 focus-visible:ring-red-400" : ""}`}
+                  className={`h-9 text-sm pr-9 ${errors.password ? "border-gray-400 focus-visible:ring-gray-400" : ""}`}
                 />
                 <button
                   type="button"
@@ -410,7 +410,7 @@ export default function UsersPage() {
                 <p className="text-[11px] text-gray-400">Kosongkan jika tidak ingin mengubah password</p>
               )}
               {errors.password && (
-                <p className="text-xs text-red-500 flex items-center gap-1">
+                <p className="text-xs text-gray-700 flex items-center gap-1">
                   <AlertCircle className="w-3 h-3" /> {errors.password}
                 </p>
               )}
@@ -442,7 +442,7 @@ export default function UsersPage() {
             {form.role === "admin" && (
               <div className="space-y-1.5">
                 <Label className="text-xs font-medium">
-                  Mitra <span className="text-red-500">*</span>
+                  Mitra <span className="text-gray-700">*</span>
                 </Label>
                 {mitraList.length === 0 ? (
                   <div className="rounded-md border border-dashed border-gray-300 px-3 py-6 text-center">
@@ -455,7 +455,7 @@ export default function UsersPage() {
                       setForm({ ...form, mitraId: v });
                       setErrors((p) => ({ ...p, mitraId: undefined }));
                     }}>
-                      <SelectTrigger className={`h-9 text-sm ${errors.mitraId ? "border-red-400 focus-visible:ring-red-400" : ""}`}>
+                      <SelectTrigger className={`h-9 text-sm ${errors.mitraId ? "border-gray-400 focus-visible:ring-gray-400" : ""}`}>
                         <SelectValue placeholder="Pilih mitra..." />
                       </SelectTrigger>
                       <SelectContent>
@@ -470,7 +470,7 @@ export default function UsersPage() {
                       </SelectContent>
                     </Select>
                     {errors.mitraId && (
-                      <p className="text-xs text-red-500 flex items-center gap-1">
+                      <p className="text-xs text-gray-700 flex items-center gap-1">
                         <AlertCircle className="w-3 h-3" /> {errors.mitraId}
                       </p>
                     )}
@@ -485,7 +485,7 @@ export default function UsersPage() {
             <Button
               onClick={handleSave}
               disabled={saving || (form.role === "admin" && mitraList.length === 0 && !editing)}
-              className="bg-red-600 hover:bg-red-700 text-white h-8 text-sm px-4"
+              className="bg-gray-900 hover:bg-gray-800 text-white h-8 text-sm px-4"
             >
               {saving && <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />}
               {editing ? "Simpan" : "Tambah"}
@@ -505,7 +505,7 @@ export default function UsersPage() {
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2">
             <AlertDialogCancel className="h-8 text-sm">Batal</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} disabled={deletingLoading} className="bg-red-600 hover:bg-red-700 text-white h-8 text-sm">
+            <AlertDialogAction onClick={handleDelete} disabled={deletingLoading} className="bg-gray-900 hover:bg-gray-800 text-white h-8 text-sm">
               {deletingLoading && <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />}
               Hapus
             </AlertDialogAction>

@@ -180,7 +180,7 @@ export default function TestimoniPage() {
           <h1 className="text-2xl font-bold text-gray-900">Testimoni</h1>
           <p className="text-sm text-gray-500 mt-1">Kelola testimoni pelanggan</p>
         </div>
-        <Button onClick={openCreate} className="bg-red-600 hover:bg-red-700 text-white gap-2">
+        <Button onClick={openCreate} className="bg-gray-900 hover:bg-gray-800 text-white gap-2">
           <Plus className="w-4 h-4" /> Tambah Testimoni
         </Button>
       </div>
@@ -245,7 +245,7 @@ export default function TestimoniPage() {
                             <Button variant="ghost" size="icon" onClick={() => openEdit(t)} className="text-gray-400 hover:text-blue-600">
                               <Pencil className="w-4 h-4" />
                             </Button>
-                            <Button variant="ghost" size="icon" onClick={() => openDelete(t)} className="text-gray-400 hover:text-red-600">
+                            <Button variant="ghost" size="icon" onClick={() => openDelete(t)} className="text-gray-400 hover:text-gray-700">
                               <Trash2 className="w-4 h-4" />
                             </Button>
                           </div>
@@ -287,15 +287,15 @@ export default function TestimoniPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>
-                  Nama <span className="text-red-500">*</span>
+                  Nama <span className="text-gray-700">*</span>
                 </Label>
                 <Input
                   value={form.name}
                   onChange={(e) => handleFieldChange("name", e.target.value)}
-                  className={errors.name ? "border-red-400 focus-visible:ring-red-400" : ""}
+                  className={errors.name ? "border-gray-400 focus-visible:ring-gray-400" : ""}
                 />
                 {errors.name && (
-                  <p className="text-xs text-red-500 flex items-center gap-1">
+                  <p className="text-xs text-gray-700 flex items-center gap-1">
                     <AlertCircle className="w-3 h-3" /> {errors.name}
                   </p>
                 )}
@@ -310,16 +310,16 @@ export default function TestimoniPage() {
             </div>
             <div className="space-y-2">
               <Label>
-                Testimoni <span className="text-red-500">*</span>
+                Testimoni <span className="text-gray-700">*</span>
               </Label>
               <Textarea
                 value={form.text}
                 onChange={(e) => handleFieldChange("text", e.target.value)}
                 rows={4}
-                className={errors.text ? "border-red-400 focus-visible:ring-red-400" : ""}
+                className={errors.text ? "border-gray-400 focus-visible:ring-gray-400" : ""}
               />
               {errors.text && (
-                <p className="text-xs text-red-500 flex items-center gap-1">
+                <p className="text-xs text-gray-700 flex items-center gap-1">
                   <AlertCircle className="w-3 h-3" /> {errors.text}
                 </p>
               )}
@@ -342,7 +342,7 @@ export default function TestimoniPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setFormOpen(false)}>Batal</Button>
-            <Button onClick={handleSave} disabled={saving} className="bg-red-600 hover:bg-red-700 text-white">
+            <Button onClick={handleSave} disabled={saving} className="bg-gray-900 hover:bg-gray-800 text-white">
               {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               {editing ? "Simpan" : "Tambah"}
             </Button>
@@ -361,7 +361,7 @@ export default function TestimoniPage() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Batal</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} disabled={deletingLoading} className="bg-red-600 hover:bg-red-700 text-white">
+            <AlertDialogAction onClick={handleDelete} disabled={deletingLoading} className="bg-gray-900 hover:bg-gray-800 text-white">
               {deletingLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               Hapus
             </AlertDialogAction>

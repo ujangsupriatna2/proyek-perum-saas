@@ -94,7 +94,7 @@ interface Property {
 
 const STATUS_MAP: Record<string, { label: string; className: string }> = {
   available: { label: "Tersedia", className: "bg-green-100 text-green-700" },
-  sold: { label: "Terjual", className: "bg-red-100 text-red-700" },
+  sold: { label: "Terjual", className: "bg-gray-100 text-gray-700" },
   reserved: { label: "Dipesan", className: "bg-amber-100 text-amber-700" },
 };
 
@@ -313,7 +313,7 @@ function InstallmentGridEditor({
           type="button"
           variant="ghost"
           size="sm"
-          className="h-7 text-xs text-red-500 hover:text-red-700 hover:bg-red-50"
+          className="h-7 text-xs text-gray-700 hover:text-gray-800 hover:bg-gray-50"
           onClick={clearAll}
         >
           Kosongkan
@@ -360,7 +360,7 @@ function InstallmentGridEditor({
                           }
                         }}
                         placeholder="—"
-                        className="w-full h-8 text-center text-sm border border-gray-200 rounded-md focus:border-red-400 focus:ring-1 focus:ring-red-400 focus:outline-none bg-white transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className="w-full h-8 text-center text-sm border border-gray-200 rounded-md focus:border-gray-400 focus:ring-1 focus:ring-gray-400 focus:outline-none bg-white transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                     </td>
                   );
@@ -520,7 +520,7 @@ function KprAutoGrid({
       <div className="overflow-x-auto rounded-lg border border-gray-200">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-gradient-to-r from-red-50 to-orange-50">
+            <tr className="bg-gradient-to-r from-gray-50 to-orange-50">
               <th className="px-3 py-2.5 text-xs font-semibold text-gray-500 text-left border-r border-gray-200 min-w-[90px]">
                 DP (Rp) ↓ / Tenor →
               </th>
@@ -536,7 +536,7 @@ function KprAutoGrid({
                 <th key={t} className="text-[10px] font-semibold text-gray-400 text-center">
                   <span className="inline-flex gap-3">
                     <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-yellow-400" />Flat</span>
-                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-red-400" />Anuitas</span>
+                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-gray-400" />Anuitas</span>
                   </span>
                 </th>
               ))}
@@ -544,7 +544,7 @@ function KprAutoGrid({
           </thead>
           <tbody>
             {dpList.map((dp) => (
-              <tr key={dp} className="border-t border-gray-100 hover:bg-red-50/30 transition-colors">
+              <tr key={dp} className="border-t border-gray-100 hover:bg-gray-50 transition-colors">
                 <td className="px-3 py-2 font-semibold text-gray-700 text-xs border-r border-gray-200 bg-gray-50/80">
                   Rp {formatRupiahShort(dp)}
                 </td>
@@ -558,9 +558,9 @@ function KprAutoGrid({
                           <span className="text-[11px] font-semibold text-yellow-800">{flat > 0 ? flat.toFixed(1) : "—"}</span>
                           <span className="text-[9px] text-yellow-500 ml-0.5">jt</span>
                         </div>
-                        <div className="bg-red-50 border border-red-100 rounded px-1.5 py-1">
-                          <span className="text-[11px] font-semibold text-red-800">{annuity > 0 ? annuity.toFixed(1) : "—"}</span>
-                          <span className="text-[9px] text-red-400 ml-0.5">jt</span>
+                        <div className="bg-gray-100 border border-gray-200 rounded px-1.5 py-1">
+                          <span className="text-[11px] font-semibold text-gray-800">{annuity > 0 ? annuity.toFixed(1) : "—"}</span>
+                          <span className="text-[9px] text-gray-400 ml-0.5">jt</span>
                         </div>
                       </div>
                     </td>
@@ -572,7 +572,7 @@ function KprAutoGrid({
         </table>
       </div>
       <div className="flex items-center gap-1.5 text-[11px] text-gray-400">
-        <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-400" />
+        <span className="inline-block w-1.5 h-1.5 rounded-full bg-gray-400" />
         Otomatis dihitung — Harga <strong>Rp {price.toFixed(0)}jt</strong>, bunga <strong>{interestRate ?? 7.5}% p.a.</strong> (flat &amp; anuitas)
       </div>
     </div>
@@ -616,13 +616,13 @@ function TagInput({
         {list.map((v) => (
           <span
             key={v}
-            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-red-50 text-red-700 text-xs font-medium border border-red-100"
+            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-medium border border-gray-200"
           >
             {v}{suffix || ""}
             <button
               type="button"
               onClick={() => removeTag(v)}
-              className="text-red-400 hover:text-red-700 transition-colors"
+              className="text-gray-400 hover:text-gray-800 transition-colors"
             >
               <X className="w-3 h-3" />
             </button>
@@ -853,7 +853,7 @@ export default function ProyekPage() {
           <h1 className="text-2xl font-bold text-gray-900">Proyek</h1>
           <p className="text-sm text-gray-500 mt-1">Kelola listing properti / proyek perumahan</p>
         </div>
-        <Button onClick={openCreate} className="bg-red-600 hover:bg-red-700 text-white gap-2">
+        <Button onClick={openCreate} className="bg-gray-900 hover:bg-gray-800 text-white gap-2">
           <Plus className="w-4 h-4" /> Tambah Proyek
         </Button>
       </div>
@@ -930,7 +930,7 @@ export default function ProyekPage() {
                               <div>
                                 <p className="font-medium text-sm">{p.name}</p>
                                 {p.tag && (
-                                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0 mt-0.5 bg-red-50 text-red-600">
+                                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0 mt-0.5 bg-gray-100 text-gray-700">
                                     {p.tag}
                                   </Badge>
                                 )}
@@ -949,10 +949,10 @@ export default function ProyekPage() {
                           </TableCell>
                           <TableCell className="text-right">
                             <div className="flex justify-end gap-1">
-                              <Button variant="ghost" size="icon" onClick={() => openEdit(p)} className="text-gray-400 hover:text-red-600">
+                              <Button variant="ghost" size="icon" onClick={() => openEdit(p)} className="text-gray-400 hover:text-gray-700">
                                 <Pencil className="w-4 h-4" />
                               </Button>
-                              <Button variant="ghost" size="icon" onClick={() => openDelete(p)} className="text-gray-400 hover:text-red-600">
+                              <Button variant="ghost" size="icon" onClick={() => openDelete(p)} className="text-gray-400 hover:text-gray-700">
                                 <Trash2 className="w-4 h-4" />
                               </Button>
                             </div>
@@ -994,15 +994,15 @@ export default function ProyekPage() {
             )}
             {/* ── Info Dasar ── */}
             <div className="space-y-2">
-              <Label className="flex items-center gap-0.5">Nama Proyek <span className="text-red-500">*</span></Label>
+              <Label className="flex items-center gap-0.5">Nama Proyek <span className="text-gray-700">*</span></Label>
               <Input
                 value={form.name}
                 onChange={(e) => updateField("name", e.target.value)}
                 placeholder="Cluster Kav R3 & R4"
-                className={hasError("name") ? "border-red-400 focus-visible:ring-red-400" : ""}
+                className={hasError("name") ? "border-gray-400 focus-visible:ring-gray-400" : ""}
               />
               {errors.name && (
-                <p className="text-xs text-red-500 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {errors.name}</p>
+                <p className="text-xs text-gray-700 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {errors.name}</p>
               )}
             </div>
             <div className="space-y-2">
@@ -1010,21 +1010,21 @@ export default function ProyekPage() {
               <Input value={form.tag} onChange={(e) => setForm({ ...form, tag: e.target.value })} placeholder="Best Seller, Populer, Baru..." />
             </div>
             <div className="space-y-2">
-              <Label className="flex items-center gap-0.5">Tipe (LB/LT) {form.category !== "kavling" && <span className="text-red-500">*</span>}</Label>
+              <Label className="flex items-center gap-0.5">Tipe (LB/LT) {form.category !== "kavling" && <span className="text-gray-700">*</span>}</Label>
               <Input
                 value={form.type}
                 onChange={(e) => updateField("type", e.target.value)}
                 placeholder="45/127"
                 readOnly={form.category === "kavling"}
-                className={`${hasError("type") ? "border-red-400 focus-visible:ring-red-400" : ""} ${form.category === "kavling" ? "bg-gray-50 text-gray-400" : ""}`}
+                className={`${hasError("type") ? "border-gray-400 focus-visible:ring-gray-400" : ""} ${form.category === "kavling" ? "bg-gray-50 text-gray-400" : ""}`}
               />
               {form.category === "kavling" && <p className="text-[10px] text-gray-400">Otomatis kosong untuk kavling</p>}
               {errors.type && (
-                <p className="text-xs text-red-500 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {errors.type}</p>
+                <p className="text-xs text-gray-700 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {errors.type}</p>
               )}
             </div>
             <div className="space-y-2">
-              <Label className="flex items-center gap-0.5">Kategori <span className="text-red-500">*</span></Label>
+              <Label className="flex items-center gap-0.5">Kategori <span className="text-gray-700">*</span></Label>
               <Select value={form.category} onValueChange={(v) => {
                 updateField("category", v);
                 if (v === "kavling") {
@@ -1050,7 +1050,7 @@ export default function ProyekPage() {
                   }));
                 }
               }}>
-                <SelectTrigger className={hasError("category") ? "border-red-400 focus:ring-red-400" : ""}>
+                <SelectTrigger className={hasError("category") ? "border-gray-400 focus:ring-gray-400" : ""}>
                   <SelectValue placeholder="Pilih kategori" />
                 </SelectTrigger>
                 <SelectContent>
@@ -1060,11 +1060,11 @@ export default function ProyekPage() {
                 </SelectContent>
               </Select>
               {errors.category && (
-                <p className="text-xs text-red-500 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {errors.category}</p>
+                <p className="text-xs text-gray-700 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {errors.category}</p>
               )}
             </div>
             <div className="space-y-2">
-              <Label className="flex items-center gap-0.5">Harga (Juta Rp) <span className="text-red-500">*</span></Label>
+              <Label className="flex items-center gap-0.5">Harga (Juta Rp) <span className="text-gray-700">*</span></Label>
               <Input
                 type="number"
                 step="0.1"
@@ -1072,10 +1072,10 @@ export default function ProyekPage() {
                 onChange={(e) => updateField("price", e.target.value)}
                 placeholder="575"
                 readOnly={form.category === "kavling"}
-                className={`${hasError("price") ? "border-red-400 focus-visible:ring-red-400" : ""} ${form.category === "kavling" ? "bg-gray-50 text-gray-500" : ""}`}
+                className={`${hasError("price") ? "border-gray-400 focus-visible:ring-gray-400" : ""} ${form.category === "kavling" ? "bg-gray-50 text-gray-500" : ""}`}
               />
               {errors.price && (
-                <p className="text-xs text-red-500 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {errors.price}</p>
+                <p className="text-xs text-gray-700 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {errors.price}</p>
               )}
             </div>
             <div className="space-y-2">
@@ -1170,7 +1170,7 @@ export default function ProyekPage() {
             <div className="space-y-2">
               <Label className="flex items-center gap-1">
                 Link Video YouTube
-                <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="text-red-500 hover:text-red-600">
+                <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-800">
                   <ExternalLink className="w-3 h-3" />
                 </a>
               </Label>
@@ -1192,8 +1192,8 @@ export default function ProyekPage() {
                   const label = type === "syariah" ? "Syariah" : "KPR Bank";
                   const color = type === "syariah"
                     ? isActive ? "bg-amber-100 border-amber-300 text-amber-700" : "bg-gray-50 border-gray-200 text-gray-400"
-                    : isActive ? "bg-red-100 border-red-300 text-red-700" : "bg-gray-50 border-gray-200 text-gray-400";
-                  const dotColor = type === "syariah" ? "bg-amber-500" : "bg-red-500";
+                    : isActive ? "bg-gray-100 border-gray-300 text-gray-700" : "bg-gray-50 border-gray-200 text-gray-400";
+                  const dotColor = type === "syariah" ? "bg-amber-500" : "bg-gray-1000";
                   return (
                     <button
                       key={type}
@@ -1288,7 +1288,7 @@ export default function ProyekPage() {
                         Syariah
                       </TabsTrigger>
                       <TabsTrigger value="kpr" className="gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-red-500" />
+                        <span className="w-2 h-2 rounded-full bg-gray-1000" />
                         KPR Bank
                       </TabsTrigger>
                     </TabsList>
@@ -1346,7 +1346,7 @@ export default function ProyekPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setFormOpen(false)}>Batal</Button>
-            <Button onClick={handleSave} disabled={saving} className="bg-red-600 hover:bg-red-700 text-white">
+            <Button onClick={handleSave} disabled={saving} className="bg-gray-900 hover:bg-gray-800 text-white">
               {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               {editing ? "Simpan" : "Tambah"}
             </Button>
@@ -1365,7 +1365,7 @@ export default function ProyekPage() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Batal</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} disabled={deletingLoading} className="bg-red-600 hover:bg-red-700 text-white">
+            <AlertDialogAction onClick={handleDelete} disabled={deletingLoading} className="bg-gray-900 hover:bg-gray-800 text-white">
               {deletingLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               Hapus
             </AlertDialogAction>

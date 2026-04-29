@@ -111,7 +111,7 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
             className={cn(
               "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
               isActive
-                ? "bg-red-600 text-white shadow-lg shadow-red-600/30"
+                ? "bg-gray-900 text-white shadow-lg shadow-gray-900/30"
                 : "text-gray-300 hover:bg-gray-800 hover:text-white"
             )}
             title={collapsed ? item.label : undefined}
@@ -144,7 +144,7 @@ function SidebarContent({ showCollapseToggle = true }: { showCollapseToggle?: bo
             className="w-9 h-9 rounded-xl object-contain shrink-0 bg-white/10"
           />
         ) : (
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-red-600 to-amber-500 flex items-center justify-center shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-gray-800 to-gray-700 flex items-center justify-center shrink-0">
             <Building2 className="w-5 h-5 text-white" />
           </div>
         )}
@@ -240,7 +240,7 @@ function Header() {
         </button>
 
         <div className="flex items-center gap-2 text-sm">
-          <Link href="/?tab=home" className="text-gray-400 hover:text-red-600 transition-colors">
+          <Link href="/?tab=home" className="text-gray-400 hover:text-gray-700 transition-colors">
             <Home className="w-4 h-4" />
           </Link>
           <span className="text-gray-300">/</span>
@@ -256,7 +256,7 @@ function Header() {
               <Skeleton className="w-8 h-8 rounded-full" />
             ) : (
               <Avatar className="w-8 h-8">
-                <AvatarFallback className="bg-red-600 text-white text-xs font-semibold">
+                <AvatarFallback className="bg-gray-900 text-white text-xs font-semibold">
                   {initials}
                 </AvatarFallback>
               </Avatar>
@@ -266,7 +266,7 @@ function Header() {
                 <p className="text-sm font-medium text-gray-700 leading-tight">{session.user.name}</p>
                 <span className={`inline-block mt-0.5 px-1.5 py-0.5 text-[10px] font-semibold rounded-md leading-none ${
                   isSuperadmin(role)
-                    ? "bg-red-100 text-red-700"
+                    ? "bg-gray-100 text-gray-700"
                     : "bg-gray-100 text-gray-500"
                 }`}>
                   {isSuperadmin(role) ? "Super Admin" : "Admin"}
@@ -277,7 +277,7 @@ function Header() {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
           <DropdownMenuItem
-            className="gap-2 text-red-600 focus:text-red-600"
+            className="gap-2 text-gray-700 focus:text-gray-700"
             onClick={() => signOut({ callbackUrl: "/admin/login" })}
           >
             <LogOut className="w-4 h-4" />

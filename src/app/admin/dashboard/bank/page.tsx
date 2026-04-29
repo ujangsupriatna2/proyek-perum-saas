@@ -177,7 +177,7 @@ export default function BankPage() {
           <h1 className="text-2xl font-bold text-gray-900">Kerjasama Bank</h1>
           <p className="text-sm text-gray-500 mt-1">Kelola data mitra bank</p>
         </div>
-        <Button onClick={openCreate} className="bg-red-600 hover:bg-red-700 text-white gap-2">
+        <Button onClick={openCreate} className="bg-gray-900 hover:bg-gray-800 text-white gap-2">
           <Plus className="w-4 h-4" /> Tambah Bank
         </Button>
       </div>
@@ -267,7 +267,7 @@ export default function BankPage() {
                           <Button variant="ghost" size="icon" onClick={() => openEdit(item)} className="text-gray-400 hover:text-blue-600">
                             <Pencil className="w-4 h-4" />
                           </Button>
-                          <Button variant="ghost" size="icon" onClick={() => openDelete(item)} className="text-gray-400 hover:text-red-600">
+                          <Button variant="ghost" size="icon" onClick={() => openDelete(item)} className="text-gray-400 hover:text-gray-700">
                             <Trash2 className="w-4 h-4" />
                           </Button>
                         </div>
@@ -308,16 +308,16 @@ export default function BankPage() {
             )}
             <div className="space-y-2">
               <Label>
-                Nama Bank <span className="text-red-500">*</span>
+                Nama Bank <span className="text-gray-700">*</span>
               </Label>
               <Input
                 value={form.name}
                 onChange={(e) => { clearFieldError("name"); setForm({ ...form, name: e.target.value }); }}
                 placeholder="contoh: Bank Syariah Indonesia"
-                className={errors.name ? "border-red-400 focus-visible:ring-red-400" : ""}
+                className={errors.name ? "border-gray-400 focus-visible:ring-gray-400" : ""}
               />
               {errors.name && (
-                <p className="text-xs text-red-500 flex items-center gap-1">
+                <p className="text-xs text-gray-700 flex items-center gap-1">
                   <AlertCircle className="w-3 h-3" /> {errors.name}
                 </p>
               )}
@@ -349,7 +349,7 @@ export default function BankPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setFormOpen(false)}>Batal</Button>
-            <Button onClick={handleSave} disabled={saving} className="bg-red-600 hover:bg-red-700 text-white">
+            <Button onClick={handleSave} disabled={saving} className="bg-gray-900 hover:bg-gray-800 text-white">
               {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               {editing ? "Simpan" : "Tambah"}
             </Button>
@@ -368,7 +368,7 @@ export default function BankPage() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Batal</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700 text-white">Hapus</AlertDialogAction>
+            <AlertDialogAction onClick={handleDelete} className="bg-gray-900 hover:bg-gray-800 text-white">Hapus</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
