@@ -381,26 +381,20 @@ function Navbar({ activeTab }: { activeTab: string }) {
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-0.5">
-            {NAV_LINKS.map((link) => {
-              const isActive = activeTab === link.tab || (link.tab === "blog" && activeTab.startsWith("blog/"));
-              return (
-                <a
-                  key={link.tab}
-                  href={`/?tab=${link.tab}`}
-                  onClick={(e) => { e.preventDefault(); handleNav(link.tab); }}
-                  className={`px-4 py-2 text-[13px] font-medium rounded-lg transition-all relative ${
-                    isActive
-                      ? "text-gray-900"
-                      : isSolid
-                        ? "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
-                        : "text-white/80 hover:text-white hover:bg-white/10"
-                  }`}
-                >
-                  {link.label}
-                  {isActive && <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-5 h-0.5 rounded-full bg-gray-900" />}
-                </a>
-              );
-            })}
+            {NAV_LINKS.map((link) => (
+              <a
+                key={link.tab}
+                href={`/?tab=${link.tab}`}
+                onClick={(e) => { e.preventDefault(); handleNav(link.tab); }}
+                className={`px-4 py-2 text-[13px] font-medium rounded-lg transition-all ${
+                  isSolid
+                    ? "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
+                    : "text-white/80 hover:text-white hover:bg-white/10"
+                }`}
+              >
+                {link.label}
+              </a>
+            ))}
           </nav>
 
           {/* CTA Button Desktop */}
@@ -441,20 +435,15 @@ function Navbar({ activeTab }: { activeTab: string }) {
             className="md:hidden bg-white border-t border-gray-100 overflow-hidden"
           >
             <nav className="flex flex-col p-6 gap-1">
-              {NAV_LINKS.map((link) => {
-                const isActive = activeTab === link.tab || (link.tab === "blog" && activeTab.startsWith("blog/"));
-                return (
-                  <button
-                    key={link.tab}
-                    onClick={() => handleNav(link.tab)}
-                    className={`px-4 py-3 font-medium rounded-xl transition-colors text-left ${
-                      isActive ? "bg-gray-900 text-white" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                    }`}
-                  >
-                    {link.label}
-                  </button>
-                );
-              })}
+              {NAV_LINKS.map((link) => (
+                <button
+                  key={link.tab}
+                  onClick={() => handleNav(link.tab)}
+                  className="px-4 py-3 font-medium rounded-xl transition-colors text-left text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                >
+                  {link.label}
+                </button>
+              ))}
               <a
                 href={`https://wa.me/${S.contact_wa}`}
                 target="_blank"
