@@ -333,7 +333,7 @@ function Navbar({ activeTab }: { activeTab: string }) {
         <div className="flex items-center justify-between h-18 md:h-20">
           {/* Logo */}
           <a href="/?tab=home" onClick={(e) => { e.preventDefault(); handleNav("home"); }} className="flex items-center gap-2.5">
-            <img src="/images/logo-brr.png" alt="Logo" className="w-10 h-10 md:w-11 md:h-11 rounded-xl object-contain" />
+            <img src={S.logo_url || "/images/logo-brr.png"} alt="Logo" className="w-10 h-10 md:w-11 md:h-11 rounded-xl object-contain" />
             <div className="flex flex-col leading-tight">
               <span className={`text-[10px] md:text-xs font-medium tracking-wider uppercase ${isSolid ? 'text-gray-400' : 'text-white/60'} transition-colors`}>
                 {S.company_legal_name}
@@ -5171,7 +5171,7 @@ function Footer() {
           {/* Brand */}
           <div className="lg:col-span-2">
             <div className="flex items-center gap-3 mb-5">
-              <img src="/images/logo-brr.png" alt="Logo" className="w-10 h-10 rounded-lg object-contain" />
+              <img src={S.logo_url || "/images/logo-brr.png"} alt="Logo" className="w-10 h-10 rounded-lg object-contain" />
               <div className="flex flex-col leading-tight">
                 <span className="text-[10px] text-gray-500 font-semibold tracking-wider uppercase">{S.company_legal_name}</span>
                 <span className="text-sm text-white font-black">{S.company_name}</span>
