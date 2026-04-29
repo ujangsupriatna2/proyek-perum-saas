@@ -811,7 +811,7 @@ function TentangKamiKeunggulanSection() {
         <FadeIn className="text-center mb-16">
           <span className="text-gray-500 text-xs font-bold uppercase tracking-[0.3em]">Keunggulan Kami</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-3 mb-4 tracking-tight">
-            Mengapa <span className="text-gradient-accent">Berpercaya</span> pada Kami?
+            Mengapa Berpercaya pada Kami?
           </h2>
           <p className="text-gray-500 max-w-2xl mx-auto text-lg">
             Bukan sekadar janji, tapi bukti nyata dari ratusan keluarga yang sudah mempercayai {S.company_name}.
@@ -4318,7 +4318,7 @@ function TentangKamiPage() {
           <FadeIn className="text-center mb-16">
             <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Perjalanan Kami</span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-white mt-3 mb-4 tracking-tight">
-              Milestone <span className="text-amber-300">Bisnis</span>
+              Milestone Bisnis
             </h2>
             <p className="text-gray-400 max-w-2xl mx-auto text-lg">
               Dari satu proyek menjadi platform perumahan yang menghimpun puluhan mitra developer.
