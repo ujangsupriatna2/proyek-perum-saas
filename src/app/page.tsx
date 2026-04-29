@@ -444,24 +444,25 @@ function Hero() {
   const { settings: S } = useSettingsStore();
   const router = useRouter();
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-950">
-      {/* Ken Burns Background Image */}
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black">
+      {/* Background Image */}
       <div className="absolute inset-0 overflow-hidden">
         <img
           src={S.hero_bg_image || "/images/properties/hero_cover.png"}
           alt={S.company_name}
           className="w-full h-full object-cover animate-ken-burns"
         />
-        {/* Multi-layer gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-950/70 via-gray-950/40 to-gray-950/90" />
-        <div className="absolute inset-0 bg-gradient-to-r from-gray-950/50 via-transparent to-gray-950/60" />
-        {/* Grain texture */}
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")' }} />
+        {/* Refined gradient overlay — softer, lets image breathe */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/80" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-black/40" />
+        {/* Vignette corners for cinematic depth */}
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.5) 100%)' }} />
+        {/* Subtle grain */}
+        <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")' }} />
       </div>
 
-      {/* Floating decorative elements */}
-      <div className="absolute top-1/4 left-[10%] w-64 h-64 rounded-full bg-white/[0.02] blur-3xl animate-float-y" />
-      <div className="absolute bottom-1/4 right-[15%] w-80 h-80 rounded-full bg-white/[0.02] blur-3xl animate-float-y" style={{ animationDelay: '2s' }} />
+      {/* Soft ambient glow behind text */}
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-white/[0.03] blur-[120px] rounded-full" />
 
       {/* Content */}
       <div className="relative z-10 max-w-5xl mx-auto px-6 sm:px-10 text-center">
@@ -472,11 +473,11 @@ function Hero() {
           transition={{ duration: 0.7, delay: 0.2 }}
           className="inline-flex items-center gap-3 mb-8"
         >
-          <div className="h-px w-10 bg-gray-400" />
-          <span className="text-gray-400 text-xs font-semibold uppercase tracking-[0.25em]">
+          <div className="h-px w-10 bg-white/30" />
+          <span className="text-white/50 text-xs font-semibold uppercase tracking-[0.25em]">
             {S.company_legal_name || "Platform Perumahan"}
           </span>
-          <div className="h-px w-10 bg-gray-400" />
+          <div className="h-px w-10 bg-white/30" />
         </motion.div>
 
         {/* Headline */}
@@ -484,38 +485,47 @@ function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-[1.05] mb-8 tracking-tight"
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-[1.08] mb-8 tracking-tight"
         >
-          Temukan Hunian
+          <span className="text-white drop-shadow-[0_2px_20px_rgba(255,255,255,0.15)]">Temukan Hunian</span>
           <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-300 via-white to-gray-300">Idaman Anda</span>
+          <span className="text-white drop-shadow-[0_2px_30px_rgba(255,255,255,0.25)]">Idaman Anda</span>
           <br />
-          <span className="text-gray-500 text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-light">di Sini</span>
+          <span className="text-white/70 text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-light tracking-wide">di Sini</span>
         </motion.h1>
+
+        {/* Divider line */}
+        <motion.div
+          initial={{ opacity: 0, scaleX: 0 }}
+          animate={{ opacity: 1, scaleX: 1 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          className="w-16 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent mx-auto mb-8"
+        />
 
         {/* Subtitle */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.6 }}
-          className="text-base sm:text-lg text-gray-400 leading-relaxed mb-12 max-w-2xl mx-auto"
+          transition={{ duration: 0.7, delay: 0.7 }}
+          className="text-base sm:text-lg text-white/60 leading-relaxed mb-12 max-w-2xl mx-auto font-light"
         >
           Platform perumahan terpercaya yang menghubungkan Anda dengan developer terpilih.
-          Skema pembayaran fleksibel — Syariah &amp; KPR Bank.
+          <br className="hidden sm:block" />
+          <span className="text-white/80 font-normal">Skema pembayaran fleksibel</span> — Syariah &amp; KPR Bank.
         </motion.p>
 
         {/* CTAs */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.8 }}
+          transition={{ duration: 0.7, delay: 0.9 }}
           className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
         >
           <a
             href={`https://wa.me/${S.contact_wa}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-white text-gray-950 font-bold rounded-xl hover:bg-gray-100 transition-all active:scale-[0.98] text-sm overflow-hidden"
+            className="group relative inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-white text-gray-950 font-bold rounded-xl hover:bg-gray-100 transition-all active:scale-[0.98] text-sm shadow-lg shadow-white/10 overflow-hidden"
           >
             <span className="relative z-10 flex items-center gap-2.5">
               <MessageCircle className="w-4 h-4" />
@@ -525,7 +535,7 @@ function Hero() {
           </a>
           <button
             onClick={() => router.push("/?tab=proyek")}
-            className="inline-flex items-center justify-center gap-2.5 px-8 py-4 border border-white/20 text-white font-semibold rounded-xl hover:bg-white/10 hover:border-white/40 transition-all text-sm backdrop-blur-sm"
+            className="inline-flex items-center justify-center gap-2.5 px-8 py-4 border border-white/25 text-white font-semibold rounded-xl hover:bg-white/10 hover:border-white/50 transition-all text-sm backdrop-blur-sm"
           >
             Lihat Semua Proyek
             <ArrowRight className="w-4 h-4" />
@@ -536,17 +546,17 @@ function Hero() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 1.0 }}
+          transition={{ duration: 0.7, delay: 1.1 }}
           className="grid grid-cols-3 gap-8 max-w-xl mx-auto"
         >
           {[
             { value: `${S.total_units_sold}+`, label: "Unit Terjual" },
             { value: "3+", label: "Mitra Developer" },
             { value: "10+", label: "Proyek Perumahan" },
-          ].map((stat, i) => (
+          ].map((stat) => (
             <div key={stat.label} className="text-center">
-              <div className="text-2xl sm:text-3xl font-black text-white">{stat.value}</div>
-              <div className="text-[11px] text-gray-500 mt-1 font-medium">{stat.label}</div>
+              <div className="text-2xl sm:text-3xl font-black text-white drop-shadow-[0_1px_8px_rgba(255,255,255,0.2)]">{stat.value}</div>
+              <div className="text-[11px] text-white/40 mt-1.5 font-medium uppercase tracking-wider">{stat.label}</div>
             </div>
           ))}
         </motion.div>
@@ -559,9 +569,9 @@ function Hero() {
         transition={{ delay: 1.5 }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
       >
-        <span className="text-gray-600 text-[10px] uppercase tracking-widest font-medium">Scroll</span>
-        <div className="w-5 h-8 border border-gray-600 rounded-full flex justify-center pt-1.5">
-          <div className="w-1 h-2 bg-gray-400 rounded-full animate-scroll-indicator" />
+        <span className="text-white/30 text-[10px] uppercase tracking-widest font-medium">Scroll</span>
+        <div className="w-5 h-8 border border-white/20 rounded-full flex justify-center pt-1.5">
+          <div className="w-1 h-2 bg-white/40 rounded-full animate-scroll-indicator" />
         </div>
       </motion.div>
     </section>
@@ -599,6 +609,52 @@ function MarqueeStrip() {
         ))}
       </div>
     </div>
+  );
+}
+
+/* ─────────────────────────── VIDEO OVERVIEW (Home) ─────────────────────────── */
+
+function VideoOverviewSection() {
+  const { settings: S } = useSettingsStore();
+  const videoUrl = S.hero_video_url;
+  const embedUrl = getYoutubeEmbedUrl(videoUrl);
+
+  if (!embedUrl) return null;
+
+  return (
+    <section className="py-20 md:py-28 bg-white overflow-hidden">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <FadeIn className="text-center mb-12">
+          <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Kenali Kami</span>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-4 mb-5 tracking-tight">
+            Lebih Dekat dengan <span className="text-gradient-gray">{S.company_name}</span>
+          </h2>
+          <p className="text-gray-500 max-w-xl mx-auto leading-relaxed">
+            Simak overview singkat tentang visi, misi, dan proyek-proyek unggulan kami.
+          </p>
+        </FadeIn>
+
+        <FadeIn delay={0.2}>
+          <div className="relative group">
+            {/* Decorative glow behind video */}
+            <div className="absolute -inset-4 bg-gradient-to-r from-gray-200/50 via-gray-100 to-gray-200/50 rounded-3xl blur-2xl opacity-60 group-hover:opacity-80 transition-opacity duration-700" />
+
+            {/* Video container */}
+            <div className="relative rounded-2xl overflow-hidden border border-gray-200 shadow-xl shadow-gray-200/50">
+              <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                <iframe
+                  src={embedUrl}
+                  title={`${S.company_name} - Video Overview`}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="absolute inset-0 w-full h-full"
+                />
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+      </div>
+    </section>
   );
 }
 
@@ -5276,6 +5332,7 @@ function PageContent() {
             <Navbar activeTab={tab} />
             <Hero />
             <MarqueeStrip />
+            <VideoOverviewSection />
             <WhyChooseSection />
             <PropertyShowcaseSection onSelectProperty={handleSelectProperty} />
             <HowToBuySection />
