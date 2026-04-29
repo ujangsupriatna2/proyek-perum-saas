@@ -5153,7 +5153,7 @@ function ServiceCard({
           {/* Description */}
           {service.description && (
             <p className="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2">
-              {service.description.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"')}
+              {service.description}
             </p>
           )}
 
@@ -5290,10 +5290,9 @@ function ServiceDetailPage({ slug }: { slug: string }) {
                 <FileText className="w-4 h-4 text-gray-400" />
                 Deskripsi
               </h2>
-              <div
-                className="prose prose-sm max-w-none text-gray-600 leading-relaxed"
-                dangerouslySetInnerHTML={{ __html: service.description }}
-              />
+              <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-line">
+                {service.description}
+              </p>
             </div>
           )}
 

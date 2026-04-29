@@ -14,7 +14,6 @@ import {
   Video,
 } from "lucide-react";
 import ImageUpload from "@/components/admin/image-upload";
-import RichEditor from "@/components/admin/rich-editor";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -642,13 +641,14 @@ export default function JasaPage() {
               </p>
             </div>
 
-            {/* Description — Rich Editor */}
+            {/* Description */}
             <div className="space-y-2 sm:col-span-2">
               <Label>Deskripsi</Label>
-              <RichEditor
+              <textarea
+                className="w-full min-h-[120px] rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900/20 focus:border-gray-400 resize-y transition-all"
+                placeholder="Deskripsi singkat layanan jasa..."
                 value={form.description}
-                onChange={(v) => setForm({ ...form, description: v })}
-                placeholder="Deskripsi detail layanan jasa..."
+                onChange={(e) => setForm({ ...form, description: e.target.value })}
               />
             </div>
 
