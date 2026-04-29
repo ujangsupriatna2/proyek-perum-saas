@@ -444,112 +444,84 @@ function Hero() {
   const { settings: S } = useSettingsStore();
   const router = useRouter();
   return (
-    <section className="relative h-screen min-h-[600px] flex items-center overflow-hidden">
-      {/* BG Image */}
-      <div className="absolute inset-0">
+    <section className="relative min-h-screen flex items-stretch overflow-hidden bg-gray-950">
+      {/* Left: Image */}
+      <div className="absolute inset-0 lg:relative lg:w-1/2">
         <img
           src={S.hero_bg_image || "/images/properties/hero_cover.png"}
           alt={S.company_name}
-          className="w-full h-full object-cover scale-105"
+          className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 overlay-dark" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-black/70 lg:bg-gradient-to-r lg:from-transparent lg:via-transparent lg:to-gray-950" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 lg:hidden" />
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="max-w-3xl">
-          {/* Tagline */}
+      {/* Right: Content */}
+      <div className="relative z-10 w-full lg:w-1/2 flex items-center">
+        <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 py-32 lg:py-20 w-full">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/15 mb-8">
-              <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-              <span className="text-white/90 text-sm font-medium">Platform Perumahan Terpercaya</span>
+            {/* Eyebrow */}
+            <div className="flex items-center gap-3 mb-8">
+              <div className="h-px w-12 bg-amber-400" />
+              <span className="text-amber-400 text-sm font-semibold uppercase tracking-[0.2em]">
+                {S.company_legal_name || "Platform Perumahan"}
+              </span>
             </div>
-          </motion.div>
 
-          {/* Headline */}
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.1 }}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-[1.05] mb-6 tracking-tight"
-          >
-            Temukan Hunian
-            <br />
-            <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">Idaman</span> Anda dari
-            <br />
-            Developer <span className="text-accent">Terpilih</span>
-          </motion.h1>
+            {/* Headline */}
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-[1.08] mb-6 tracking-tight">
+              Hunian Idaman
+              <br />
+              <span className="text-amber-400">Dari Developer</span>
+              <br />
+              Terpilih
+            </h1>
 
-          {/* Subtitle */}
-          <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="text-lg sm:text-xl text-white/70 mb-10 leading-relaxed max-w-xl"
-          >
-            {S.company_name} menghimpun developer perumahan terbaik. Pilihan hunian
-            terluas dengan skema pembayaran fleksibel — Syariah & KPR Bank.
-          </motion.p>
+            {/* Subtitle */}
+            <p className="text-lg text-gray-400 leading-relaxed mb-10 max-w-md">
+              Pilihan terluas hunian berkualitas dengan skema pembayaran fleksibel — Syariah &amp; KPR Bank.
+            </p>
 
-          {/* CTAs */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-            className="flex flex-col sm:flex-row gap-4 mb-16"
-          >
-            <button
-              onClick={() => router.push("/?tab=proyek")}
-              className="btn-accent text-sm px-6 py-2.5 rounded-xl inline-flex items-center justify-center gap-2 active:scale-[0.98]"
-            >
-              Lihat Semua Proyek
-              <ArrowRight className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => router.push("/?tab=tentang")}
-              className="btn-outline-white text-sm px-6 py-2.5 rounded-xl inline-flex items-center justify-center gap-2"
-            >
-              <Building2 className="w-5 h-5" />
-              Tentang Kami
-            </button>
-          </motion.div>
+            {/* CTAs */}
+            <div className="flex flex-col sm:flex-row gap-3 mb-14">
+              <a
+                href={`https://wa.me/${S.contact_wa}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-amber-500 text-gray-950 font-bold rounded-lg hover:bg-amber-400 transition-all active:scale-[0.98] text-sm"
+              >
+                <MessageCircle className="w-4 h-4" />
+                Booking via WhatsApp
+              </a>
+              <button
+                onClick={() => router.push("/?tab=proyek")}
+                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 border border-white/20 text-white font-semibold rounded-lg hover:bg-white/10 transition-all text-sm"
+              >
+                Lihat Semua Proyek
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
 
-          {/* Stats Row */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.45 }}
-          >
-            <div className="flex flex-wrap gap-8 md:gap-14">
+            {/* Stats */}
+            <div className="grid grid-cols-3 gap-6 border-t border-white/10 pt-8">
               {[
                 { value: `${S.total_units_sold}+`, label: "Unit Terjual" },
                 { value: "3+", label: "Mitra Developer" },
                 { value: "10+", label: "Proyek Perumahan" },
               ].map((stat) => (
                 <div key={stat.label}>
-                  <div className="text-3xl md:text-4xl font-extrabold text-white">{stat.value}</div>
-                  <div className="text-sm text-white/50 mt-1">{stat.label}</div>
+                  <div className="text-2xl lg:text-3xl font-black text-white">{stat.value}</div>
+                  <div className="text-xs text-gray-500 mt-1">{stat.label}</div>
                 </div>
               ))}
             </div>
           </motion.div>
         </div>
       </div>
-
-      {/* Scroll indicator */}
-      <motion.div
-        animate={{ y: [0, 8, 0] }}
-        transition={{ repeat: Infinity, duration: 1.5 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
-      >
-        <div className="w-6 h-10 border-2 border-white/25 rounded-full flex justify-center pt-2">
-          <div className="w-1 h-2.5 bg-white/40 rounded-full" />
-        </div>
-      </motion.div>
     </section>
   );
 }
@@ -599,26 +571,26 @@ function PromoStrip() {
 function FeaturesSection() {
   const { settings: S } = useSettingsStore();
   return (
-    <section className="py-24 md:py-32 bg-section-white">
+    <section className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-16">
-          <p className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Mengapa Kami</p>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-            Keunggulan <span className="text-gradient-accent">{S.company_name}</span>
+          <span className="text-amber-600 text-sm font-bold uppercase tracking-[0.2em]">Mengapa Kami</span>
+          <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-3 mb-4">
+            Keunggulan {S.company_name}
           </h2>
-          <p className="text-gray-500 max-w-2xl mx-auto text-lg">
+          <p className="text-gray-500 max-w-xl mx-auto">
             Bukan sekadar rumah — investasi masa depan yang aman untuk keluarga Anda.
           </p>
         </FadeIn>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border border-gray-200 rounded-2xl overflow-hidden">
           {FEATURES.map((feat, i) => (
-            <FadeIn key={feat.title} delay={i * 0.08}>
-              <div className="group p-8 rounded-2xl bg-gray-50 hover:bg-white border border-transparent hover:border-gray-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                <div className="w-12 h-12 rounded-xl bg-gray-900 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
-                  <feat.icon className="w-6 h-6 text-white" />
+            <FadeIn key={feat.title} delay={i * 0.06}>
+              <div className={`group p-8 hover:bg-gray-50 transition-colors duration-300 border-b lg:border-b-0 ${i < 2 ? "lg:border-r" : i === 2 ? "" : i % 3 !== 2 ? "lg:border-r" : ""} border-gray-200`}>
+                <div className="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center mb-5 group-hover:bg-amber-100 transition-colors">
+                  <feat.icon className="w-5 h-5 text-amber-700" />
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">{feat.title}</h3>
+                <h3 className="text-base font-bold text-gray-900 mb-2">{feat.title}</h3>
                 <p className="text-gray-500 leading-relaxed text-sm">{feat.desc}</p>
               </div>
             </FadeIn>
@@ -766,55 +738,59 @@ function CompactPropertyCard({
   onSelect: (p: Property) => void;
 }) {
   const finTypes = property.financingTypes ?? ["syariah", "kpr"];
-  // Get cheapest KPR installment (longest tenor preferred)
   const bestKpr = getCheapestKprInstallment(property);
 
   return (
     <FadeIn className="h-full">
-      <Card className="group h-full overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 cursor-pointer" onClick={() => onSelect(property)}>
-        <div className="relative h-40 overflow-hidden bg-gray-200">
+      <div className="group h-full bg-white rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer" onClick={() => onSelect(property)}>
+        {/* Image */}
+        <div className="relative h-56 overflow-hidden bg-gray-100">
           {property.image ? (
-            <img
-              src={property.image}
-              alt={property.name}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            />
+            <img src={property.image} alt={property.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-400">
-              <Home className="w-10 h-10" />
-            </div>
+            <div className="w-full h-full flex items-center justify-center text-gray-300"><Home className="w-12 h-12" /></div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-          <div className="absolute top-3 left-3 flex gap-1.5">
-            <Badge className="bg-gray-900 text-white border-0 shadow-lg text-xs">
-              {property.tag}
-            </Badge>
+          {/* Price Badge */}
+          <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-lg px-3 py-1.5 shadow-md">
+            <span className="text-base font-black text-gray-900">Rp {property.price}</span>
+            <span className="text-[10px] text-gray-500 font-medium ml-0.5">Juta</span>
           </div>
-          <div className="absolute top-3 right-3 flex gap-1">
-            {finTypes.includes("syariah") && (
-              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-gray-500/90 text-white backdrop-blur-sm">Syariah</span>
-            )}
-            {finTypes.includes("kpr") && (
-              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-gray-500/90 text-white backdrop-blur-sm">KPR</span>
-            )}
+          {/* Financing badges */}
+          <div className="absolute top-4 right-4 flex gap-1">
+            {finTypes.includes("syariah") && <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-emerald-600 text-white">Syariah</span>}
+            {finTypes.includes("kpr") && <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-blue-600 text-white">KPR</span>}
           </div>
-          <div className="absolute bottom-3 left-3 right-3">
-            <h3 className="font-bold text-white text-sm leading-tight">{property.name}</h3>
-            <p className="text-white/80 text-xs mt-0.5">{property.location}</p>
+          {/* Bottom gradient */}
+          <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/50 to-transparent" />
+          <div className="absolute bottom-3 left-4 right-4">
+            <p className="text-white text-xs flex items-center gap-1 font-medium"><MapPin className="w-3 h-3" />{property.location}</p>
           </div>
         </div>
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <span className="text-lg font-extrabold text-gray-900">Rp {property.price}</span>
-              <span className="text-xs text-gray-500 ml-1">Juta</span>
-            </div>
-            <span className="text-xs font-semibold text-gray-600 bg-gray-50 px-2 py-1 rounded-lg">
-              {bestKpr ? `Rp ${new Intl.NumberFormat("id-ID").format(Math.round(bestKpr.amount * 1_000_000))}/bln` : "Hubungi kami"}
-            </span>
+        {/* Content */}
+        <div className="p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-50 text-amber-700 uppercase tracking-wider">{property.tag}</span>
+            <span className="text-[10px] text-gray-400">{CATEGORY_LABELS[property.category as PropertyCategory] || property.category}</span>
           </div>
-        </CardContent>
-      </Card>
+          <h3 className="font-bold text-gray-900 text-sm mb-3 line-clamp-1 group-hover:text-amber-700 transition-colors">{property.name}</h3>
+          {/* Specs */}
+          {property.category !== "kavling" ? (
+            <div className="flex items-center gap-3 text-[11px] text-gray-500 border-t border-gray-100 pt-3">
+              <span className="flex items-center gap-1"><Building2 className="w-3 h-3" />{property.buildingArea} m²</span>
+              <span className="flex items-center gap-1"><LandPlot className="w-3 h-3" />{property.landArea} m²</span>
+              <span className="flex items-center gap-1"><Home className="w-3 h-3" />{property.bedrooms} KT</span>
+              <span className="flex items-center gap-1"><Users className="w-3 h-3" />{property.bathrooms} KM</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 text-[11px] text-gray-500 border-t border-gray-100 pt-3">
+              <span className="flex items-center gap-1"><LandPlot className="w-3 h-3" />{property.landArea} m²</span>
+            </div>
+          )}
+          {bestKpr && (
+            <p className="text-[11px] text-emerald-600 font-semibold mt-2">Mulai Rp {new Intl.NumberFormat("id-ID").format(Math.round(bestKpr.amount * 1_000_000))}/bln</p>
+          )}
+        </div>
+      </div>
     </FadeIn>
   );
 }
@@ -833,52 +809,46 @@ function PropertyPreviewSection({
     : PROPERTIES.filter((p) => p.category === activeCategory);
 
   return (
-    <section className="py-20 md:py-28 bg-white">
+    <section className="py-20 md:py-28 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <FadeIn className="text-center mb-12">
-          <Badge variant="secondary" className="mb-4 bg-gray-100 text-gray-600 border-gray-200">
-            <Home className="w-3.5 h-3.5 mr-1.5" />
-            Proyek Kami
-          </Badge>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-            Pilih Proyek <span className="text-gray-900">Idaman</span> Anda
+        <FadeIn className="text-center mb-10">
+          <span className="text-amber-600 text-sm font-bold uppercase tracking-[0.2em]">Proyek Kami</span>
+          <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-3 mb-4">
+            Pilih Hunian Idaman Anda
           </h2>
-          <p className="text-gray-500 max-w-2xl mx-auto text-lg">
-            Tersedia berbagai proyek — Siap Huni, Kavling, dan Inden — dengan harga terjangkau dan skema pembayaran Syariah &amp; KPR.
+          <p className="text-gray-500 max-w-xl mx-auto">
+            Tersedia berbagai tipe — Siap Huni, Kavling, dan Inden — dengan skema Syariah &amp; KPR.
           </p>
         </FadeIn>
 
+        {/* Category filter pills */}
         <FadeIn delay={0.1} className="flex justify-center mb-10">
-          <Select value={activeCategory} onValueChange={(v) => setActiveCategory(v as PropertyCategory | "all")}>
-            <SelectTrigger className="w-[180px] h-10 text-xs font-semibold border-gray-200 focus:ring-gray-400 focus:border-gray-400">
-              <SelectValue placeholder="Semua Kategori" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Semua Kategori</SelectItem>
-              <SelectItem value="inden">Inden</SelectItem>
-              <SelectItem value="kavling">Kavling</SelectItem>
-              <SelectItem value="siap_huni">Siap Huni</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="inline-flex bg-white rounded-full p-1 shadow-sm border border-gray-200">
+            {(["all", "inden", "kavling", "siap_huni"] as const).map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`px-5 py-2 rounded-full text-xs font-semibold transition-all ${
+                  activeCategory === cat
+                    ? "bg-gray-900 text-white shadow-md"
+                    : "text-gray-500 hover:text-gray-900"
+                }`}
+              >
+                {cat === "all" ? "Semua" : CATEGORY_LABELS[cat]}
+              </button>
+            ))}
+          </div>
         </FadeIn>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.slice(0, 6).map((property) => (
-            <CompactPropertyCard
-              key={property.id}
-              property={property}
-              onSelect={onSelectProperty}
-            />
+            <CompactPropertyCard key={property.id} property={property} onSelect={onSelectProperty} />
           ))}
         </div>
 
         <FadeIn className="text-center mt-10">
-          <button
-            onClick={() => router.push("/?tab=proyek")}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gray-100 text-gray-600 font-semibold rounded-xl hover:bg-gray-100 transition-colors"
-          >
-            Lihat Semua Proyek
-            <ArrowRight className="w-4 h-4" />
+          <button onClick={() => router.push("/?tab=proyek")} className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors text-sm">
+            Lihat Semua Proyek <ArrowRight className="w-4 h-4" />
           </button>
         </FadeIn>
       </div>
@@ -891,67 +861,45 @@ function PropertyPreviewSection({
 function CaraBeliSection() {
   const { settings: S } = useSettingsStore();
   const steps = [
-    { num: 1, title: "Konsultasi Gratis", desc: "Hubungi kami via WhatsApp untuk konsultasi gratis tentang pilihan rumah dan skema pembayaran.", icon: MessageCircle, gradient: "from-green-500 to-green-600" },
-    { num: 2, title: "Pilih Proyek", desc: "Pilih proyek yang sesuai kebutuhan dan budget Anda dari pilihan Siap Huni, Kavling, atau Inden.", icon: Home, gradient: "from-gray-800 to-gray-900" },
-    { num: 3, title: "Hitung Cicilan", desc: "Gunakan kalkulator simulasi cicilan kami untuk menentukan DP dan tenor yang tepat.", icon: Calculator, gradient: "from-amber-500 to-amber-600" },
-    { num: 4, title: "Booking & Akad", desc: "Lakukan booking fee dan proses akad jual beli. Serah terima kunci dan rumah siap huni!", icon: KeyRound, gradient: "from-purple-500 to-purple-600" },
+    { num: 1, title: "Konsultasi", desc: "Hubungi kami via WhatsApp untuk konsultasi gratis tentang pilihan rumah.", icon: MessageCircle },
+    { num: 2, title: "Pilih Proyek", desc: "Pilih proyek sesuai kebutuhan dan budget Anda.", icon: Home },
+    { num: 3, title: "Hitung Cicilan", desc: "Gunakan kalkulator simulasi cicilan kami.", icon: Calculator },
+    { num: 4, title: "Booking & Akad", desc: "Lakukan booking fee dan proses akad jual beli.", icon: KeyRound },
   ];
 
   return (
-    <section className="py-20 md:py-28 bg-white overflow-hidden">
+    <section className="py-20 md:py-28 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-16">
-          <Badge variant="secondary" className="mb-4 bg-gray-50 text-gray-600 border-gray-200">
-            <Handshake className="w-3.5 h-3.5 mr-1.5" />
-            Cara Memiliki Rumah
-          </Badge>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-            Proses <span className="text-gray-900">Mudah</span> & Transparan
-          </h2>
-          <p className="text-gray-500 max-w-2xl mx-auto text-lg">
-            Hanya 4 langkah untuk memiliki rumah impian Anda.
-          </p>
+          <span className="text-amber-600 text-sm font-bold uppercase tracking-[0.2em]">Cara Memiliki Rumah</span>
+          <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-3 mb-4">Proses Mudah &amp; Transparan</h2>
+          <p className="text-gray-500 max-w-xl mx-auto">Hanya 4 langkah untuk memiliki rumah impian Anda.</p>
         </FadeIn>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
-          {/* Connecting line (desktop only) */}
-          <div className="hidden lg:block absolute top-16 left-[calc(12.5%+24px)] right-[calc(12.5%+24px)] h-0.5 bg-gradient-to-r from-green-300 via-gray-300 to-purple-300 z-0" />
-
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0 border border-gray-200 rounded-2xl overflow-hidden">
           {steps.map((step, i) => {
             const Icon = step.icon;
             return (
-              <FadeIn key={step.num} delay={i * 0.15}>
-                <div className="relative z-10 text-center">
-                  <div className={`w-16 h-16 mx-auto mb-5 bg-gradient-to-br ${step.gradient} rounded-2xl flex items-center justify-center shadow-lg`}>
-                    <Icon className="w-8 h-8 text-white" />
+              <FadeIn key={step.num} delay={i * 0.1}>
+                <div className={`relative p-8 text-center border-b sm:border-b-0 lg:border-b-0 ${i < 3 ? "lg:border-r" : ""} border-gray-200 group hover:bg-amber-50/50 transition-colors`}>
+                  {/* Number */}
+                  <div className="absolute top-4 right-4 text-6xl font-black text-gray-100 group-hover:text-amber-100 transition-colors leading-none">{`0${step.num}`}</div>
+                  <div className="relative z-10">
+                    <div className="w-14 h-14 mx-auto mb-4 bg-gray-900 rounded-2xl flex items-center justify-center group-hover:bg-amber-600 transition-colors">
+                      <Icon className="w-6 h-6 text-white" />
+                    </div>
+                    <h3 className="text-base font-bold text-gray-900 mb-2">{step.title}</h3>
+                    <p className="text-gray-500 text-sm leading-relaxed">{step.desc}</p>
                   </div>
-                  <div className="w-8 h-8 mx-auto -mt-8 mb-4 bg-white border-2 border-gray-200 rounded-full flex items-center justify-center relative z-10">
-                    <span className="text-sm font-extrabold text-gray-700">{step.num}</span>
-                  </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">{step.title}</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed">{step.desc}</p>
                 </div>
               </FadeIn>
             );
           })}
         </div>
 
-        <FadeIn className="flex flex-col sm:flex-row gap-4 justify-center mt-14">
-          <a
-            href={`https://wa.me/${S.contact_wa}?text=Halo,%20saya%20ingin%20cek%20unit%20tersedia`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-green-600 text-white font-semibold rounded-xl shadow-lg hover:bg-green-700 transition-all active:scale-95 text-sm"
-          >
-            <MessageCircle className="w-4 h-4" />
-            Cek Unit Tersedia
-          </a>
-          <a
-            href="/?tab=proyek"
-            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gray-900 text-white font-semibold rounded-xl shadow-lg hover:bg-gray-800 transition-all active:scale-95 text-sm"
-          >
-            <Calculator className="w-5 h-5" />
-            Hitung Cicilan Saya
+        <FadeIn className="flex justify-center mt-10">
+          <a href={`https://wa.me/${S.contact_wa}?text=Halo,%20saya%20ingin%20cek%20unit%20tersedia`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition-colors text-sm">
+            <MessageCircle className="w-4 h-4" /> Cek Unit Tersedia
           </a>
         </FadeIn>
       </div>
@@ -963,39 +911,22 @@ function CaraBeliSection() {
 
 function TestimonialCard({ t }: { t: Testimonial }) {
   return (
-    <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-shadow bg-white">
-      <CardContent className="p-6">
-        {/* Stars */}
-        <div className="flex gap-0.5 mb-4">
-          {Array.from({ length: 5 }).map((_, si) => (
-            <Star
-              key={si}
-              className={`w-4 h-4 ${
-                si < t.rating
-                  ? "text-yellow-400 fill-yellow-400"
-                  : "text-gray-200"
-              }`}
-            />
-          ))}
+    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 h-full flex flex-col">
+      <div className="text-amber-400 text-3xl font-serif leading-none mb-3">&ldquo;</div>
+      <div className="flex gap-0.5 mb-4">
+        {Array.from({ length: 5 }).map((_, si) => (
+          <Star key={si} className={`w-3.5 h-3.5 ${si < t.rating ? "text-amber-400 fill-amber-400" : "text-gray-200"}`} />
+        ))}
+      </div>
+      <p className="text-gray-600 text-sm leading-relaxed flex-1 italic">&ldquo;{t.text}&rdquo;</p>
+      <div className="flex items-center gap-3 mt-5 pt-4 border-t border-gray-100">
+        <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center text-amber-700 font-bold text-sm shrink-0">{t.name.charAt(0)}</div>
+        <div className="min-w-0">
+          <p className="font-bold text-gray-900 text-sm truncate">{t.name}</p>
+          <p className="text-xs text-gray-400 truncate">{t.role}</p>
         </div>
-
-        <p className="text-gray-600 leading-relaxed mb-6 italic">
-          &ldquo;{t.text}&rdquo;
-        </p>
-
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-bold text-sm flex-shrink-0">
-            {t.name.charAt(0)}
-          </div>
-          <div className="min-w-0">
-            <p className="font-bold text-gray-900 text-sm truncate">
-              {t.name}
-            </p>
-            <p className="text-xs text-gray-400 truncate">{t.role}</p>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
 
@@ -1006,125 +937,46 @@ function TestimonialsSection({ limit }: { limit?: number }) {
     fetchTestimonials();
   }, [fetchTestimonials]);
 
-  const items = testimonials.length > 0 ? testimonials : [];
-  const displayItems = limit ? items.slice(0, limit) : items;
-
-  if (displayItems.length === 0) {
-    return null;
-  }
-
-  // If limit is passed, show static grid (e.g. on Home page)
-  if (limit) {
-    return (
-      <section className="py-20 md:py-28 bg-section-gray">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <FadeIn className="text-center mb-12">
-            <Badge
-              variant="secondary"
-              className="mb-4 bg-gray-50 text-gray-600 border-gray-200"
-            >
-              <Star className="w-3.5 h-3.5 mr-1.5" />
-              Testimoni Warga
-            </Badge>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-              Apa Kata <span className="text-gray-900">Penghuni</span> Kami?
-            </h2>
-            <p className="text-gray-500 max-w-2xl mx-auto text-lg">
-              Dengarkan cerita dan pengalaman warga yang sudah memilih Bandung
-              Raya Residence sebagai rumah mereka.
-            </p>
-          </FadeIn>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {displayItems.map((t, i) => (
-              <FadeIn key={t.id} delay={i * 0.1}>
-                <TestimonialCard t={t} />
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  // Infinite vertical scroll marquee — duplicates items for seamless loop
-  const duplicated = [...displayItems, ...displayItems];
+  const items = (testimonials || []).slice(0, limit || 50);
+  if (items.length === 0) return null;
 
   return (
-    <section className="py-20 md:py-28 bg-section-gray overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <FadeIn className="text-center mb-12">
-          <Badge
-            variant="secondary"
-            className="mb-4 bg-gray-50 text-gray-600 border-gray-200"
-          >
-            <Star className="w-3.5 h-3.5 mr-1.5" />
-            Testimoni Warga
-          </Badge>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-            Apa Kata <span className="text-gray-900">Penghuni</span> Kami?
-          </h2>
-          <p className="text-gray-500 max-w-2xl mx-auto text-lg">
-            Dengarkan cerita dan pengalaman warga yang sudah memilih Bandung
-            Raya Residence sebagai rumah mereka.
-          </p>
-        </FadeIn>
+    <section className="py-20 md:py-28 relative overflow-hidden bg-gray-50">
+      <div className="absolute inset-0">
+        <img src="/images/properties/hero_cover.png" alt="" className="w-full h-full object-cover opacity-[0.06]" />
       </div>
-
-      {/* Marquee viewport — 2 cols × 3 rows on desktop, 1 col × 3 rows on mobile */}
-      <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Top fade */}
-        <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-warm-bg to-transparent z-10 pointer-events-none" />
-        {/* Bottom fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-warm-bg z-10 pointer-events-none" />
-
-        <div
-          className="overflow-hidden"
-          style={{ maxHeight: "calc(3 * 14.5rem + 2 * 1.5rem)" }}
-        >
-          <div className="animate-[testimonial-scroll_40s_linear_infinite] grid grid-cols-1 md:grid-cols-2 gap-6 hover:[animation-play-state:paused]">
-            {duplicated.map((t, i) => (
-              <TestimonialCard key={`${t.id}-${i}`} t={t} />
-            ))}
-          </div>
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <FadeIn className="text-center mb-14">
+          <span className="text-amber-600 text-sm font-bold uppercase tracking-[0.2em]">Testimoni</span>
+          <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-3 mb-4">Apa Kata Pembeli Kami</h2>
+          <p className="text-gray-500 max-w-xl mx-auto">Ratusan keluarga telah mempercayai kami untuk hunian mereka.</p>
+        </FadeIn>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {items.map((t) => (
+            <FadeIn key={t.id}><TestimonialCard t={t} /></FadeIn>
+          ))}
         </div>
       </div>
     </section>
   );
 }
-
 /* ─────────────────────────── FAQ ─────────────────────────── */
 
 function FAQSection() {
   return (
-    <section className="py-20 md:py-28 bg-section-gray">
+    <section className="py-20 md:py-28 bg-white">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-12">
-          <Badge variant="secondary" className="mb-4 bg-gray-100 text-gray-600 border-gray-200">
-            <HelpCircle className="w-3.5 h-3.5 mr-1.5" />
-            FAQ
-          </Badge>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-            Pertanyaan <span className="text-gray-900">Umum</span>
-          </h2>
-          <p className="text-gray-500 text-lg">
-            Jawaban atas pertanyaan yang sering ditanyakan calon pembeli.
-          </p>
+          <span className="text-amber-600 text-sm font-bold uppercase tracking-[0.2em]">FAQ</span>
+          <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-3 mb-4">Pertanyaan Umum</h2>
+          <p className="text-gray-500">Jawaban atas pertanyaan yang sering ditanyakan calon pembeli.</p>
         </FadeIn>
-
         <FadeIn>
           <Accordion type="single" collapsible className="space-y-3">
             {FAQ_ITEMS.map((item, i) => (
-              <AccordionItem
-                key={i}
-                value={`faq-${i}`}
-                className="bg-white rounded-xl border border-gray-200 px-6 shadow-sm data-[state=open]:shadow-md transition-shadow"
-              >
-                <AccordionTrigger className="text-base font-semibold text-gray-900 hover:text-gray-900 hover:no-underline py-5">
-                  {item.q}
-                </AccordionTrigger>
-                <AccordionContent className="text-gray-600 leading-relaxed pb-5">
-                  {item.a}
-                </AccordionContent>
+              <AccordionItem key={i} value={`faq-${i}`} className="bg-gray-50 rounded-lg border-0 px-6 data-[state=open]:bg-white data-[state=open]:shadow-md transition-all">
+                <AccordionTrigger className="text-sm font-semibold text-gray-900 hover:text-gray-900 hover:no-underline py-4">{item.q}</AccordionTrigger>
+                <AccordionContent className="text-gray-600 text-sm leading-relaxed pb-4">{item.a}</AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>
@@ -1276,70 +1128,35 @@ function GalleryPreviewSection() {
 function CTASection() {
   const { settings: S } = useSettingsStore();
   return (
-    <section className="py-28 md:py-36 bg-section-dark relative overflow-hidden">
-      {/* Background Image */}
+    <section className="relative py-28 md:py-36 overflow-hidden">
       <div className="absolute inset-0">
-        <img
-          src={S.hero_bg_image || "/images/properties/hero_cover.png"}
-          alt=""
-          className="w-full h-full object-cover opacity-30"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-gray-900/95 via-gray-900/80 to-gray-900/60" />
+        <img src={S.hero_bg_image || "/images/properties/hero_cover.png"} alt="" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gray-950/85" />
       </div>
-
       <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <FadeIn>
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full text-gray-300 text-sm font-medium mb-8 border border-white/10">
-            <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-            Unit Terbatas Bulan Ini
+          <div className="flex items-center justify-center gap-3 mb-8">
+            <div className="h-px w-12 bg-amber-400" />
+            <span className="text-amber-400 text-sm font-bold uppercase tracking-[0.2em]">Promo Terbatas</span>
+            <div className="h-px w-12 bg-amber-400" />
           </div>
-
-          <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6 leading-tight tracking-tight">
+          <h2 className="text-3xl md:text-5xl font-black text-white mb-6 leading-tight tracking-tight">
             Jangan Tunda Lagi!
             <br />
-            <span className="text-gradient-gray">
-              Miliki Rumah Impian Anda Sekarang
-            </span>
+            <span className="text-amber-400">Miliki Rumah Impian Anda Sekarang</span>
           </h2>
-
-          <p className="text-gray-400 text-lg mb-10 max-w-2xl mx-auto leading-relaxed">
-            Hubungi kami sekarang untuk konsultasi gratis. Tim marketing kami
-            siap membantu Anda menemukan rumah yang tepat.
+          <p className="text-gray-400 text-lg mb-10 max-w-xl mx-auto">
+            Hubungi kami untuk konsultasi gratis. Tim marketing siap membantu Anda.
           </p>
-
-          {/* Trust pills */}
-          <div className="flex flex-wrap justify-center gap-3 mb-12">
-            {["DP bisa dicicil", "Tanpa bunga / riba", "Tanpa denda", "Booking fee terjangkau"].map((pill) => (
-              <span
-                key={pill}
-                className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-white/8 backdrop-blur-md text-gray-300 text-sm rounded-full border border-white/10"
-              >
-                <CheckCircle2 className="w-4 h-4 text-green-400" />
-                {pill}
-              </span>
-            ))}
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href={`https://wa.me/${S.contact_wa}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-green-500 text-white font-semibold rounded-xl shadow-2xl hover:bg-green-600 transition-all active:scale-95 text-sm"
-            >
-              <MessageCircle className="w-4 h-4" />
-              Booking via WhatsApp
-            </a>
-            <a
-              href={`https://wa.me/${S.contact_wa}?text=Halo,%20saya%20ingin%20cek%20unit%20tersedia`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-outline-white text-sm"
-            >
-              <Home className="w-5 h-5" />
-              Cek Unit Tersedia
-            </a>
-          </div>
+          <a
+            href={`https://wa.me/${S.contact_wa}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-amber-500 text-gray-950 font-bold rounded-lg hover:bg-amber-400 transition-all text-sm"
+          >
+            <MessageCircle className="w-4 h-4" />
+            Booking via WhatsApp
+          </a>
         </FadeIn>
       </div>
     </section>
@@ -1578,27 +1395,17 @@ function BlogPreviewSection() {
 
 function PageBanner({ title, subtitle, bgImage }: { title: string; subtitle?: string; bgImage?: string }) {
   return (
-    <section className="relative min-h-[50vh] flex items-center overflow-hidden">
+    <section className="relative h-[40vh] min-h-[280px] flex items-center overflow-hidden bg-gray-950">
       <div className="absolute inset-0">
-        <img
-          src={bgImage || "/images/properties/hero_cover.png"}
-          alt={title}
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black/70" />
+        <img src={bgImage || "/images/properties/hero_cover.png"} alt={title} className="w-full h-full object-cover opacity-40" />
       </div>
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-4">
-            {title}
-          </h1>
-          {subtitle && (
-            <p className="text-lg text-gray-300 max-w-2xl">{subtitle}</p>
-          )}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="h-px w-10 bg-amber-400" />
+            <span className="text-amber-400 text-xs font-bold uppercase tracking-[0.2em]">{subtitle}</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-black text-white leading-tight">{title}</h1>
         </motion.div>
       </div>
     </section>
@@ -5001,120 +4808,53 @@ function ProyekPage({
 
 function Footer() {
   const { settings: S } = useSettingsStore();
-  const { properties: PROPERTIES } = usePropertyStore();
   return (
-    <footer className="bg-gray-900 text-gray-300 mt-auto">
+    <footer className="bg-gray-950 text-gray-400 mt-auto border-t border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-16">
           {/* Brand */}
-          <div className="lg:col-span-1">
-            <div className="flex items-center gap-2.5 mb-4">
-              <img
-                src="/images/logo-brr.png"
-                alt="Logo BRR"
-                className="w-10 h-10 rounded-xl object-contain"
-              />
+          <div className="lg:col-span-2">
+            <div className="flex items-center gap-3 mb-5">
+              <img src="/images/logo-brr.png" alt="Logo" className="w-10 h-10 rounded-lg object-contain" />
               <div className="flex flex-col leading-tight">
-                <span className="text-[10px] text-gray-500 font-semibold tracking-wide">
-                  {S.company_legal_name}
-                </span>
-                <span className="text-sm text-white font-extrabold">
-                  {S.company_name}
-                </span>
+                <span className="text-[10px] text-gray-500 font-semibold tracking-wider uppercase">{S.company_legal_name}</span>
+                <span className="text-sm text-white font-black">{S.company_name}</span>
               </div>
             </div>
-            <p className="text-gray-400 text-sm leading-relaxed mb-4">
-              {S.company_name} — Developer perumahan terpercaya di
-              Bandung & Sentul. Menyediakan hunian berkualitas dengan skema pembayaran
-              Syariah & KPR.
+            <p className="text-gray-500 text-sm leading-relaxed mb-5 max-w-sm">
+              Platform perumahan terpercaya yang menghimpun developer terpilih. Menyediakan hunian berkualitas dengan skema Syariah &amp; KPR.
             </p>
-            <div className="flex gap-3">
-              <a
-                href={`https://instagram.com/${S.social_instagram}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-gray-800 hover:bg-gray-700 rounded-xl flex items-center justify-center transition-colors"
-              >
-                <Instagram className="w-5 h-5" />
-              </a>
-              <a
-                href={`https://wa.me/${S.contact_wa}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-gray-800 hover:bg-green-600 rounded-xl flex items-center justify-center transition-colors"
-              >
-                <MessageCircle className="w-5 h-5" />
-              </a>
+            <div className="flex gap-2">
+              <a href={`https://instagram.com/${S.social_instagram}`} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-gray-800 hover:bg-amber-600 rounded-lg flex items-center justify-center transition-colors"><Instagram className="w-4 h-4" /></a>
+              <a href={`https://wa.me/${S.contact_wa}`} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-gray-800 hover:bg-emerald-600 rounded-lg flex items-center justify-center transition-colors"><MessageCircle className="w-4 h-4" /></a>
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Menu */}
           <div>
-            <h4 className="font-bold text-white mb-4">Menu</h4>
+            <h4 className="text-white font-bold text-sm mb-5">Navigasi</h4>
             <ul className="space-y-2.5">
               {NAV_LINKS.map((link) => (
-                <li key={link.tab}>
-                  <a
-                    href={`/?tab=${link.tab}`}
-                    className="text-gray-400 hover:text-gray-400 transition-colors text-sm"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Proyek */}
-          <div>
-            <h4 className="font-bold text-white mb-4">Proyek</h4>
-            <ul className="space-y-2.5">
-              {(["Siap Huni", "Kavling", "Inden"] as const).map((cat) => (
-                <li key={cat}>
-                  <a
-                    href="/?tab=proyek"
-                    className="text-gray-400 hover:text-gray-400 transition-colors text-sm"
-                  >
-                    {cat}
-                  </a>
-                </li>
+                <li key={link.tab}><a href={`/?tab=${link.tab}`} className="text-sm hover:text-amber-400 transition-colors">{link.label}</a></li>
               ))}
             </ul>
           </div>
 
           {/* Contact */}
           <div>
-            <h4 className="font-bold text-white mb-4">Kontak</h4>
+            <h4 className="text-white font-bold text-sm mb-5">Kontak</h4>
             <ul className="space-y-3">
-              <li className="flex items-start gap-3">
-                <Phone className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                <div>
-                  <p className="text-sm">{S.contact_phone}</p>
-                  <p className="text-xs text-gray-500">({S.contact_person})</p>
-                </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <Instagram className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                <p className="text-sm">{`@${S.social_instagram}`}</p>
-              </li>
-              <li className="flex items-start gap-3">
-                <MapPin className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                <p className="text-sm">{S.contact_address}</p>
-              </li>
+              <li className="flex items-start gap-2.5"><Phone className="w-4 h-4 text-gray-500 mt-0.5 shrink-0" /><div><p className="text-sm">{S.contact_phone}</p><p className="text-xs text-gray-600">{S.contact_person}</p></div></li>
+              <li className="flex items-start gap-2.5"><MapPin className="w-4 h-4 text-gray-500 mt-0.5 shrink-0" /><p className="text-sm">{S.contact_address}</p></li>
+              <li className="flex items-start gap-2.5"><Instagram className="w-4 h-4 text-gray-500 mt-0.5 shrink-0" /><p className="text-sm">@{S.social_instagram}</p></li>
             </ul>
           </div>
         </div>
 
-        <Separator className="bg-gray-800 my-10" />
-
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-gray-500 text-sm">
-            &copy; {new Date().getFullYear()} {S.company_name}. All rights
-            reserved.
-          </p>
-          <p className="text-gray-500 text-xs">
-            Perumahan Terpercaya di Bandung & Sentul
-          </p>
+        {/* Bottom bar */}
+        <div className="mt-12 pt-8 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-gray-600">&copy; {new Date().getFullYear()} {S.company_legal_name}. All rights reserved.</p>
+          <p className="text-xs text-gray-700">Built with ❤️ for better living.</p>
         </div>
       </div>
     </footer>
