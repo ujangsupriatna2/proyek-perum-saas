@@ -373,7 +373,13 @@ function Navbar({ activeTab }: { activeTab: string }) {
         <div className="flex items-center justify-between h-18 md:h-20">
           {/* Logo */}
           <a href="/?tab=home" onClick={(e) => { e.preventDefault(); handleNav("home"); }} className="flex items-center gap-2.5">
-            <img src={S.logo_url || "/images/logo-brr.png"} alt="Logo" className="w-10 h-10 md:w-11 md:h-11 rounded-xl object-contain" />
+            {S.logo_url ? (
+              <img src={S.logo_url} alt="Logo" className="w-10 h-10 md:w-11 md:h-11 rounded-xl object-contain" />
+            ) : (
+              <div className={`w-10 h-10 md:w-11 md:h-11 rounded-xl flex items-center justify-center ${isSolid ? 'bg-gray-900' : 'bg-white/15 backdrop-blur-sm'}`}>
+                <Building2 className={`w-5 h-5 ${isSolid ? 'text-white' : 'text-white'}`} />
+              </div>
+            )}
             <span className={`text-xs md:text-sm font-bold tracking-wider uppercase ${isSolid ? 'text-gray-700' : 'text-white'} transition-colors`}>
               {S.company_legal_name}
             </span>
@@ -469,11 +475,15 @@ function Hero() {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black">
       {/* Background Image */}
       <div className="absolute inset-0 overflow-hidden">
-        <img
-          src={S.hero_bg_image || "/images/properties/hero_cover.png"}
-          alt={S.company_name}
-          className="w-full h-full object-cover animate-ken-burns"
-        />
+        {S.hero_bg_image ? (
+          <img
+            src={S.hero_bg_image}
+            alt={S.company_name}
+            className="w-full h-full object-cover animate-ken-burns"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-gray-800 to-black" />
+        )}
         {/* Dark overlay — ensure text always readable */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/85" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/50" />
@@ -1588,7 +1598,11 @@ function CTASection() {
   return (
     <section className="relative py-32 md:py-40 overflow-hidden">
       <div className="absolute inset-0">
-        <img src={S.location_bg_image || "/images/location.png"} alt="" className="w-full h-full object-cover" />
+        {S.location_bg_image ? (
+          <img src={S.location_bg_image} alt="" className="w-full h-full object-cover" />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-gray-900 to-black" />
+        )}
         <div className="absolute inset-0 bg-gray-950/85" />
       </div>
       {/* Animated gradient orbs */}
@@ -4281,11 +4295,17 @@ function TentangKamiPage() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <FadeIn direction="left">
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-                <img
-                  src={S.tentangkami_image || "/images/properties/hero_cover.png"}
-                  alt={S.company_name}
-                  className="w-full h-[400px] object-cover"
-                />
+                {S.tentangkami_image ? (
+                  <img
+                    src={S.tentangkami_image}
+                    alt={S.company_name}
+                    className="w-full h-[400px] object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-[400px] bg-gradient-to-br from-gray-800 via-gray-900 to-black flex items-center justify-center">
+                    <Building2 className="w-16 h-16 text-gray-600" />
+                  </div>
+                )}
                 <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 to-transparent p-6">
                   <p className="text-white font-bold text-lg">{S.company_legal_name}</p>
                 </div>
@@ -5872,7 +5892,13 @@ function Footer() {
           {/* Brand */}
           <div className="lg:col-span-2">
             <div className="flex items-center gap-3 mb-5">
-              <img src={S.logo_url || "/images/logo-brr.png"} alt="Logo" className="w-10 h-10 rounded-lg object-contain" />
+              {S.logo_url ? (
+                <img src={S.logo_url} alt="Logo" className="w-10 h-10 rounded-lg object-contain" />
+              ) : (
+                <div className="w-10 h-10 rounded-lg bg-gray-800 flex items-center justify-center">
+                  <Building2 className="w-5 h-5 text-gray-400" />
+                </div>
+              )}
               <span className="text-sm text-white font-bold tracking-wider uppercase">{S.company_legal_name}</span>
             </div>
             <p className="text-gray-500 text-sm leading-relaxed mb-5 max-w-sm">
