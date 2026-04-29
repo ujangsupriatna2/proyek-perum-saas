@@ -1589,8 +1589,12 @@ function ServicePreviewSection({
 
 function BlogPreviewSection() {
   const router = useRouter();
-  const { articles } = useBlogStore();
+  const { articles, fetchArticles } = useBlogStore();
   const displayArticles = articles.slice(0, 3);
+
+  useEffect(() => {
+    fetchArticles();
+  }, [fetchArticles]);
 
   const COLORS = [
     "from-gray-800 to-gray-900",
