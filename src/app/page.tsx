@@ -4273,6 +4273,8 @@ function TentangKamiPage() {
   const { galleryItems, fetchGalleryItems } = useGalleryStore();
   const { bankItems, loading: bankLoading, fetchBankItems } = useBankStore();
   const { settings: S } = useSettingsStore();
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
   useEffect(() => { fetchGalleryItems(); }, [fetchGalleryItems]);
   useEffect(() => { fetchBankItems(); }, [fetchBankItems]);
   const homeGalleryItems = galleryItems.slice(0, 8);
@@ -4633,19 +4635,53 @@ function TentangKamiPage() {
               Galeri <span className="text-gradient-gray">Foto</span>
             </h2>
           </FadeIn>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {homeGalleryItems.map((img, i) => (
-              <FadeIn key={img.id} delay={i * 0.05}>
-                <div className="aspect-[4/3] overflow-hidden rounded-xl shadow-md">
-                  <img src={img.image} alt={img.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
-                </div>
-              </FadeIn>
-            ))}
-          </div>
+
+          {homeGalleryItems.length === 0 ? (
+            <div className="text-center py-16">
+              <Camera className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-400 text-lg">Belum ada foto dokumentasi.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-12 gap-3 md:gap-4">
+              {homeGalleryItems.slice(0, 8).map((img, i) => {
+                // Bento layout: varied sizes
+                const sizeMap = [
+                  "col-span-12 md:col-span-7 row-span-2 aspect-[4/3]",  // 0: large left
+                  "col-span-6 md:col-span-5 aspect-square",              // 1: medium right top
+                  "col-span-6 md:col-span-5 aspect-[4/3]",              // 2: medium right bottom
+                  "col-span-6 md:col-span-4 aspect-[3/4]",              // 3: tall
+                  "col-span-6 md:col-span-4 aspect-square",             // 4: square
+                  "col-span-6 md:col-span-4 aspect-[3/4]",              // 5: tall
+                  "col-span-12 md:col-span-8 aspect-video",             // 6: wide bottom
+                  "col-span-12 md:col-span-4 aspect-square",            // 7: small
+                ] as const;
+                const size = sizeMap[i] || "col-span-6 md:col-span-3 aspect-square";
+                return (
+                  <FadeIn key={img.id} delay={i * 0.06}>
+                    <div
+                      className={`${size} overflow-hidden rounded-xl shadow-md group cursor-pointer relative`}
+                      onClick={() => { setLightboxIndex(i); setLightboxOpen(true); }}
+                    >
+                      <img
+                        src={img.image}
+                        alt={img.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                        <p className="text-white font-semibold text-sm truncate">{img.title}</p>
+                      </div>
+                    </div>
+                  </FadeIn>
+                );
+              })}
+            </div>
+          )}
+
           <FadeIn className="text-center mt-10">
             <button
               onClick={() => (typeof window !== "undefined") && window.location.assign("/?tab=gallery")}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gray-100 text-gray-600 font-semibold rounded-xl hover:bg-gray-100 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gray-100 text-gray-600 font-semibold rounded-xl hover:bg-gray-200 transition-colors"
             >
               Lihat Semua Foto
               <ArrowRight className="w-4 h-4" />
@@ -4656,6 +4692,15 @@ function TentangKamiPage() {
 
       {/* ═══════ TESTIMONI ═══════ */}
       <TestimonialsCarousel />
+
+      {/* Lightbox */}
+      {lightboxOpen && (
+        <LightboxOverlay
+          images={homeGalleryItems.map((g) => g.image)}
+          activeIndex={lightboxIndex}
+          onClose={() => setLightboxOpen(false)}
+        />
+      )}
     </>
   );
 }
