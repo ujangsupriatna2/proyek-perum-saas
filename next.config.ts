@@ -2,8 +2,12 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
-  /* config options here */
   serverExternalPackages: ["sharp", "next-auth"],
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "100mb",
+    },
+  },
   typescript: {
     ignoreBuildErrors: true,
   },
