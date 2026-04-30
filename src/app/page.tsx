@@ -1119,12 +1119,12 @@ function PropertyShowcaseSection() {
           </p>
         </FadeIn>
         {/* Filter */}
-        <FadeIn delay={0.15} className="flex flex-wrap justify-center gap-2 mb-10">
+        <FadeIn delay={0.15} className="flex justify-center gap-1.5 mb-10">
           {(["all", "inden", "kavling", "siap_huni"] as const).map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
                 activeCategory === cat
                   ? "bg-gray-900 text-white"
                   : "bg-white text-gray-500 border border-gray-200 hover:border-gray-300 hover:text-gray-900"
