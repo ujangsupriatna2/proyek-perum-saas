@@ -1070,28 +1070,11 @@ function VideoOverviewSection() {
     return `${m}:${sec.toString().padStart(2, '0')}`;
   };
 
-  // Auto-unmute after first play
+  // Attach video events when videoUrl is available (ref is set after render)
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-    const tryUnmute = () => {
-      video.muted = false;
-      setMuted(false);
-      video.removeEventListener('playing', tryUnmute);
-      video.removeEventListener('canplay', tryUnmute);
-    };
-    video.addEventListener('playing', tryUnmute);
-    video.addEventListener('canplay', tryUnmute);
-    return () => {
-      video.removeEventListener('playing', tryUnmute);
-      video.removeEventListener('canplay', tryUnmute);
-    };
-  }, []);
 
-  // Track time & progress
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
     const onTime = () => {
       setCurrentTime(video.currentTime);
       setDuration(video.duration || 0);
@@ -1100,19 +1083,27 @@ function VideoOverviewSection() {
     const onPlay = () => setPlaying(true);
     const onPause = () => setPlaying(false);
     const onEnded = () => setPlaying(false);
+    const tryUnmute = () => {
+      video.muted = false;
+      setMuted(false);
+    };
+
     video.addEventListener('timeupdate', onTime);
     video.addEventListener('loadedmetadata', onTime);
     video.addEventListener('play', onPlay);
     video.addEventListener('pause', onPause);
     video.addEventListener('ended', onEnded);
+    video.addEventListener('playing', tryUnmute);
+
     return () => {
       video.removeEventListener('timeupdate', onTime);
       video.removeEventListener('loadedmetadata', onTime);
       video.removeEventListener('play', onPlay);
       video.removeEventListener('pause', onPause);
       video.removeEventListener('ended', onEnded);
+      video.removeEventListener('playing', tryUnmute);
     };
-  }, []);
+  }, [videoUrl]);
 
   const togglePlay = () => {
     const video = videoRef.current;
