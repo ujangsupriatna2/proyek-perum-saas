@@ -60,8 +60,8 @@ export default function DashboardPage() {
       {/* Page Title */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Selamat datang di panel admin
+        <p className="text-sm text-gray-500 mt-2">
+          Selamat datang di panel admin{" "}
           {superAdmin
             ? companyName
             : mitraName || companyName}
