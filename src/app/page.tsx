@@ -1057,7 +1057,7 @@ function VideoOverviewSection() {
   const { settings: S } = useSettingsStore();
   const videoUrl = S.hero_video_url;
   const [muted, setMuted] = useState(true);
-  const [playing, setPlaying] = useState(false);
+  const [playing, setPlaying] = useState(true);
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -1173,23 +1173,21 @@ function VideoOverviewSection() {
                 onClick={togglePlay}
               />
 
-              {/* Big center play/pause overlay */}
-              {!playing && (
-                <button
-                  type="button"
-                  onClick={togglePlay}
-                  className="absolute inset-0 z-10 flex items-center justify-center bg-black/20 transition-opacity"
-                >
-                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg hover:scale-105 transition-transform">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 md:w-8 md:h-8 text-gray-800 ml-1" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
+              {/* Quick pause/play pulse on click */}
+              <div className="absolute inset-0 z-[5] pointer-events-none">
+                {!playing && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-14 h-14 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-lg animate-scale-in">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-gray-800 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                    </div>
                   </div>
-                </button>
-              )}
+                )}
+              </div>
 
-              {/* Controls bar */}
-              <div className="absolute bottom-0 left-0 right-0 z-10 bg-gradient-to-t from-black/70 via-black/30 to-transparent px-3 pb-3 pt-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              {/* Controls bar - always visible */}
+              <div className="absolute bottom-0 left-0 right-0 z-10 bg-gradient-to-t from-black/70 via-black/30 to-transparent px-3 pb-3 pt-10">
                 {/* Progress bar */}
                 <div
                   ref={progressRef}
