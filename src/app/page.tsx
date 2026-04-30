@@ -253,23 +253,37 @@ function SparkleCursor() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
+
+    // ─── Device detection ───
+    const isMobile = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i.test(navigator.userAgent)
+      || window.innerWidth < 768;
+    const MAX_PARTICLES = isMobile ? 120 : 400;
+    const AMBIENT_MAX_PER_FRAME = isMobile ? 1 : 2;
+    const AMBIENT_INTERVAL = isMobile ? 18 : 8;
+    const SCROLL_MAX_PER_FRAME = isMobile ? 1 : 3;
+    const FRAME_SKIP = isMobile ? 2 : 1; // draw every N frames
 
     let W = 0, H = 0;
     const resize = () => {
       W = window.innerWidth;
       H = document.documentElement.scrollHeight;
-      canvas.width = window.innerWidth;
+      canvas.width = W;
       canvas.height = window.innerHeight;
-      canvas.style.width = `${window.innerWidth}px`;
-      canvas.style.height = `${window.innerHeight}px`;
       collectTextZones();
+    };
+
+    let collectPending = false;
+    const scheduleCollect = () => {
+      if (collectPending) return;
+      collectPending = true;
+      setTimeout(() => { collectPending = false; collectTextZones(); }, 500);
     };
 
     const collectTextZones = () => {
       textZonesRef.current = [];
-      const selectors = 'h1, h2, h3, h4, p, span.text-shimmer-silver, span.text-shimmer-silver-dark, .text-hero-glossy, .text-hero-glossy-accent, [class*="shimmer"], section';
+      const selectors = 'h1, h2, h3, h4, .text-hero-glossy, .text-hero-glossy-accent, [class*="shimmer"]';
       const els = document.querySelectorAll(selectors);
       els.forEach(el => {
         const rect = el.getBoundingClientRect();
@@ -286,22 +300,25 @@ function SparkleCursor() {
 
     resize();
     window.addEventListener("resize", resize);
-    window.addEventListener("scroll", () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }, { passive: true });
+    // Debounced scroll zone refresh (no canvas resize!)
+    let scrollTimer: ReturnType<typeof setTimeout>;
+    const onScroll = () => {
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(scheduleCollect, 200);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
 
-    // Re-collect text zones periodically & on mutation
-    const observer = new MutationObserver(() => {
-      setTimeout(collectTextZones, 300);
-    });
-    observer.observe(document.body, { childList: true, subtree: true, attributes: true });
-    const zoneInterval = setInterval(collectTextZones, 3000);
+    // Re-collect on mutation (debounced)
+    const observer = new MutationObserver(scheduleCollect);
+    observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style'] });
+    const zoneInterval = setInterval(scheduleCollect, 5000);
 
     let mouseX = -100, mouseY = -100;
     let lastX = -100, lastY = -100;
     let frame = 0;
     let lastScrollY = window.scrollY;
+    let animId = 0;
+    let idleFrames = 0;
 
     const colors = [
       "rgba(200, 200, 210, ",
@@ -311,7 +328,6 @@ function SparkleCursor() {
       "rgba(170, 160, 150, ",
       "rgba(210, 200, 190, ",
     ];
-
     const glowColors = [
       "rgba(255, 255, 255, ",
       "rgba(220, 215, 210, ",
@@ -322,11 +338,11 @@ function SparkleCursor() {
     const spawnParticles = (x: number, y: number, count: number, opts?: { glow?: boolean; sizeMul?: number; lifeMul?: number }) => {
       const sizeMul = opts?.sizeMul ?? 1;
       const lifeMul = opts?.lifeMul ?? 1;
+      const useGlow = opts?.glow ?? false;
       for (let i = 0; i < count; i++) {
         const angle = Math.random() * Math.PI * 2;
         const speed = 0.3 + Math.random() * 1.5;
         const types: Array<'star' | 'dot' | 'diamond'> = ['star', 'dot', 'diamond'];
-        const useGlow = opts?.glow ?? false;
         particlesRef.current.push({
           x: x + (Math.random() - 0.5) * 14,
           y: y + (Math.random() - 0.5) * 14,
@@ -385,10 +401,12 @@ function SparkleCursor() {
     const onMouseMove = (e: MouseEvent) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
+      idleFrames = 0; // wake up
     };
     const onTouchMove = (e: TouchEvent) => {
       mouseX = e.touches[0].clientX;
       mouseY = e.touches[0].clientY;
+      idleFrames = 0;
     };
 
     window.addEventListener("mousemove", onMouseMove);
@@ -396,78 +414,117 @@ function SparkleCursor() {
 
     const animate = () => {
       frame++;
+
+      // ─── Idle detection: skip draw if no particles & mouse idle ───
+      const pLen = particlesRef.current.length;
+      if (pLen === 0 && idleFrames > 120) {
+        // Check if there are visible text zones that need ambient
+        const scrollY = window.scrollY;
+        const viewBottom = scrollY + window.innerHeight;
+        const viewTop = scrollY;
+        let hasVisibleZone = false;
+        for (const z of textZonesRef.current) {
+          if (z.y + z.h > viewTop && z.y < viewBottom) { hasVisibleZone = true; break; }
+        }
+        if (!hasVisibleZone) {
+          // Truly idle — sleep and check again later
+          idleFrames++;
+          if (idleFrames % 60 === 0) {
+            // Wake up every ~1s to re-check
+            animId = requestAnimationFrame(animate);
+          } else {
+            animId = requestAnimationFrame(animate);
+          }
+          return;
+        }
+      }
+
+      // Frame skip for mobile
+      if (frame % FRAME_SKIP !== 0 && pLen > 50) {
+        // Still update positions but don't draw
+        for (const p of particlesRef.current) {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.life -= 1 / p.maxLife;
+        }
+        animId = requestAnimationFrame(animate);
+        return;
+      }
+
       ctx.clearRect(0, 0, W, H);
 
       const scrollY = window.scrollY;
       const viewBottom = scrollY + window.innerHeight;
       const viewTop = scrollY;
 
-      // ─── Ambient sparkle on visible text zones ───
-      if (frame % 8 === 0) {
+      // ─── Ambient sparkle on visible text zones (max N per frame) ───
+      if (frame % AMBIENT_INTERVAL === 0 && pLen < MAX_PARTICLES * 0.7) {
         const zones = textZonesRef.current;
-        for (let z = 0; z < zones.length; z++) {
+        let spawned = 0;
+        for (let z = 0; z < zones.length && spawned < AMBIENT_MAX_PER_FRAME; z++) {
           const zone = zones[z];
           const zoneBottom = zone.y + zone.h;
-          const zoneTop = zone.y;
-          // Only sparkle for zones in viewport
-          if (zoneBottom < viewTop || zoneTop > viewBottom) continue;
-          // Subtle ambient sparkle
+          if (zoneBottom < viewTop || zone.y > viewBottom) continue;
           if (Math.random() < 0.35) {
-            const px = zone.x + Math.random() * zone.w;
-            const py = zoneTop + Math.random() * zone.h;
-            // Convert to screen coords
-            const screenX = px;
-            const screenY = py - scrollY;
+            const screenX = zone.x + Math.random() * zone.w;
+            const screenY = zone.y + Math.random() * zone.h - scrollY;
             spawnParticles(screenX, screenY, 1, {
               glow: true,
               sizeMul: 0.8 + Math.random() * 0.6,
               lifeMul: 1.2 + Math.random() * 0.5,
             });
+            spawned++;
           }
         }
       }
 
-      // ─── Sparkle burst when scrolling through text zones ───
+      // ─── Sparkle burst when scrolling (max N per frame) ───
       const scrollDelta = Math.abs(scrollY - lastScrollY);
-      if (scrollDelta > 2) {
+      if (scrollDelta > 2 && pLen < MAX_PARTICLES * 0.85) {
         const zones = textZonesRef.current;
-        for (let z = 0; z < zones.length; z++) {
+        let spawned = 0;
+        for (let z = 0; z < zones.length && spawned < SCROLL_MAX_PER_FRAME; z++) {
           const zone = zones[z];
-          if (zoneBottom(z) < viewTop || zone.y > viewBottom) continue;
+          if (zone.y + zone.h < viewTop || zone.y > viewBottom) continue;
           if (Math.random() < 0.4) {
-            const px = zone.x + Math.random() * zone.w;
-            const py = zone.y + Math.random() * zone.h;
-            const screenX = px;
-            const screenY = py - scrollY;
+            const screenX = zone.x + Math.random() * zone.w;
+            const screenY = zone.y + Math.random() * zone.h - scrollY;
             if (screenY > -20 && screenY < window.innerHeight + 20) {
               spawnParticles(screenX, screenY, 1 + Math.floor(Math.random() * 2), {
                 glow: true,
                 sizeMul: 0.7 + Math.random() * 0.5,
                 lifeMul: 1.0 + Math.random() * 0.3,
               });
+              spawned++;
             }
           }
         }
         lastScrollY = scrollY;
+        idleFrames = 0;
+      } else if (scrollDelta <= 2) {
+        lastScrollY = scrollY;
       }
 
-      // Spawn particles along mouse path
+      // ─── Cursor trail ───
       const dx = mouseX - lastX;
       const dy = mouseY - lastY;
       const dist = Math.sqrt(dx * dx + dy * dy);
       if (dist > 3 && mouseX > 0) {
-        const count = Math.min(3, Math.ceil(dist / 8));
+        const count = Math.min(isMobile ? 2 : 3, Math.ceil(dist / 8));
         spawnParticles(mouseX, mouseY, count);
+        lastX = mouseX;
+        lastY = mouseY;
+      } else if (dist <= 3) {
         lastX = mouseX;
         lastY = mouseY;
       }
 
-      // Cap particles for performance
-      if (particlesRef.current.length > 500) {
-        particlesRef.current.splice(0, particlesRef.current.length - 500);
+      // Cap particles
+      if (particlesRef.current.length > MAX_PARTICLES) {
+        particlesRef.current.splice(0, particlesRef.current.length - MAX_PARTICLES);
       }
 
-      // Update & draw particles
+      // ─── Update & draw particles ───
       for (let i = particlesRef.current.length - 1; i >= 0; i--) {
         const p = particlesRef.current[i];
         p.x += p.vx;
@@ -479,21 +536,21 @@ function SparkleCursor() {
         p.life -= 1 / p.maxLife;
 
         if (p.life <= 0) {
-          particlesRef.current.splice(i, 1);
+          // Swap-remove for O(1) instead of splice
+          particlesRef.current[i] = particlesRef.current[particlesRef.current.length - 1];
+          particlesRef.current.pop();
           continue;
         }
 
         const alpha = p.alpha * p.life;
         const size = p.size * (0.5 + p.life * 0.5);
-
-        // Glow (larger for text zone particles)
         const glowR = p.glow ? size * 3.5 : size * 2.5;
+
         ctx.beginPath();
         ctx.arc(p.x, p.y, glowR, 0, Math.PI * 2);
         ctx.fillStyle = p.color + (alpha * (p.glow ? 0.1 : 0.15)).toFixed(3) + ")";
         ctx.fill();
 
-        // Core
         if (p.type === 'star') {
           drawStar(p.x, p.y, size * 1.5, p.rotation, alpha);
         } else if (p.type === 'diamond') {
@@ -518,18 +575,23 @@ function SparkleCursor() {
         ctx.fill();
       }
 
-      requestAnimationFrame(animate);
+      // Track idle
+      if (dist <= 3 && scrollDelta <= 2 && pLen === 0) {
+        idleFrames++;
+      }
+
+      animId = requestAnimationFrame(animate);
     };
 
-    const zoneBottom = (z: { y: number; h: number }) => z.y + z.h;
-
-    const animId = requestAnimationFrame(animate);
+    animId = requestAnimationFrame(animate);
 
     return () => {
       cancelAnimationFrame(animId);
       clearInterval(zoneInterval);
+      clearTimeout(scrollTimer);
       observer.disconnect();
       window.removeEventListener("resize", resize);
+      window.removeEventListener("scroll", onScroll);
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("touchmove", onTouchMove);
     };
