@@ -237,6 +237,198 @@ const FAQ_ITEMS = [
 
 /* ─────────────────────────── COMPONENTS ─────────────────────────── */
 
+/* ── Sparkle Luxury Cursor Trail ── */
+function SparkleCursor() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const particlesRef = useRef<Array<{
+    x: number; y: number; vx: number; vy: number;
+    life: number; maxLife: number; size: number;
+    type: 'star' | 'dot' | 'diamond';
+    rotation: number; rotSpeed: number;
+    color: string; alpha: number;
+  }>>([]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let W = 0, H = 0;
+    const resize = () => {
+      W = window.innerWidth;
+      H = window.innerHeight;
+      canvas.width = W;
+      canvas.height = H;
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    let mouseX = -100, mouseY = -100;
+    let lastX = -100, lastY = -100;
+    let frame = 0;
+
+    const colors = [
+      "rgba(200, 200, 210, ",  // silver
+      "rgba(220, 220, 230, ",  // light silver
+      "rgba(180, 180, 195, ",  // cool gray
+      "rgba(255, 255, 255, ",  // white
+      "rgba(170, 160, 150, ",  // warm silver
+      "rgba(210, 200, 190, ",  // gold-silver
+    ];
+
+    const spawnParticles = (x: number, y: number, count: number) => {
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 0.3 + Math.random() * 1.5;
+        const types: Array<'star' | 'dot' | 'diamond'> = ['star', 'dot', 'diamond'];
+        particlesRef.current.push({
+          x: x + (Math.random() - 0.5) * 12,
+          y: y + (Math.random() - 0.5) * 12,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 0.5 - Math.random() * 0.8,
+          life: 1,
+          maxLife: 25 + Math.random() * 35,
+          size: 1 + Math.random() * 3,
+          type: types[Math.floor(Math.random() * types.length)],
+          rotation: Math.random() * Math.PI * 2,
+          rotSpeed: (Math.random() - 0.5) * 0.1,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 0.6 + Math.random() * 0.4,
+        });
+      }
+    };
+
+    const drawStar = (cx: number, cy: number, r: number, rotation: number) => {
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(rotation);
+      ctx.beginPath();
+      for (let i = 0; i < 4; i++) {
+        const a = (i / 4) * Math.PI * 2;
+        ctx.moveTo(0, 0);
+        ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+      }
+      ctx.strokeStyle = "rgba(255,255,255,0.8)";
+      ctx.lineWidth = 0.5;
+      ctx.stroke();
+      ctx.restore();
+    };
+
+    const drawDiamond = (cx: number, cy: number, s: number, rotation: number) => {
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(rotation);
+      ctx.beginPath();
+      ctx.moveTo(0, -s);
+      ctx.lineTo(s * 0.6, 0);
+      ctx.lineTo(0, s);
+      ctx.lineTo(-s * 0.6, 0);
+      ctx.closePath();
+      ctx.fillStyle = "rgba(255,255,255,0.7)";
+      ctx.fill();
+      ctx.restore();
+    };
+
+    const onMouseMove = (e: MouseEvent) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      mouseX = e.touches[0].clientX;
+      mouseY = e.touches[0].clientY;
+    };
+
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("touchmove", onTouchMove, { passive: true });
+
+    const animate = () => {
+      frame++;
+      ctx.clearRect(0, 0, W, H);
+
+      // Spawn particles along mouse path
+      const dx = mouseX - lastX;
+      const dy = mouseY - lastY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist > 3 && mouseX > 0) {
+        const count = Math.min(3, Math.ceil(dist / 8));
+        spawnParticles(mouseX, mouseY, count);
+        lastX = mouseX;
+        lastY = mouseY;
+      }
+
+      // Update & draw particles
+      for (let i = particlesRef.current.length - 1; i >= 0; i--) {
+        const p = particlesRef.current[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.01; // tiny gravity
+        p.vx *= 0.98;
+        p.vy *= 0.98;
+        p.rotation += p.rotSpeed;
+        p.life -= 1 / p.maxLife;
+
+        if (p.life <= 0) {
+          particlesRef.current.splice(i, 1);
+          continue;
+        }
+
+        const alpha = p.alpha * p.life;
+        const size = p.size * (0.5 + p.life * 0.5);
+
+        // Glow
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, size * 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = p.color + (alpha * 0.15).toFixed(3) + ")";
+        ctx.fill();
+
+        // Core
+        if (p.type === 'star') {
+          drawStar(p.x, p.y, size * 1.5, p.rotation);
+        } else if (p.type === 'diamond') {
+          drawDiamond(p.x, p.y, size, p.rotation);
+        } else {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, size * 0.8, 0, Math.PI * 2);
+          ctx.fillStyle = p.color + alpha.toFixed(3) + ")";
+          ctx.fill();
+        }
+      }
+
+      // Soft glow around cursor
+      if (mouseX > 0) {
+        const pulse = 0.03 + Math.sin(frame * 0.05) * 0.015;
+        const grad = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 30);
+        grad.addColorStop(0, `rgba(200, 200, 210, ${pulse})`);
+        grad.addColorStop(1, "transparent");
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(mouseX, mouseY, 30, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      requestAnimationFrame(animate);
+    };
+
+    const animId = requestAnimationFrame(animate);
+
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener("resize", resize);
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("touchmove", onTouchMove);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 w-full h-full pointer-events-none"
+      style={{ zIndex: 9999 }}
+    />
+  );
+}
+
 function SectionDivider({ dark = false }: { dark?: boolean }) {
   return (
     <div className={`relative h-px w-full overflow-hidden ${dark ? "bg-gray-900" : "bg-gray-50"}`}>
@@ -6287,7 +6479,12 @@ function PageContent() {
     }
   };
 
-  return <main className="min-h-screen flex flex-col bg-white">{renderContent()}</main>;
+  return (
+    <main className="min-h-screen flex flex-col bg-white">
+      <SparkleCursor />
+      {renderContent()}
+    </main>
+  );
 }
 
 export default function HomePage() {
