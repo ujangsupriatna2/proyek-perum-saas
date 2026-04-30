@@ -1059,6 +1059,28 @@ function VideoOverviewSection() {
   const [muted, setMuted] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  // Auto-unmute after first play (browser requires muted for autoplay)
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const tryUnmute = () => {
+      video.muted = false;
+      setMuted(false);
+      video.removeEventListener('playing', tryUnmute);
+      video.removeEventListener('canplay', tryUnmute);
+    };
+    video.addEventListener('playing', tryUnmute);
+    video.addEventListener('canplay', tryUnmute);
+    // If already playing
+    if (!video.paused && !video.muted) {
+      setMuted(false);
+    }
+    return () => {
+      video.removeEventListener('playing', tryUnmute);
+      video.removeEventListener('canplay', tryUnmute);
+    };
+  }, []);
+
   // Only render if video URL exists and is NOT a YouTube URL
   if (!videoUrl || videoUrl.includes("youtube.com") || videoUrl.includes("youtu.be")) return null;
 
