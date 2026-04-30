@@ -280,6 +280,18 @@ function FloatingParticles({ count = 6, dark = false }: { count?: number; dark?:
   );
 }
 
+/* ── Fire Heading wrapper — living fire around text ── */
+function FireHeading({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <div className={`fire-heading-wrap relative inline-block ${className}`}>
+      <div className="fire-tongue fire-tongue-1" />
+      <div className="fire-tongue fire-tongue-2" />
+      <div className="fire-tongue fire-tongue-3" />
+      {children}
+    </div>
+  );
+}
+
 function FadeIn({
   children,
   delay = 0,
@@ -846,9 +858,11 @@ function TentangKamiKeunggulanSection() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-16">
           <span className="text-gray-500 text-xs font-bold uppercase tracking-[0.3em]">Keunggulan Kami</span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
+          <FireHeading className="mt-3 mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver tracking-tight">
             Mengapa Berpercaya pada Kami?
           </h2>
+          </FireHeading>
           <p className="text-gray-500 max-w-2xl mx-auto text-lg">
             Bukan sekadar janji, tapi bukti nyata dari ratusan keluarga yang sudah mempercayai {S.company_name}.
           </p>
@@ -1185,9 +1199,11 @@ function HowToBuySection() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-20">
           <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Cara Memiliki Rumah</span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
+          <FireHeading className="mt-3 mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver tracking-tight">
             Proses Mudah &amp; <span className="text-gradient-gray">Transparan</span>
           </h2>
+          </FireHeading>
           <p className="text-gray-500 max-w-xl mx-auto">Hanya 4 langkah untuk memiliki hunian impian Anda.</p>
         </FadeIn>
 
@@ -1333,9 +1349,11 @@ function TestimonialsCarousel({ limit }: { limit?: number }) {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-16">
           <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Testimoni</span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
+          <FireHeading className="mt-3 mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver tracking-tight">
             Apa Kata <span className="text-gradient-gray">Pembeli Kami</span>
           </h2>
+          </FireHeading>
           <p className="text-gray-500 max-w-xl mx-auto">
             Ratusan keluarga telah mempercayai kami untuk hunian mereka.
           </p>
@@ -1428,7 +1446,9 @@ function FAQSection() {
       <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-12">
           <span className="text-gray-500 text-sm font-bold uppercase tracking-[0.2em]">FAQ</span>
-          <h2 className="text-3xl md:text-4xl font-black text-shimmer-silver mt-3 mb-4">Pertanyaan Umum</h2>
+          <FireHeading className="mt-3 mb-4">
+          <h2 className="text-3xl md:text-4xl font-black text-shimmer-silver">Pertanyaan Umum</h2>
+          </FireHeading>
           <p className="text-gray-500">Jawaban atas pertanyaan yang sering ditanyakan calon pembeli.</p>
         </FadeIn>
         <FadeIn>
@@ -2233,9 +2253,11 @@ function PropertiesSection() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-12">
           <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Katalog Properti</span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
+          <FireHeading className="mt-3 mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver tracking-tight">
             Pilih Rumah <span className="text-gradient-gray">Idaman</span> Anda
           </h2>
+          </FireHeading>
           <p className="text-gray-500 max-w-2xl mx-auto text-lg">
             Tersedia berbagai tipe rumah dengan harga terjangkau dan skema
             pembayaran Syariah & KPR yang fleksibel.
@@ -3359,9 +3381,11 @@ function CalculatorSection() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-8">
           <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Simulasi Cicilan</span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
+          <FireHeading className="mt-3 mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver tracking-tight">
             Hitung <span className="text-gradient-gray">Cicilan</span> Anda
           </h2>
+          </FireHeading>
           <p className="text-gray-500 max-w-2xl mx-auto text-lg">
             Kalkulator simulasi cicilan {effectiveFinType === "syariah" ? "syariah" : "KPR"}. Tentukan DP dan tenor sesuai
             kemampuan Anda.
@@ -3700,9 +3724,11 @@ function LocationSection() {
       <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-14">
           <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Lokasi Strategis</span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
+          <FireHeading className="mt-3 mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver tracking-tight">
             Berlokasi di <span className="text-gradient-gray">Berbagai Kota Strategis</span>
           </h2>
+          </FireHeading>
           <p className="text-gray-500 text-lg mb-8 leading-relaxed max-w-2xl mx-auto">
             {S.company_name} berlokasi di {S.contact_address} dengan akses mudah ke berbagai fasilitas penting.
           </p>
@@ -3882,9 +3908,11 @@ function ContactSection() {
         {/* Section Heading */}
         <FadeIn className="text-center mb-14">
           <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Hubungi Kami</span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
+          <FireHeading className="mt-3 mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver tracking-tight">
             Tim Marketing Kami Siap <span className="text-gradient-gray">Melayani</span> Anda
           </h2>
+          </FireHeading>
           <p className="text-gray-500 max-w-xl mx-auto text-lg">
             Jangan ragu untuk menghubungi kami melalui berbagai channel di bawah ini.
           </p>
@@ -4100,9 +4128,11 @@ function ProyekGallery() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-12">
             <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Gallery</span>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
+            <FireHeading className="mt-3 mb-4">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver tracking-tight">
               Dokumentasi <span className="text-gradient-gray">Proyek</span> Kami
             </h2>
+            </FireHeading>
           </FadeIn>
           <div className="flex justify-center py-20">
             <div className="w-10 h-10 border-4 border-gray-200 border-t-gray-900 rounded-full animate-spin" />
@@ -4124,9 +4154,11 @@ function ProyekGallery() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-12">
           <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Gallery</span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
+          <FireHeading className="mt-3 mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver tracking-tight">
             Dokumentasi <span className="text-gradient-gray">Proyek</span> Kami
           </h2>
+          </FireHeading>
           <p className="text-gray-500 max-w-2xl mx-auto text-lg">
             Lihat foto dan video proyek serta lingkungan {S.company_name}.
           </p>
@@ -4337,9 +4369,11 @@ function TentangKamiPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-12">
             <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Visi &amp; Misi</span>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
+            <FireHeading className="mt-3 mb-4">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver tracking-tight">
               Arah &amp; <span className="text-gradient-gray">Tujuan</span> Kami
             </h2>
+            </FireHeading>
           </FadeIn>
           <div className="grid md:grid-cols-2 gap-8">
             <FadeIn>
@@ -4399,9 +4433,11 @@ function TentangKamiPage() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-16">
             <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Nilai-Nilai Kami</span>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
+            <FireHeading className="mt-3 mb-4">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver tracking-tight">
               Prinsip yang <span className="text-gradient-gray">Kami Pegang</span>
             </h2>
+            </FireHeading>
             <p className="text-gray-500 max-w-2xl mx-auto text-lg">
               Setiap keputusan yang kami ambil berlandaskan pada nilai-nilai inti yang memastikan kepercayaan dan kenyamanan Anda.
             </p>
@@ -4444,9 +4480,11 @@ function TentangKamiPage() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-16">
             <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Perjalanan Kami</span>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver-dark mt-3 mb-4 tracking-tight">
+            <FireHeading className="mt-3 mb-4">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver-dark tracking-tight">
               Milestone Bisnis
             </h2>
+            </FireHeading>
             <p className="text-gray-400 max-w-2xl mx-auto text-lg">
               Dari satu proyek menjadi platform perumahan yang menghimpun puluhan mitra developer.
             </p>
@@ -4516,9 +4554,11 @@ function TentangKamiPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-12">
             <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Legalitas Perusahaan</span>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
+            <FireHeading className="mt-3 mb-4">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver tracking-tight">
               Dokumen <span className="text-gradient-gray">Lengkap &amp; Terverifikasi</span>
             </h2>
+            </FireHeading>
             <p className="text-gray-500 max-w-2xl mx-auto text-lg">
               {S.company_legal_name} beroperasi secara legal dengan seluruh dokumen perizinan lengkap.
             </p>
@@ -4573,9 +4613,11 @@ function TentangKamiPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-10">
             <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Mitra Perbankan</span>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
+            <FireHeading className="mt-3 mb-4">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver tracking-tight">
               Didukung <span className="text-gradient-gray">Bank &amp; Lembaga Keuangan</span> Terpercaya
             </h2>
+            </FireHeading>
           </FadeIn>
           {bankLoading ? (
             <div className="flex gap-6 justify-center">
@@ -4631,9 +4673,11 @@ function TentangKamiPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-12">
             <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Dokumentasi</span>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
+            <FireHeading className="mt-3 mb-4">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver tracking-tight">
               Galeri <span className="text-gradient-gray">Foto</span>
             </h2>
+            </FireHeading>
           </FadeIn>
 
           {homeGalleryItems.length === 0 ? (
@@ -5673,9 +5717,11 @@ function JasaListingSection() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-10">
           <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Layanan Jasa Kami</span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
+          <FireHeading className="mt-3 mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver tracking-tight">
             Solusi Bangunan <span className="text-gradient-gray">Profesional</span>
           </h2>
+          </FireHeading>
           <p className="text-gray-500 max-w-2xl mx-auto text-lg">
             Dari konstruksi hingga desain interior — semua kebutuhan bangunan Anda
             ditangani oleh tim berpengalaman.
@@ -5915,9 +5961,11 @@ function MitraPage() {
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-14">
             <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Mitra Terpercaya</span>
-            <h2 className="text-3xl md:text-4xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
+            <FireHeading className="mt-3 mb-4">
+            <h2 className="text-3xl md:text-4xl font-black text-shimmer-silver tracking-tight">
               Developer <span className="text-gradient-gray">Terpilih</span> &amp; Terverifikasi
             </h2>
+            </FireHeading>
             <p className="text-gray-500 max-w-xl mx-auto">
               Setiap mitra telah melalui proses kurasi ketat — legalitas, kualitas, dan track record.
             </p>
@@ -6024,9 +6072,11 @@ function MitraPage() {
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-14">
             <span className="text-gray-500 text-xs font-bold uppercase tracking-[0.3em]">Bergabunglah</span>
-            <h2 className="text-3xl md:text-4xl font-black text-shimmer-silver-dark mt-3 mb-4 tracking-tight">
+            <FireHeading className="mt-3 mb-4">
+            <h2 className="text-3xl md:text-4xl font-black text-shimmer-silver-dark tracking-tight">
               Cara Menjadi <span className="text-gray-400">Mitra Developer</span>
             </h2>
+            </FireHeading>
             <p className="text-gray-500 max-w-xl mx-auto">
               Proses kurasi transparan untuk menjaga kualitas setiap mitra di platform kami.
             </p>
