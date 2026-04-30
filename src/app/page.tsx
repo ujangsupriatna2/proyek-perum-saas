@@ -246,7 +246,9 @@ function SparkleCursor() {
     type: 'star' | 'dot' | 'diamond';
     rotation: number; rotSpeed: number;
     color: string; alpha: number;
+    glow: boolean;
   }>>([]);
+  const textZonesRef = useRef<Array<{ x: number; y: number; w: number; h: number }>>([]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -257,52 +259,99 @@ function SparkleCursor() {
     let W = 0, H = 0;
     const resize = () => {
       W = window.innerWidth;
-      H = window.innerHeight;
-      canvas.width = W;
-      canvas.height = H;
+      H = document.documentElement.scrollHeight;
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      canvas.style.width = `${window.innerWidth}px`;
+      canvas.style.height = `${window.innerHeight}px`;
+      collectTextZones();
     };
+
+    const collectTextZones = () => {
+      textZonesRef.current = [];
+      const selectors = 'h1, h2, h3, h4, p, span.text-shimmer-silver, span.text-shimmer-silver-dark, .text-hero-glossy, .text-hero-glossy-accent, [class*="shimmer"], section';
+      const els = document.querySelectorAll(selectors);
+      els.forEach(el => {
+        const rect = el.getBoundingClientRect();
+        if (rect.width > 50 && rect.height > 10) {
+          textZonesRef.current.push({
+            x: rect.left,
+            y: rect.top + window.scrollY,
+            w: rect.width,
+            h: rect.height,
+          });
+        }
+      });
+    };
+
     resize();
     window.addEventListener("resize", resize);
+    window.addEventListener("scroll", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }, { passive: true });
+
+    // Re-collect text zones periodically & on mutation
+    const observer = new MutationObserver(() => {
+      setTimeout(collectTextZones, 300);
+    });
+    observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+    const zoneInterval = setInterval(collectTextZones, 3000);
 
     let mouseX = -100, mouseY = -100;
     let lastX = -100, lastY = -100;
     let frame = 0;
+    let lastScrollY = window.scrollY;
 
     const colors = [
-      "rgba(200, 200, 210, ",  // silver
-      "rgba(220, 220, 230, ",  // light silver
-      "rgba(180, 180, 195, ",  // cool gray
-      "rgba(255, 255, 255, ",  // white
-      "rgba(170, 160, 150, ",  // warm silver
-      "rgba(210, 200, 190, ",  // gold-silver
+      "rgba(200, 200, 210, ",
+      "rgba(220, 220, 230, ",
+      "rgba(180, 180, 195, ",
+      "rgba(255, 255, 255, ",
+      "rgba(170, 160, 150, ",
+      "rgba(210, 200, 190, ",
     ];
 
-    const spawnParticles = (x: number, y: number, count: number) => {
+    const glowColors = [
+      "rgba(255, 255, 255, ",
+      "rgba(220, 215, 210, ",
+      "rgba(200, 195, 185, ",
+      "rgba(240, 240, 245, ",
+    ];
+
+    const spawnParticles = (x: number, y: number, count: number, opts?: { glow?: boolean; sizeMul?: number; lifeMul?: number }) => {
+      const sizeMul = opts?.sizeMul ?? 1;
+      const lifeMul = opts?.lifeMul ?? 1;
       for (let i = 0; i < count; i++) {
         const angle = Math.random() * Math.PI * 2;
         const speed = 0.3 + Math.random() * 1.5;
         const types: Array<'star' | 'dot' | 'diamond'> = ['star', 'dot', 'diamond'];
+        const useGlow = opts?.glow ?? false;
         particlesRef.current.push({
-          x: x + (Math.random() - 0.5) * 12,
-          y: y + (Math.random() - 0.5) * 12,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed - 0.5 - Math.random() * 0.8,
+          x: x + (Math.random() - 0.5) * 14,
+          y: y + (Math.random() - 0.5) * 14,
+          vx: Math.cos(angle) * speed * (useGlow ? 0.6 : 1),
+          vy: Math.sin(angle) * speed * (useGlow ? 0.4 : 1) - 0.5 - Math.random() * 0.8,
           life: 1,
-          maxLife: 25 + Math.random() * 35,
-          size: 1 + Math.random() * 3,
+          maxLife: (25 + Math.random() * 35) * lifeMul,
+          size: (1 + Math.random() * 3) * sizeMul,
           type: types[Math.floor(Math.random() * types.length)],
           rotation: Math.random() * Math.PI * 2,
           rotSpeed: (Math.random() - 0.5) * 0.1,
-          color: colors[Math.floor(Math.random() * colors.length)],
-          alpha: 0.6 + Math.random() * 0.4,
+          color: useGlow
+            ? glowColors[Math.floor(Math.random() * glowColors.length)]
+            : colors[Math.floor(Math.random() * colors.length)],
+          alpha: useGlow ? 0.3 + Math.random() * 0.3 : 0.6 + Math.random() * 0.4,
+          glow: useGlow,
         });
       }
     };
 
-    const drawStar = (cx: number, cy: number, r: number, rotation: number) => {
+    const drawStar = (cx: number, cy: number, r: number, rotation: number, alpha: number) => {
       ctx.save();
       ctx.translate(cx, cy);
       ctx.rotate(rotation);
+      ctx.globalAlpha = alpha;
       ctx.beginPath();
       for (let i = 0; i < 4; i++) {
         const a = (i / 4) * Math.PI * 2;
@@ -312,13 +361,15 @@ function SparkleCursor() {
       ctx.strokeStyle = "rgba(255,255,255,0.8)";
       ctx.lineWidth = 0.5;
       ctx.stroke();
+      ctx.globalAlpha = 1;
       ctx.restore();
     };
 
-    const drawDiamond = (cx: number, cy: number, s: number, rotation: number) => {
+    const drawDiamond = (cx: number, cy: number, s: number, rotation: number, alpha: number) => {
       ctx.save();
       ctx.translate(cx, cy);
       ctx.rotate(rotation);
+      ctx.globalAlpha = alpha;
       ctx.beginPath();
       ctx.moveTo(0, -s);
       ctx.lineTo(s * 0.6, 0);
@@ -327,6 +378,7 @@ function SparkleCursor() {
       ctx.closePath();
       ctx.fillStyle = "rgba(255,255,255,0.7)";
       ctx.fill();
+      ctx.globalAlpha = 1;
       ctx.restore();
     };
 
@@ -346,6 +398,59 @@ function SparkleCursor() {
       frame++;
       ctx.clearRect(0, 0, W, H);
 
+      const scrollY = window.scrollY;
+      const viewBottom = scrollY + window.innerHeight;
+      const viewTop = scrollY;
+
+      // ─── Ambient sparkle on visible text zones ───
+      if (frame % 8 === 0) {
+        const zones = textZonesRef.current;
+        for (let z = 0; z < zones.length; z++) {
+          const zone = zones[z];
+          const zoneBottom = zone.y + zone.h;
+          const zoneTop = zone.y;
+          // Only sparkle for zones in viewport
+          if (zoneBottom < viewTop || zoneTop > viewBottom) continue;
+          // Subtle ambient sparkle
+          if (Math.random() < 0.35) {
+            const px = zone.x + Math.random() * zone.w;
+            const py = zoneTop + Math.random() * zone.h;
+            // Convert to screen coords
+            const screenX = px;
+            const screenY = py - scrollY;
+            spawnParticles(screenX, screenY, 1, {
+              glow: true,
+              sizeMul: 0.8 + Math.random() * 0.6,
+              lifeMul: 1.2 + Math.random() * 0.5,
+            });
+          }
+        }
+      }
+
+      // ─── Sparkle burst when scrolling through text zones ───
+      const scrollDelta = Math.abs(scrollY - lastScrollY);
+      if (scrollDelta > 2) {
+        const zones = textZonesRef.current;
+        for (let z = 0; z < zones.length; z++) {
+          const zone = zones[z];
+          if (zoneBottom(z) < viewTop || zone.y > viewBottom) continue;
+          if (Math.random() < 0.4) {
+            const px = zone.x + Math.random() * zone.w;
+            const py = zone.y + Math.random() * zone.h;
+            const screenX = px;
+            const screenY = py - scrollY;
+            if (screenY > -20 && screenY < window.innerHeight + 20) {
+              spawnParticles(screenX, screenY, 1 + Math.floor(Math.random() * 2), {
+                glow: true,
+                sizeMul: 0.7 + Math.random() * 0.5,
+                lifeMul: 1.0 + Math.random() * 0.3,
+              });
+            }
+          }
+        }
+        lastScrollY = scrollY;
+      }
+
       // Spawn particles along mouse path
       const dx = mouseX - lastX;
       const dy = mouseY - lastY;
@@ -357,14 +462,19 @@ function SparkleCursor() {
         lastY = mouseY;
       }
 
+      // Cap particles for performance
+      if (particlesRef.current.length > 500) {
+        particlesRef.current.splice(0, particlesRef.current.length - 500);
+      }
+
       // Update & draw particles
       for (let i = particlesRef.current.length - 1; i >= 0; i--) {
         const p = particlesRef.current[i];
         p.x += p.vx;
         p.y += p.vy;
-        p.vy += 0.01; // tiny gravity
-        p.vx *= 0.98;
-        p.vy *= 0.98;
+        p.vy += p.glow ? 0.005 : 0.01;
+        p.vx *= p.glow ? 0.99 : 0.98;
+        p.vy *= p.glow ? 0.99 : 0.98;
         p.rotation += p.rotSpeed;
         p.life -= 1 / p.maxLife;
 
@@ -376,17 +486,18 @@ function SparkleCursor() {
         const alpha = p.alpha * p.life;
         const size = p.size * (0.5 + p.life * 0.5);
 
-        // Glow
+        // Glow (larger for text zone particles)
+        const glowR = p.glow ? size * 3.5 : size * 2.5;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, size * 2.5, 0, Math.PI * 2);
-        ctx.fillStyle = p.color + (alpha * 0.15).toFixed(3) + ")";
+        ctx.arc(p.x, p.y, glowR, 0, Math.PI * 2);
+        ctx.fillStyle = p.color + (alpha * (p.glow ? 0.1 : 0.15)).toFixed(3) + ")";
         ctx.fill();
 
         // Core
         if (p.type === 'star') {
-          drawStar(p.x, p.y, size * 1.5, p.rotation);
+          drawStar(p.x, p.y, size * 1.5, p.rotation, alpha);
         } else if (p.type === 'diamond') {
-          drawDiamond(p.x, p.y, size, p.rotation);
+          drawDiamond(p.x, p.y, size, p.rotation, alpha);
         } else {
           ctx.beginPath();
           ctx.arc(p.x, p.y, size * 0.8, 0, Math.PI * 2);
@@ -410,10 +521,14 @@ function SparkleCursor() {
       requestAnimationFrame(animate);
     };
 
+    const zoneBottom = (z: { y: number; h: number }) => z.y + z.h;
+
     const animId = requestAnimationFrame(animate);
 
     return () => {
       cancelAnimationFrame(animId);
+      clearInterval(zoneInterval);
+      observer.disconnect();
       window.removeEventListener("resize", resize);
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("touchmove", onTouchMove);
