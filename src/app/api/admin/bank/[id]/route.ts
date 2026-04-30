@@ -65,8 +65,9 @@ export async function PUT(
     for (const f of fields) {
       if (body[f] !== undefined) updateData[f] = body[f];
     }
-    if (body.sortOrder !== undefined) updateData.sortOrder = parseInt(body.sortOrder);
+    if (body.sortOrder !== undefined) updateData.sortOrder = parseInt(body.sortOrder) || 0;
     if (body.isActive !== undefined) updateData.isActive = Boolean(body.isActive);
+    if (body.mitraId !== undefined) updateData.mitraId = body.mitraId || null;
 
     const item = await db.bank.update({
       where: { id },

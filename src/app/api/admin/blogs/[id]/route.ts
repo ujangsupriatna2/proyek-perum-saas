@@ -89,6 +89,7 @@ export async function PUT(
       }
     }
     if (body.published !== undefined) updateData.published = !!body.published;
+    if (body.mitraId !== undefined) updateData.mitraId = body.mitraId || null;
 
     const blog = await db.blogPost.update({
       where: { id },

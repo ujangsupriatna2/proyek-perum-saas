@@ -50,7 +50,7 @@ interface SettingsStore {
   settings: SiteSettings;
   loading: boolean;
   initialized: boolean;
-  fetchSettings: () => Promise<void>;
+  fetchSettings: (force?: boolean) => Promise<void>;
   refetchSettings: () => Promise<void>;
   get: <K extends keyof SiteSettings>(key: K) => SiteSettings[K];
 }
@@ -59,8 +59,8 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
   settings: DEFAULTS,
   loading: false,
   initialized: false,
-  fetchSettings: async () => {
-    if (get().initialized) return;
+  fetchSettings: async (force = false) => {
+    if (get().initialized && !force) return;
     set({ loading: true });
     try {
       const res = await fetch("/api/settings");

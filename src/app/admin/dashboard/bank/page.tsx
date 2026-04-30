@@ -65,6 +65,7 @@ export default function BankPage() {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editing, setEditing] = useState<BankItem | null>(null);
   const [deleting, setDeleting] = useState<BankItem | null>(null);
+  const [deletingLoading, setDeletingLoading] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -86,6 +87,11 @@ export default function BankPage() {
   const fetchBanks = useCallback(async () => {
     try {
       const res = await fetch("/api/admin/bank");
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        toast.error(err.error || "Gagal memuat data");
+        return;
+      }
       const data = await res.json();
       let list = data.items || [];
       if (search) {
@@ -151,7 +157,11 @@ export default function BankPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-      if (!res.ok) { toast.error("Gagal menyimpan"); return; }
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        toast.error(err.error || "Gagal menyimpan");
+        return;
+      }
       toast.success(editing ? "Bank berhasil diupdate" : "Bank berhasil ditambahkan");
       setFormOpen(false);
       fetchBanks();
@@ -161,6 +171,7 @@ export default function BankPage() {
 
   const handleDelete = async () => {
     if (!deleting) return;
+    setDeletingLoading(true);
     try {
       const res = await fetch(`/api/admin/bank/${deleting.id}`, { method: "DELETE" });
       if (!res.ok) { toast.error("Gagal menghapus"); return; }
@@ -168,6 +179,7 @@ export default function BankPage() {
       setDeleteOpen(false);
       fetchBanks();
     } catch { toast.error("Terjadi kesalahan"); }
+    finally { setDeletingLoading(false); }
   };
 
   return (
@@ -367,8 +379,18 @@ export default function BankPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Batal</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-gray-900 hover:bg-gray-800 text-white">Hapus</AlertDialogAction>
+            <AlertDialogCancel disabled={deletingLoading}>Batal</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                handleDelete();
+              }}
+              disabled={deletingLoading}
+              className="bg-gray-900 hover:bg-gray-800 text-white"
+            >
+              {deletingLoading && <Loader2 className="w-4 h-4 animate-spin mr-1" />}
+              Hapus
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

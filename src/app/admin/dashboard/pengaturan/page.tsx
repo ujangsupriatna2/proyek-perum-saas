@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { Save, Loader2, Settings as SettingsIcon, Phone, Globe, AlertCircle, MapPin, Building2, ImagePlus, X, Upload, Handshake, Youtube, FileVideo } from "lucide-react";
 import { toast } from "sonner";
+import { useSettingsStore } from "@/lib/settings-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -366,6 +367,7 @@ export default function PengaturanPage() {
       });
       if (!res.ok) { toast.error("Gagal menyimpan"); return; }
       toast.success("Pengaturan berhasil disimpan");
+      useSettingsStore.getState().fetchSettings(true);
     } catch { toast.error("Terjadi kesalahan"); }
     finally { setSaving(false); }
   };

@@ -184,6 +184,11 @@ export default function JasaPage() {
       if (categoryFilter) params.set("category", categoryFilter);
       const q = params.toString() ? `?${params.toString()}` : "";
       const res = await fetch(`/api/admin/jasa${q}`);
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        toast.error(err.error || "Gagal memuat data");
+        return;
+      }
       const data = await res.json();
       setServices(data.services || []);
     } catch {
@@ -255,7 +260,7 @@ export default function JasaPage() {
       setForm((prev) => ({
         ...prev,
         title: value as string,
-        slug: generateSlug(value as string),
+        slug: !editing ? generateSlug(value as string) : prev.slug,
       }));
     } else {
       setForm((prev) => ({ ...prev, [field]: value }));
@@ -760,7 +765,10 @@ export default function JasaPage() {
           <AlertDialogFooter>
             <AlertDialogCancel disabled={deletingLoading}>Batal</AlertDialogCancel>
             <AlertDialogAction
-              onClick={handleDelete}
+              onClick={(e) => {
+                e.preventDefault();
+                handleDelete();
+              }}
               disabled={deletingLoading}
               className="bg-gray-900 hover:bg-gray-800 text-white"
             >

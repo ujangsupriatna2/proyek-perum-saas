@@ -74,24 +74,25 @@ export async function PUT(
     for (const f of stringFields) {
       if (body[f] !== undefined) updateData[f] = body[f];
     }
-    if (body.price !== undefined) updateData.price = parseFloat(body.price);
-    if (body.bedrooms !== undefined) updateData.bedrooms = parseInt(body.bedrooms);
-    if (body.bathrooms !== undefined) updateData.bathrooms = parseInt(body.bathrooms);
-    if (body.landArea !== undefined) updateData.landArea = parseFloat(body.landArea);
-    if (body.buildingArea !== undefined) updateData.buildingArea = parseFloat(body.buildingArea);
+    if (body.price !== undefined) updateData.price = parseFloat(body.price) || 0;
+    if (body.bedrooms !== undefined) updateData.bedrooms = parseInt(body.bedrooms) || 0;
+    if (body.bathrooms !== undefined) updateData.bathrooms = parseInt(body.bathrooms) || 0;
+    if (body.landArea !== undefined) updateData.landArea = parseFloat(body.landArea) || 0;
+    if (body.buildingArea !== undefined) updateData.buildingArea = parseFloat(body.buildingArea) || 0;
     if (body.features !== undefined) updateData.features = typeof body.features === "string" ? body.features : JSON.stringify(body.features);
     if (body.images !== undefined) updateData.images = body.images;
     if (body.dpOptions !== undefined) updateData.dpOptions = typeof body.dpOptions === "string" ? body.dpOptions : JSON.stringify(body.dpOptions);
     if (body.tenorOptions !== undefined) updateData.tenorOptions = typeof body.tenorOptions === "string" ? body.tenorOptions : JSON.stringify(body.tenorOptions);
     if (body.installments !== undefined) updateData.installments = typeof body.installments === "string" ? body.installments : JSON.stringify(body.installments);
-    if (body.syariahMargin !== undefined) updateData.syariahMargin = parseFloat(body.syariahMargin);
+    if (body.syariahMargin !== undefined) updateData.syariahMargin = parseFloat(body.syariahMargin) || 15;
     if (body.kprDpOptions !== undefined) updateData.kprDpOptions = typeof body.kprDpOptions === "string" ? body.kprDpOptions : JSON.stringify(body.kprDpOptions);
     if (body.kprTenorOptions !== undefined) updateData.kprTenorOptions = typeof body.kprTenorOptions === "string" ? body.kprTenorOptions : JSON.stringify(body.kprTenorOptions);
     if (body.kprInstallments !== undefined) updateData.kprInstallments = typeof body.kprInstallments === "string" ? body.kprInstallments : JSON.stringify(body.kprInstallments);
-    if (body.kprInterestRate !== undefined) updateData.kprInterestRate = parseFloat(body.kprInterestRate);
+    if (body.kprInterestRate !== undefined) updateData.kprInterestRate = parseFloat(body.kprInterestRate) || 7.5;
     if (body.kprInterestType !== undefined) updateData.kprInterestType = body.kprInterestType;
     if (body.videoUrl !== undefined) updateData.videoUrl = body.videoUrl;
     if (body.isFeatured !== undefined) updateData.isFeatured = !!body.isFeatured;
+    if (body.mitraId !== undefined) updateData.mitraId = body.mitraId || null;
 
     const property = await db.property.update({
       where: { id },

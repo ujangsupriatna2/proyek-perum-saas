@@ -137,6 +137,11 @@ export default function MitraPage() {
   const fetchMitras = useCallback(async () => {
     try {
       const res = await fetch("/api/admin/mitra");
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        toast.error(err.error || "Gagal memuat data");
+        return;
+      }
       const data = await res.json();
       setMitras(Array.isArray(data) ? data : []);
     } catch {

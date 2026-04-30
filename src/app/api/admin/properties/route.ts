@@ -18,8 +18,8 @@ export async function GET(req: Request) {
     const search = searchParams.get("search") || "";
     const status = searchParams.get("status") || "";
     const category = searchParams.get("category") || "";
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "50");
+    const page = parseInt(searchParams.get("page") || "1") || 1;
+    const limit = parseInt(searchParams.get("limit") || "50") || 50;
 
     const where: Record<string, unknown> = { ...mitraFilter };
     if (search) {
@@ -94,7 +94,7 @@ export async function POST(req: Request) {
         slug,
         type,
         category,
-        price: parseFloat(price),
+        price: parseFloat(price) || 0,
         location: location || "",
         bedrooms: parseInt(bedrooms) || 2,
         bathrooms: parseInt(bathrooms) || 1,
@@ -110,11 +110,11 @@ export async function POST(req: Request) {
         dpOptions: dpOptions || "[30,35,40,45,50]",
         tenorOptions: tenorOptions || "[1,2,3,4,5]",
         installments: installments || "{}",
-        syariahMargin: syariahMargin !== undefined ? parseFloat(syariahMargin) : 15,
+        syariahMargin: syariahMargin !== undefined ? (parseFloat(syariahMargin) || 15) : 15,
         kprDpOptions: kprDpOptions || "[0,10,15,20,25,30]",
         kprTenorOptions: kprTenorOptions || "[5,10,15,20,25]",
         kprInstallments: kprInstallments || "{}",
-        kprInterestRate: kprInterestRate !== undefined ? parseFloat(kprInterestRate) : 7.5,
+        kprInterestRate: kprInterestRate !== undefined ? (parseFloat(kprInterestRate) || 7.5) : 7.5,
         kprInterestType: kprInterestType || "annuity",
         videoUrl: videoUrl || "",
         isFeatured: !!isFeatured,

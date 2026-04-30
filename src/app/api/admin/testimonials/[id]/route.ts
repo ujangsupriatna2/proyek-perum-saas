@@ -70,6 +70,7 @@ export async function PUT(
       updateData.rating = (isNaN(parsedRating) || parsedRating < 1 || parsedRating > 5) ? existing.rating : parsedRating;
     }
     if (body.featured !== undefined) updateData.featured = !!body.featured;
+    if (body.mitraId !== undefined) updateData.mitraId = body.mitraId || null;
 
     const testimonial = await db.testimonial.update({
       where: { id },

@@ -66,6 +66,7 @@ export async function PUT(
       if (body[f] !== undefined) updateData[f] = body[f];
     }
     if (body.sortOrder !== undefined) updateData.sortOrder = parseInt(body.sortOrder);
+    if (body.mitraId !== undefined) updateData.mitraId = body.mitraId || null;
 
     const item = await db.galleryItem.update({
       where: { id },

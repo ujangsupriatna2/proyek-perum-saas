@@ -65,6 +65,7 @@ export default function GalleryPage() {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editing, setEditing] = useState<GalleryItem | null>(null);
   const [deleting, setDeleting] = useState<GalleryItem | null>(null);
+  const [deletingLoading, setDeletingLoading] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -86,6 +87,11 @@ export default function GalleryPage() {
   const fetchGallery = useCallback(async () => {
     try {
       const res = await fetch("/api/admin/gallery");
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        toast.error(err.error || "Gagal memuat data");
+        return;
+      }
       const data = await res.json();
       let list = data.items || [];
       if (search) {
@@ -153,7 +159,11 @@ export default function GalleryPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-      if (!res.ok) { toast.error("Gagal menyimpan"); return; }
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        toast.error(err.error || "Gagal menyimpan");
+        return;
+      }
       toast.success(editing ? "Gallery berhasil diupdate" : "Gallery berhasil ditambahkan");
       setFormOpen(false);
       fetchGallery();
@@ -163,6 +173,7 @@ export default function GalleryPage() {
 
   const handleDelete = async () => {
     if (!deleting) return;
+    setDeletingLoading(true);
     try {
       const res = await fetch(`/api/admin/gallery/${deleting.id}`, { method: "DELETE" });
       if (!res.ok) { toast.error("Gagal menghapus"); return; }
@@ -170,6 +181,7 @@ export default function GalleryPage() {
       setDeleteOpen(false);
       fetchGallery();
     } catch { toast.error("Terjadi kesalahan"); }
+    finally { setDeletingLoading(false); }
   };
 
   return (
@@ -396,8 +408,18 @@ export default function GalleryPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Batal</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-gray-900 hover:bg-gray-800 text-white">Hapus</AlertDialogAction>
+            <AlertDialogCancel disabled={deletingLoading}>Batal</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                handleDelete();
+              }}
+              disabled={deletingLoading}
+              className="bg-gray-900 hover:bg-gray-800 text-white"
+            >
+              {deletingLoading && <Loader2 className="w-4 h-4 animate-spin mr-1" />}
+              Hapus
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

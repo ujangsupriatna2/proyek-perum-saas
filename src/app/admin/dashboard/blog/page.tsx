@@ -79,6 +79,7 @@ export default function BlogPage() {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editing, setEditing] = useState<BlogPost | null>(null);
   const [deleting, setDeleting] = useState<BlogPost | null>(null);
+  const [deletingLoading, setDeletingLoading] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -101,6 +102,11 @@ export default function BlogPage() {
     try {
       const q = search ? `?search=${encodeURIComponent(search)}` : "";
       const res = await fetch(`/api/admin/blogs${q}`);
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        toast.error(err.error || "Gagal memuat data");
+        return;
+      }
       const data = await res.json();
       setBlogs(data.blogs || []);
     } catch { /* ignore */ }
@@ -172,6 +178,7 @@ export default function BlogPage() {
 
   const handleDelete = async () => {
     if (!deleting) return;
+    setDeletingLoading(true);
     try {
       const res = await fetch(`/api/admin/blogs/${deleting.id}`, { method: "DELETE" });
       if (!res.ok) { toast.error("Gagal menghapus"); return; }
@@ -179,6 +186,7 @@ export default function BlogPage() {
       setDeleteOpen(false);
       fetchBlogs();
     } catch { toast.error("Terjadi kesalahan"); }
+    finally { setDeletingLoading(false); }
   };
 
   const formatDate = (d: string) => new Date(d).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
@@ -315,7 +323,7 @@ export default function BlogPage() {
               <Input
                 value={form.title}
                 onChange={(e) => {
-                  setForm({ ...form, title: e.target.value, slug: generateSlug(e.target.value) });
+                  setForm({ ...form, title: e.target.value, slug: !editing ? generateSlug(e.target.value) : form.slug });
                   clearFieldError("title");
                 }}
                 className={errors.title ? "border-gray-400 focus-visible:ring-gray-400" : ""}
@@ -409,8 +417,18 @@ export default function BlogPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Batal</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-gray-900 hover:bg-gray-800 text-white">Hapus</AlertDialogAction>
+            <AlertDialogCancel disabled={deletingLoading}>Batal</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                handleDelete();
+              }}
+              disabled={deletingLoading}
+              className="bg-gray-900 hover:bg-gray-800 text-white"
+            >
+              {deletingLoading && <Loader2 className="w-4 h-4 animate-spin mr-1" />}
+              Hapus
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

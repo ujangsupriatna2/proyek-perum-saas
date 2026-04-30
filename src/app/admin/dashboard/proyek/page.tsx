@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import {
   Plus,
@@ -210,28 +210,27 @@ function InstallmentGridEditor({
   const tenorList = parseNumberList(tenorOptions);
   const parsed = parseInstallments(installments);
 
-  // Flat data: gridData["30"]["5"] = "12.1"
+  // Flat data: data["30"]["5"] = "12.1"
   const [data, setData] = useState<Record<string, Record<string, string>>>({});
-  const [prevKey, setPrevKey] = useState("");
+  const prevKeyRef = useRef("");
 
-  // Build grid from installments JSON + options (render-time state adjustment)
+  // Build grid from installments JSON + options when options change
   const optionsKey = dpOptions + "|" + tenorOptions;
-  let gridData = data;
-  if (optionsKey !== prevKey) {
-    setPrevKey(optionsKey);
-    const prev = data || {};
-    const d: Record<string, Record<string, string>> = {};
-    for (const dp of dpList) {
-      const dk = String(dp);
-      d[dk] = {};
-      for (const tenor of tenorList) {
-        const tk = String(tenor);
-        d[dk][tk] = prev[dk]?.[tk] || parsed[dk]?.[tk]?.toString() || "";
+  useEffect(() => {
+    if (optionsKey !== prevKeyRef.current) {
+      prevKeyRef.current = optionsKey;
+      const d: Record<string, Record<string, string>> = {};
+      for (const dp of dpList) {
+        const dk = String(dp);
+        d[dk] = {};
+        for (const tenor of tenorList) {
+          const tk = String(tenor);
+          d[dk][tk] = data[dk]?.[tk] || parsed[dk]?.[tk]?.toString() || "";
+        }
       }
+      setData(d);
     }
-    setData(d);
-    gridData = d;
-  }
+  }, [optionsKey]);
 
   const updateCell = (dp: string, tenor: string, value: string) => {
     setData((prev) => {
@@ -245,13 +244,13 @@ function InstallmentGridEditor({
     const tk = tenor;
     let firstVal = "";
     for (const dp of dpList) {
-      if (gridData[String(dp)]?.[tk]?.trim()) {
-        firstVal = gridData[String(dp)][tk];
+      if (data[String(dp)]?.[tk]?.trim()) {
+        firstVal = data[String(dp)][tk];
         break;
       }
     }
     if (!firstVal) return;
-    const newData = { ...gridData };
+    const newData = { ...data };
     for (const dp of dpList) {
       const dk = String(dp);
       newData[dk] = { ...(newData[dk] || {}), [tk]: firstVal };
@@ -273,7 +272,7 @@ function InstallmentGridEditor({
   };
 
   const handleBlur = () => {
-    onChange(buildInstallmentsJSON(dpList, tenorList, gridData));
+    onChange(buildInstallmentsJSON(dpList, tenorList, data));
   };
 
   if (dpList.length === 0 || tenorList.length === 0) {
@@ -297,9 +296,9 @@ function InstallmentGridEditor({
           onClick={() => {
             // Copy cheapest column (highest DP) to all
             const lastDp = String(dpList[dpList.length - 1]);
-            const copyVal = gridData[lastDp];
+            const copyVal = data[lastDp];
             if (!copyVal) return;
-            const newData = { ...gridData };
+            const newData = { ...data };
             for (const dp of dpList) {
               newData[String(dp)] = { ...copyVal };
             }
@@ -344,7 +343,7 @@ function InstallmentGridEditor({
                 {tenorList.map((tenor) => {
                   const dk = String(dp);
                   const tk = String(tenor);
-                  const val = gridData[dk]?.[tk] || "";
+                  const val = data[dk]?.[tk] || "";
                   return (
                     <td key={tk} className="px-1 py-1 text-center">
                       <input
@@ -680,6 +679,11 @@ export default function ProyekPage() {
     try {
       const q = search ? `?search=${encodeURIComponent(search)}` : "";
       const res = await fetch(`/api/admin/properties${q}`);
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        toast.error(err.error || "Gagal memuat data");
+        return;
+      }
       const data = await res.json();
       setProperties(data.properties || []);
     } catch { /* ignore */ }
@@ -743,7 +747,7 @@ export default function ProyekPage() {
       setForm((prev) => ({
         ...prev,
         name: value as string,
-        slug: generateSlug(value as string),
+        slug: !editing ? generateSlug(value as string) : prev.slug,
       }));
     } else {
       setForm((prev) => ({ ...prev, [field]: value }));
