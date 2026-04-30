@@ -24,7 +24,7 @@ export interface SiteSettings {
 }
 
 const DEFAULTS: SiteSettings = {
-  company_name: "Bandung Raya Residence",
+  company_name: "Maju Sejahtera",
   total_units_sold: "500",
   company_legal_name: "PT Bumi Sanggar Meubel",
   logo_url: "",
@@ -35,11 +35,11 @@ const DEFAULTS: SiteSettings = {
   contact_phone: "0812-8965-6707",
   contact_email: "info@brr.co.id",
   contact_wa: "6281289656707",
-  contact_address: "Bandung, Jawa Barat",
+  contact_address: "Kota, Provinsi",
   contact_person: "Fadhil BSM",
   map_latitude: "-6.9204",
   map_longitude: "107.7518",
-  social_instagram: "bandung.raya.residence",
+  social_instagram: "majusejahtera",
   social_facebook: "",
   social_youtube: "",
   social_tiktok: "",

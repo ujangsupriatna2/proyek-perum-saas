@@ -1080,7 +1080,7 @@ export default function ProyekPage() {
             </div>
             <div className="space-y-2">
               <Label>Lokasi</Label>
-              <Input value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Bandung Raya Residence, Sentul, dll" />
+              <Input value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Maju Sejahtera, Kota Lain, dll" />
             </div>
             <div className="space-y-2">
               <Label>Luas Tanah (m²)</Label>

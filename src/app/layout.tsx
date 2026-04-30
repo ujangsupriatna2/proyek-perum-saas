@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const DEFAULT_COMPANY = "Bandung Raya Residence";
+const DEFAULT_COMPANY = "Maju Sejahtera";
 
 export async function generateMetadata(): Promise<Metadata> {
   let companyName = DEFAULT_COMPANY;

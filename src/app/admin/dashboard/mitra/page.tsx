@@ -499,7 +499,7 @@ export default function MitraPage() {
                 <Input
                   value={form.name}
                   onChange={(e) => updateName(e.target.value)}
-                  placeholder="Bandung Raya Residence"
+                  placeholder="Maju Sejahtera"
                   className={`pl-9 ${hasError("name") ? "border-gray-400 focus-visible:ring-gray-400" : ""}`}
                 />
               </div>
@@ -537,7 +537,7 @@ export default function MitraPage() {
                       subdomain: editing ? prev.subdomain : subdomain,
                     }));
                   }}
-                  placeholder="bandung-raya-residence"
+                  placeholder="maju-sejahtera"
                   className={`pl-9 ${hasError("slug") ? "border-gray-400 focus-visible:ring-gray-400" : ""}`}
                 />
               </div>
@@ -569,7 +569,7 @@ export default function MitraPage() {
                       .replace(/[^a-z0-9]+/g, "");
                     setForm((prev) => ({ ...prev, subdomain: val }));
                   }}
-                  placeholder="bandungrayaresidence"
+                  placeholder="majusejahtera"
                   className={`pl-9 ${hasError("subdomain") ? "border-gray-400 focus-visible:ring-gray-400" : ""}`}
                 />
               </div>
@@ -592,7 +592,7 @@ export default function MitraPage() {
                     clearFieldError("email");
                     setForm((prev) => ({ ...prev, email: e.target.value }));
                   }}
-                  placeholder="info@bandungraya.id"
+                  placeholder="info@majusejahtera.id"
                   className={`pl-9 ${hasError("email") ? "border-gray-400 focus-visible:ring-gray-400" : ""}`}
                 />
               </div>
@@ -661,7 +661,7 @@ export default function MitraPage() {
                   onChange={(e) =>
                     setForm((prev) => ({ ...prev, address: e.target.value }))
                   }
-                  placeholder="Jl. Raya Bandung No. 123, Bandung"
+                  placeholder="Jl. Raya Contoh No. 123, Kota"
                   rows={2}
                   className="pl-9"
                 />

@@ -27,7 +27,7 @@ const SETTINGS_GROUPS: { title: string; group: string; icon: React.ElementType; 
     group: "company",
     icon: Building2,
     fields: [
-      { key: "company_name", label: "Nama Perusahaan", placeholder: "Bandung Raya Residence" },
+      { key: "company_name", label: "Nama Perusahaan", placeholder: "Maju Sejahtera" },
       { key: "total_units_sold", label: "Total Unit Terjual", placeholder: "500" },
       { key: "company_legal_name", label: "Nama PT / Badan Hukum", placeholder: "PT Bumi Sanggar Meubel" },
       { key: "logo_url", label: "Logo Perusahaan", type: "image" },
@@ -45,7 +45,7 @@ const SETTINGS_GROUPS: { title: string; group: string; icon: React.ElementType; 
       { key: "contact_phone", label: "No. Telepon", placeholder: "0812-8965-6707" },
       { key: "contact_email", label: "Email", placeholder: "info@brr.co.id" },
       { key: "contact_wa", label: "No. WhatsApp", placeholder: "6281289656707" },
-      { key: "contact_address", label: "Alamat", type: "textarea", placeholder: "Bandung, Jawa Barat" },
+      { key: "contact_address", label: "Alamat", type: "textarea", placeholder: "Kota, Provinsi" },
       { key: "contact_person", label: "Nama Kontak Person", placeholder: "Fadhil BSM" },
     ],
   },
@@ -63,7 +63,7 @@ const SETTINGS_GROUPS: { title: string; group: string; icon: React.ElementType; 
     group: "social",
     icon: Globe,
     fields: [
-      { key: "social_instagram", label: "Instagram (username tanpa @)", placeholder: "bandung.raya.residence" },
+      { key: "social_instagram", label: "Instagram (username tanpa @)", placeholder: "majusejahtera" },
       { key: "social_facebook", label: "Facebook URL", type: "url", placeholder: "https://facebook.com/..." },
       { key: "social_youtube", label: "YouTube URL", type: "url", placeholder: "https://youtube.com/..." },
       { key: "social_tiktok", label: "TikTok URL", type: "url", placeholder: "https://tiktok.com/..." },

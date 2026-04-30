@@ -121,7 +121,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 /* ── HOME: Ringkas, hook-style, 1-2 kalimat, fokus headline benefit ── */
 const FEATURES = [
   { icon: Shield, title: "Syariah & KPR", desc: "Pilih skema syariah (tanpa riba) atau KPR bank sesuai kebutuhan Anda." },
-  { icon: MapPin, title: "Lokasi Strategis", desc: "Di jantung Bandung, dekat tol & fasilitas umum." },
+  { icon: MapPin, title: "Lokasi Strategis", desc: "Berada di lokasi primadona, dekat akses tol & fasilitas umum." },
   { icon: TreePine, title: "Lingkungan Asri", desc: "Kawasan hijau, aman, dan nyaman untuk keluarga." },
   { icon: Building2, title: "Desain Modern", desc: "Arsitektur premium dengan material terbaik." },
   { icon: TrendingUp, title: "Investasi Cerdas", desc: "Nilai properti naik stabil setiap tahun." },
@@ -655,7 +655,7 @@ function MarqueeStrip() {
     "✦",
     "DP Bisa Dicicil",
     "✦",
-    "Lokasi Strategis Bandung",
+    "Lokasi Strategis",
     "✦",
     "One Gate System",
     "✦",
@@ -3701,7 +3701,7 @@ function LocationSection() {
         <FadeIn className="text-center mb-14">
           <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Lokasi Strategis</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mt-3 mb-4 tracking-tight">
-            Berlokasi di <span className="text-gradient-gray">Jantung Bandung</span>
+            Berlokasi di <span className="text-gradient-gray">Berbagai Kota Strategis</span>
           </h2>
           <p className="text-gray-500 text-lg mb-8 leading-relaxed max-w-2xl mx-auto">
             {S.company_name} berlokasi di {S.contact_address} dengan akses mudah ke berbagai fasilitas penting.
@@ -4477,7 +4477,7 @@ function TentangKamiPage() {
           <FadeIn>
             <div className="max-w-3xl mx-auto space-y-0">
               {[
-                { year: "2018", title: "Awal Mula", desc: `${S.company_legal_name} didirikan. Memulai proyek perumahan pertama di kawasan Bandung dengan fokus hunian syariah.`, color: "bg-gray-1000" },
+                { year: "2018", title: "Awal Mula", desc: `${S.company_legal_name} didirikan. Memulai proyek perumahan pertama dengan fokus hunian syariah.`, color: "bg-gray-1000" },
                 { year: "2020", title: "Ekspansi Proyek", desc: "Membuka proyek kedua di kawasan Sentul. Memperluas portofolio dengan klaster baru dan konsep modern.", color: "bg-gray-500" },
                 { year: "2022", title: "Mitra Pertama Bergabung", desc: `Developer mitra pertama resmi bergabung. ${S.company_name} mulai bertransformasi dari single developer menjadi platform.`, color: "bg-gray-500" },
                 { year: "2023", title: `${S.total_units_sold} Unit Terjual`, desc: `Milestone ${S.total_units_sold} unit rumah terjual dari seluruh mitra developer. Platform terus berkembang.`, color: "bg-gray-500" },
