@@ -706,10 +706,10 @@ function Hero() {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="text-[2rem] sm:text-5xl md:text-6xl lg:text-[4.5rem] font-black text-white leading-[1.1] sm:leading-[1.1] mb-4 sm:mb-6 tracking-tight drop-shadow-[0_4px_30px_rgba(0,0,0,0.8)]"
+          className="text-[2rem] sm:text-5xl md:text-6xl lg:text-[4.5rem] font-black leading-[1.1] sm:leading-[1.1] mb-4 sm:mb-6 tracking-tight drop-shadow-[0_4px_30px_rgba(0,0,0,0.8)]"
         >
-          <span className="block">Temukan Hunian</span>
-          <span className="block mt-1 sm:mt-1">Idaman Anda <motion.span
+          <span className="block text-hero-glossy">Temukan Hunian</span>
+          <span className="block mt-1 sm:mt-1 text-hero-glossy-accent">Idaman Anda <motion.span
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 0.8, x: 0 }}
             transition={{ duration: 0.8, delay: 1.0 }}

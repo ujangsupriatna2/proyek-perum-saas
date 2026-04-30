@@ -395,6 +395,61 @@ section, header, footer, nav, main {
   display: inline-block;
 }
 
+/* ═════════════════════════════════════════════════════════ */
+/*  HERO GLOSSY HEADING                                     */
+/* ═════════════════════════════════════════════════════════ */
+
+@keyframes hero-glossy {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.text-hero-glossy {
+  background: linear-gradient(
+    90deg,
+    #ffffff 0%,
+    #f0f0f0 10%,
+    #ffffff 20%,
+    #d4d4d8 30%,
+    #ffffff 40%,
+    #e4e4e7 45%,
+    #fafafa 50%,
+    #ffffff 55%,
+    #d4d4d8 60%,
+    #ffffff 70%,
+    #e4e4e7 80%,
+    #ffffff 90%,
+    #f0f0f0 100%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: hero-glossy 5s ease-in-out infinite;
+  display: inline-block;
+  filter: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.15));
+}
+
+.text-hero-glossy-accent {
+  background: linear-gradient(
+    90deg,
+    #a1a1aa 0%,
+    #d4d4d8 15%,
+    #fafafa 30%,
+    #ffffff 50%,
+    #fafafa 70%,
+    #d4d4d8 85%,
+    #a1a1aa 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: hero-glossy 6s ease-in-out infinite reverse;
+  display: inline-block;
+  filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.2));
+}
+
 /* ═══════════════════════════════════════ */
 /*  SECTION BACKGROUNDS                        */
 /* ═══════════════════════════════════════ */
