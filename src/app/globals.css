@@ -460,10 +460,24 @@ section, header, footer, nav, main {
 }
 
 .text-gradient-gray {
-  background: linear-gradient(135deg, #374151, #6B7280);
+  background: linear-gradient(
+    90deg,
+    #374151 0%,
+    #4B5563 20%,
+    #9CA3AF 40%,
+    #D1D5DB 48%,
+    #E5E7EB 50%,
+    #D1D5DB 52%,
+    #9CA3AF 60%,
+    #4B5563 80%,
+    #374151 100%
+  );
+  background-size: 300% 100%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  animation: silver-shimmer 4s ease-in-out infinite;
+  display: inline-block;
 }
 
 /* ═══════════════════════════════════════ */

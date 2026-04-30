@@ -6018,7 +6018,7 @@ function MitraPage() {
           <FadeIn className="text-center mb-14">
             <span className="block text-gray-500 text-xs font-bold uppercase tracking-[0.3em]">Bergabunglah</span>
             <h2 className="text-3xl md:text-4xl font-black text-shimmer-silver-dark mt-3 mb-4">
-              Cara Menjadi <span className="text-gray-400">Mitra Developer</span>
+              Cara Menjadi <span className="text-shimmer-silver-dark">Mitra Developer</span>
             </h2>
             <p className="text-gray-500 max-w-xl mx-auto">
               Proses kurasi transparan untuk menjaga kualitas setiap mitra di platform kami.
