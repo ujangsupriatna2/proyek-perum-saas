@@ -20,6 +20,15 @@ interface Star {
 
 interface Bullet {
   x: number; y: number; speed: number; length: number; opacity: number;
+  type: 'laser' | 'plasma' | 'fireball' | 'beam' | 'rainbow';
+  damage: number;
+  color: string; glowColor: string;
+  vx?: number; // for spread shots
+  size?: number;
+}
+
+interface LevelUp {
+  text: string; color: string; opacity: number; y: number; age: number;
 }
 
 interface Meteor {
@@ -37,6 +46,34 @@ interface Explosion {
   x: number; y: number; particles: Particle[]; ring: { radius: number; opacity: number };
 }
 
+const WEAPON_LEVELS = [
+  {
+    level: 1, name: 'CYAN LASER', color: '#64c8ff', glowColor: 'rgba(100, 200, 255, 0.4)',
+    threshold: 0, shootInterval: 150, damage: 1,
+  desc: 'Dual Laser',
+  },
+  {
+    level: 2, name: 'GREEN PLASMA', color: '#39ff14', glowColor: 'rgba(57, 255, 20, 0.4)',
+    threshold: 5, shootInterval: 140, damage: 1,
+    desc: 'Triple Plasma',
+  },
+  {
+    level: 3, name: 'FIRE STORM', color: '#ff6b35', glowColor: 'rgba(255, 107, 53, 0.4)',
+    threshold: 15, shootInterval: 120, damage: 2,
+    desc: 'Quad Fireball',
+  },
+  {
+    level: 4, name: 'PURPLE BEAM', color: '#bf5fff', glowColor: 'rgba(191, 95, 255, 0.4)',
+    threshold: 30, shootInterval: 110, damage: 2,
+    desc: 'Spread Beam',
+  },
+  {
+    level: 5, name: 'RAINBOW BURST', color: '#ff69b4', glowColor: 'rgba(255, 105, 180, 0.5)',
+    threshold: 50, shootInterval: 90, damage: 3,
+    desc: '5-Way Rainbow',
+  },
+];
+
 function SpaceBattleCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouseRef = useRef({ x: 0, y: 0 });
@@ -49,6 +86,8 @@ function SpaceBattleCanvas() {
   const lastShotRef = useRef(0);
   const animFrameRef = useRef(0);
   const meteorsDestroyedRef = useRef(0);
+  const weaponLevelRef = useRef(0); // index into WEAPON_LEVELS
+  const levelUpNotifsRef = useRef<LevelUp[]>([]);
 
   // Generate asteroid-like vertices
   const generateMeteorVertices = (size: number) => {
@@ -102,33 +141,145 @@ function SpaceBattleCanvas() {
     });
   };
 
+  // Get current weapon
+  const getCurrentWeapon = () => WEAPON_LEVELS[weaponLevelRef.current];
+
+  // Check level up
+  const checkLevelUp = () => {
+    const kills = meteorsDestroyedRef.current;
+    for (let i = WEAPON_LEVELS.length - 1; i >= 0; i--) {
+      if (kills >= WEAPON_LEVELS[i].threshold && weaponLevelRef.current < i) {
+        weaponLevelRef.current = i;
+        const w = WEAPON_LEVELS[i];
+        levelUpNotifsRef.current.push({
+          text: `⬆ LEVEL ${w.level} — ${w.name}`,
+          color: w.color, opacity: 1.5, y: 0, age: 0,
+        });
+        // Big level up explosion at ship position
+        const ship = shipRef.current;
+        const colors = [w.color, '#ffffff', '#ffd93d', w.glowColor];
+        const particles: Particle[] = [];
+        for (let k = 0; k < 40; k++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = 2 + Math.random() * 5;
+          particles.push({
+            x: ship.x, y: ship.y,
+            vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+            life: 1, maxLife: 40 + Math.random() * 30,
+            size: 2 + Math.random() * 3,
+            color: colors[Math.floor(Math.random() * colors.length)],
+          });
+        }
+        explosionsRef.current.push({
+          x: ship.x, y: ship.y, particles,
+          ring: { radius: 0, opacity: 1.2 },
+        });
+        break;
+      }
+    }
+  };
+
+  // Spawn bullets based on weapon level
+  const shootBullets = (ship: { x: number; y: number }) => {
+    const lvl = weaponLevelRef.current;
+    const w = WEAPON_LEVELS[lvl];
+    const bx = ship.x;
+    const by = ship.y - 20;
+
+    switch (lvl) {
+      case 0: // Level 1: Dual cyan laser
+        bulletsRef.current.push(
+          { x: bx - 10, y: by, speed: 8, length: 12, opacity: 1, type: 'laser', damage: 1, color: '#64c8ff', glowColor: 'rgba(100, 200, 255, 0.4)' },
+          { x: bx + 10, y: by, speed: 8, length: 12, opacity: 1, type: 'laser', damage: 1, color: '#64c8ff', glowColor: 'rgba(100, 200, 255, 0.4)' },
+        );
+        break;
+      case 1: // Level 2: Triple green plasma
+        bulletsRef.current.push(
+          { x: bx, y: by - 5, speed: 9, length: 14, opacity: 1, type: 'plasma', damage: 1, color: '#39ff14', glowColor: 'rgba(57, 255, 20, 0.4)', size: 3 },
+          { x: bx - 12, y: by, speed: 8, length: 10, opacity: 1, type: 'plasma', damage: 1, color: '#39ff14', glowColor: 'rgba(57, 255, 20, 0.4)', size: 2 },
+          { x: bx + 12, y: by, speed: 8, length: 10, opacity: 1, type: 'plasma', damage: 1, color: '#39ff14', glowColor: 'rgba(57, 255, 20, 0.4)', size: 2 },
+        );
+        break;
+      case 2: // Level 3: Quad orange fireball
+        bulletsRef.current.push(
+          { x: bx - 14, y: by, speed: 7, length: 10, opacity: 1, type: 'fireball', damage: 2, color: '#ff6b35', glowColor: 'rgba(255, 107, 53, 0.5)', size: 4, vx: -0.8 },
+          { x: bx - 7, y: by - 3, speed: 8, length: 10, opacity: 1, type: 'fireball', damage: 2, color: '#ffa62b', glowColor: 'rgba(255, 166, 43, 0.4)', size: 3 },
+          { x: bx + 7, y: by - 3, speed: 8, length: 10, opacity: 1, type: 'fireball', damage: 2, color: '#ffa62b', glowColor: 'rgba(255, 166, 43, 0.4)', size: 3 },
+          { x: bx + 14, y: by, speed: 7, length: 10, opacity: 1, type: 'fireball', damage: 2, color: '#ff6b35', glowColor: 'rgba(255, 107, 53, 0.5)', size: 4, vx: 0.8 },
+        );
+        break;
+      case 3: // Level 4: 5-way purple beam
+        bulletsRef.current.push(
+          { x: bx, y: by - 5, speed: 10, length: 16, opacity: 1, type: 'beam', damage: 2, color: '#bf5fff', glowColor: 'rgba(191, 95, 255, 0.5)', size: 3 },
+          { x: bx - 10, y: by, speed: 9, length: 12, opacity: 1, type: 'beam', damage: 2, color: '#d98fff', glowColor: 'rgba(217, 143, 255, 0.4)', size: 2.5, vx: -1 },
+          { x: bx + 10, y: by, speed: 9, length: 12, opacity: 1, type: 'beam', damage: 2, color: '#d98fff', glowColor: 'rgba(217, 143, 255, 0.4)', size: 2.5, vx: 1 },
+          { x: bx - 16, y: by + 2, speed: 7, length: 10, opacity: 1, type: 'beam', damage: 2, color: '#9933ff', glowColor: 'rgba(153, 51, 255, 0.4)', size: 2, vx: -2.5 },
+          { x: bx + 16, y: by + 2, speed: 7, length: 10, opacity: 1, type: 'beam', damage: 2, color: '#9933ff', glowColor: 'rgba(153, 51, 255, 0.4)', size: 2, vx: 2.5 },
+        );
+        break;
+      case 4: // Level 5: Rainbow burst
+        const rainbowColors = ['#ff0000', '#ff8800', '#ffff00', '#00ff44', '#00aaff', '#aa00ff', '#ff00aa'];
+        for (let i = 0; i < 7; i++) {
+          const angle = -Math.PI / 2 + (i - 3) * 0.18;
+          const c = rainbowColors[i];
+          bulletsRef.current.push({
+            x: bx, y: by, speed: 9, length: 14, opacity: 1, type: 'rainbow', damage: 3,
+            color: c, glowColor: c.replace('ff', '88') + '66', size: 3,
+            vx: Math.cos(angle) * 2.5,
+          });
+        }
+        break;
+    }
+  };
+
   // Draw spaceship
-  const drawShip = (ctx: CanvasRenderingContext2D, x: number, y: number, tilt: number) => {
+  const drawShip = (ctx: CanvasRenderingContext2D, x: number, y: number, tilt: number, level: number) => {
     ctx.save();
     ctx.translate(x, y);
 
-    // Engine glow
-    const engineGlow = ctx.createRadialGradient(0, 18, 0, 0, 18, 25);
-    engineGlow.addColorStop(0, "rgba(255, 107, 53, 0.6)");
-    engineGlow.addColorStop(0.5, "rgba(255, 107, 53, 0.15)");
+    const weapon = WEAPON_LEVELS[level];
+    const accentR = parseInt(weapon.color.slice(1, 3), 16);
+    const accentG = parseInt(weapon.color.slice(3, 5), 16);
+    const accentB = parseInt(weapon.color.slice(5, 7), 16);
+
+    // Engine glow — color matches weapon level
+    const engineGlow = ctx.createRadialGradient(0, 18, 0, 0, 18, 25 + level * 3);
+    engineGlow.addColorStop(0, `rgba(${accentR}, ${accentG}, ${accentB}, 0.6)`);
+    engineGlow.addColorStop(0.5, `rgba(${accentR}, ${accentG}, ${accentB}, 0.15)`);
     engineGlow.addColorStop(1, "transparent");
     ctx.fillStyle = engineGlow;
     ctx.beginPath();
-    ctx.arc(0, 18, 25, 0, Math.PI * 2);
+    ctx.arc(0, 18, 25 + level * 3, 0, Math.PI * 2);
     ctx.fill();
 
     // Flame trail
-    const flameLen = 12 + Math.random() * 10;
+    const flameLen = 12 + Math.random() * 10 + level * 3;
     ctx.beginPath();
     ctx.moveTo(-6, 16);
     ctx.quadraticCurveTo(-3, 16 + flameLen * 0.6, 0, 16 + flameLen);
     ctx.quadraticCurveTo(3, 16 + flameLen * 0.6, 6, 16);
     const flameGrad = ctx.createLinearGradient(0, 16, 0, 16 + flameLen);
-    flameGrad.addColorStop(0, "#ffa62b");
-    flameGrad.addColorStop(0.4, "#ff6b35");
+    flameGrad.addColorStop(0, weapon.color);
+    flameGrad.addColorStop(0.4, `rgba(${accentR}, ${Math.floor(accentG * 0.6)}, ${Math.floor(accentB * 0.3)}, 1)`);
     flameGrad.addColorStop(1, "transparent");
     ctx.fillStyle = flameGrad;
     ctx.fill();
+
+    // Extra wing flames at higher levels
+    if (level >= 3) {
+      const wfLen = 8 + Math.random() * 6;
+      [-12, 12].forEach(wx => {
+        ctx.beginPath();
+        ctx.moveTo(wx - 2, 12);
+        ctx.quadraticCurveTo(wx, 12 + wfLen * 0.6, wx + 1, 12 + wfLen);
+        ctx.quadraticCurveTo(wx + 2, 12 + wfLen * 0.6, wx + 4, 12);
+        const wfg = ctx.createLinearGradient(wx, 12, wx, 12 + wfLen);
+        wfg.addColorStop(0, weapon.color);
+        wfg.addColorStop(1, "transparent");
+        ctx.fillStyle = wfg;
+        ctx.fill();
+      });
+    }
 
     // Ship body - sleek design
     ctx.beginPath();
@@ -172,13 +323,13 @@ function SpaceBattleCanvas() {
     ctx.fillStyle = cockpitGrad;
     ctx.fill();
 
-    // Wing accents
+    // Wing accents — color matches weapon level
     ctx.beginPath();
     ctx.moveTo(8, -4);
     ctx.lineTo(14, 8);
     ctx.lineTo(10, 6);
     ctx.closePath();
-    ctx.fillStyle = "rgba(255, 107, 53, 0.3)";
+    ctx.fillStyle = `rgba(${accentR}, ${accentG}, ${accentB}, 0.4)`;
     ctx.fill();
 
     ctx.beginPath();
@@ -186,8 +337,18 @@ function SpaceBattleCanvas() {
     ctx.lineTo(-14, 8);
     ctx.lineTo(-10, 6);
     ctx.closePath();
-    ctx.fillStyle = "rgba(255, 107, 53, 0.3)";
+    ctx.fillStyle = `rgba(${accentR}, ${accentG}, ${accentB}, 0.4)`;
     ctx.fill();
+
+    // Level indicator dots on wings
+    for (let i = 0; i <= level; i++) {
+      ctx.fillStyle = weapon.color;
+      ctx.globalAlpha = 0.8;
+      ctx.beginPath();
+      ctx.arc(-8 + i * 4, 2, 1.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
 
     ctx.restore();
   };
@@ -262,6 +423,13 @@ function SpaceBattleCanvas() {
       shipRef.current.y = H * 0.75;
       mouseRef.current.x = W / 2;
       mouseRef.current.y = H * 0.75;
+      weaponLevelRef.current = 0;
+      scoreRef.current = 0;
+      meteorsDestroyedRef.current = 0;
+      bulletsRef.current = [];
+      meteorsRef.current = [];
+      explosionsRef.current = [];
+      levelUpNotifsRef.current = [];
     };
     resize();
     window.addEventListener("resize", resize);
@@ -316,43 +484,86 @@ function SpaceBattleCanvas() {
       // Calculate tilt based on horizontal velocity
       const tilt = (mouse.x - ship.x) * 0.02;
 
-      // ── Auto-shoot bullets ──
-      const shootInterval = 150; // ms
-      if (time - lastShotRef.current > shootInterval) {
+      // ── Auto-shoot bullets (based on weapon level) ──
+      const weapon = getCurrentWeapon();
+      if (time - lastShotRef.current > weapon.shootInterval) {
         lastShotRef.current = time;
-        // Double bullets from wing positions
-        bulletsRef.current.push(
-          { x: ship.x - 10, y: ship.y - 20, speed: 8, length: 12, opacity: 1 },
-          { x: ship.x + 10, y: ship.y - 20, speed: 8, length: 12, opacity: 1 },
-        );
+        shootBullets(ship);
       }
 
       // ── Update & Draw Bullets ──
       for (let i = bulletsRef.current.length - 1; i >= 0; i--) {
         const b = bulletsRef.current[i];
         b.y -= b.speed;
-        if (b.y < -20) { bulletsRef.current.splice(i, 1); continue; }
+        if (b.vx) b.x += b.vx;
+        if (b.y < -20 || b.x < -20 || b.x > W + 20) { bulletsRef.current.splice(i, 1); continue; }
+
+        const bSize = b.size || 3;
 
         // Bullet glow
-        const bulletGlow = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, 6);
-        bulletGlow.addColorStop(0, "rgba(100, 200, 255, 0.4)");
+        const bulletGlow = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, 6 + bSize);
+        bulletGlow.addColorStop(0, b.glowColor);
         bulletGlow.addColorStop(1, "transparent");
         ctx.fillStyle = bulletGlow;
         ctx.beginPath();
-        ctx.arc(b.x, b.y, 6, 0, Math.PI * 2);
+        ctx.arc(b.x, b.y, 6 + bSize, 0, Math.PI * 2);
         ctx.fill();
 
-        // Bullet line
-        const grad = ctx.createLinearGradient(b.x, b.y + b.length, b.x, b.y);
-        grad.addColorStop(0, "transparent");
-        grad.addColorStop(0.5, "rgba(100, 200, 255, 0.8)");
-        grad.addColorStop(1, "#ffffff");
-        ctx.strokeStyle = grad;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(b.x, b.y + b.length);
-        ctx.lineTo(b.x, b.y);
-        ctx.stroke();
+        // Bullet body based on type
+        if (b.type === 'fireball' || b.type === 'rainbow') {
+          // Glowing orb
+          const orbGrad = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, bSize + 1);
+          orbGrad.addColorStop(0, "#ffffff");
+          orbGrad.addColorStop(0.3, b.color);
+          orbGrad.addColorStop(1, "transparent");
+          ctx.fillStyle = orbGrad;
+          ctx.beginPath();
+          ctx.arc(b.x, b.y, bSize + 1, 0, Math.PI * 2);
+          ctx.fill();
+          // Trail
+          const tGrad = ctx.createLinearGradient(b.x, b.y + b.length, b.x, b.y);
+          tGrad.addColorStop(0, "transparent");
+          tGrad.addColorStop(1, b.color);
+          ctx.strokeStyle = tGrad;
+          ctx.lineWidth = bSize;
+          ctx.globalAlpha = 0.4;
+          ctx.beginPath();
+          ctx.moveTo(b.x, b.y + b.length);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+        } else if (b.type === 'beam') {
+          // Thick beam
+          const bGrad = ctx.createLinearGradient(b.x, b.y + b.length, b.x, b.y);
+          bGrad.addColorStop(0, "transparent");
+          bGrad.addColorStop(0.5, b.color + 'aa');
+          bGrad.addColorStop(1, "#ffffff");
+          ctx.strokeStyle = bGrad;
+          ctx.lineWidth = bSize;
+          ctx.beginPath();
+          ctx.moveTo(b.x, b.y + b.length);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+          // Core
+          ctx.strokeStyle = "#ffffff";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(b.x, b.y + b.length * 0.5);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+        } else {
+          // Laser / Plasma line
+          const grad = ctx.createLinearGradient(b.x, b.y + b.length, b.x, b.y);
+          grad.addColorStop(0, "transparent");
+          grad.addColorStop(0.5, b.color + 'cc');
+          grad.addColorStop(1, "#ffffff");
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(b.x, b.y + b.length);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+        }
 
         // Bright tip
         ctx.fillStyle = "#ffffff";
@@ -386,12 +597,13 @@ function SpaceBattleCanvas() {
           const dy = b.y - m.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < m.size) {
-            m.hp--;
+            m.hp -= b.damage;
             bulletsRef.current.splice(j, 1);
             if (m.hp <= 0) {
               createExplosion(m.x, m.y, m.size);
               scoreRef.current += Math.floor(m.size);
               meteorsDestroyedRef.current++;
+              checkLevelUp();
               meteorsRef.current.splice(i, 1);
             } else {
               // Small spark on hit
@@ -455,24 +667,73 @@ function SpaceBattleCanvas() {
       }
 
       // ── Draw Ship ──
-      drawShip(ctx, ship.x, ship.y, tilt);
+      drawShip(ctx, ship.x, ship.y, tilt, weaponLevelRef.current);
 
-      // ── Ship shield glow (subtle) ──
+      // ── Ship shield glow (color matches weapon level) ──
+      const wColor = getCurrentWeapon().color;
+      const wR = parseInt(wColor.slice(1, 3), 16);
+      const wG = parseInt(wColor.slice(3, 5), 16);
+      const wB = parseInt(wColor.slice(5, 7), 16);
       const shieldPulse = 0.08 + Math.sin(time * 0.003) * 0.03;
-      const shieldGrad = ctx.createRadialGradient(ship.x, ship.y, 10, ship.x, ship.y, 40);
-      shieldGrad.addColorStop(0, `rgba(100, 200, 255, ${shieldPulse})`);
+      const shieldGrad = ctx.createRadialGradient(ship.x, ship.y, 10, ship.x, ship.y, 40 + weaponLevelRef.current * 5);
+      shieldGrad.addColorStop(0, `rgba(${wR}, ${wG}, ${wB}, ${shieldPulse})`);
       shieldGrad.addColorStop(1, "transparent");
       ctx.fillStyle = shieldGrad;
       ctx.beginPath();
-      ctx.arc(ship.x, ship.y, 40, 0, Math.PI * 2);
+      ctx.arc(ship.x, ship.y, 40 + weaponLevelRef.current * 5, 0, Math.PI * 2);
       ctx.fill();
 
-      // ── HUD: Score ──
-      ctx.fillStyle = "rgba(255, 255, 255, 0.12)";
+      // ── HUD ──
+      const currentWeapon = getCurrentWeapon();
       ctx.font = "bold 11px monospace";
       ctx.textAlign = "left";
+      ctx.fillStyle = "rgba(255, 255, 255, 0.15)";
       ctx.fillText(`SCORE: ${scoreRef.current}`, 16, 28);
       ctx.fillText(`DESTROYED: ${meteorsDestroyedRef.current}`, 16, 44);
+      ctx.fillStyle = currentWeapon.color + "44";
+      ctx.fillText(`LV.${currentWeapon.level}`, 16, 60);
+      ctx.font = "bold 10px monospace";
+      ctx.fillStyle = currentWeapon.color + "33";
+      ctx.fillText(currentWeapon.desc, 16, 74);
+
+      // Next level progress bar
+      const nextLvl = WEAPON_LEVELS[weaponLevelRef.current + 1];
+      if (nextLvl) {
+        const progress = (meteorsDestroyedRef.current - currentWeapon.threshold) / (nextLvl.threshold - currentWeapon.threshold);
+        const barW = 80;
+        ctx.fillStyle = "rgba(255,255,255,0.06)";
+        ctx.fillRect(16, 80, barW, 3);
+        ctx.fillStyle = currentWeapon.color + "55";
+        ctx.fillRect(16, 80, barW * Math.min(1, progress), 3);
+        ctx.font = "8px monospace";
+        ctx.fillStyle = "rgba(255,255,255,0.12)";
+        ctx.fillText(`NEXT LV: ${nextLvl.threshold - meteorsDestroyedRef.current} kills`, 16, 94);
+      }
+
+      // ── Level Up Notifications ──
+      for (let i = levelUpNotifsRef.current.length - 1; i >= 0; i--) {
+        const n = levelUpNotifsRef.current[i];
+        n.age++;
+        n.y -= 0.5;
+        if (n.age > 120) { n.opacity -= 0.02; }
+        if (n.opacity <= 0) { levelUpNotifsRef.current.splice(i, 1); continue; }
+
+        ctx.save();
+        ctx.globalAlpha = Math.min(1, n.opacity);
+        ctx.textAlign = "center";
+        // Background bar
+        const tw = ctx.measureText(n.text).width;
+        ctx.fillStyle = "rgba(0,0,0,0.5)";
+        ctx.fillRect(W / 2 - tw / 2 - 16, H / 2 + n.y - 14, tw + 32, 28);
+        ctx.strokeStyle = n.color + "66";
+        ctx.lineWidth = 1;
+        ctx.strokeRect(W / 2 - tw / 2 - 16, H / 2 + n.y - 14, tw + 32, 28);
+        // Text
+        ctx.font = "bold 13px monospace";
+        ctx.fillStyle = n.color;
+        ctx.fillText(n.text, W / 2, H / 2 + n.y + 4);
+        ctx.restore();
+      }
 
       // ── Vignette overlay ──
       const vignette = ctx.createRadialGradient(W / 2, H / 2, W * 0.25, W / 2, H / 2, W * 0.75);
