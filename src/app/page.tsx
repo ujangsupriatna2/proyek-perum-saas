@@ -1057,9 +1057,20 @@ function VideoOverviewSection() {
   const { settings: S } = useSettingsStore();
   const videoUrl = S.hero_video_url;
   const [muted, setMuted] = useState(true);
+  const [playing, setPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
 
-  // Auto-unmute after first play (browser requires muted for autoplay)
+  const fmt = (s: number) => {
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${m}:${sec.toString().padStart(2, '0')}`;
+  };
+
+  // Auto-unmute after first play
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -1071,15 +1082,53 @@ function VideoOverviewSection() {
     };
     video.addEventListener('playing', tryUnmute);
     video.addEventListener('canplay', tryUnmute);
-    // If already playing
-    if (!video.paused && !video.muted) {
-      setMuted(false);
-    }
     return () => {
       video.removeEventListener('playing', tryUnmute);
       video.removeEventListener('canplay', tryUnmute);
     };
   }, []);
+
+  // Track time & progress
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const onTime = () => {
+      setCurrentTime(video.currentTime);
+      setDuration(video.duration || 0);
+      setProgress(video.duration ? (video.currentTime / video.duration) * 100 : 0);
+    };
+    const onPlay = () => setPlaying(true);
+    const onPause = () => setPlaying(false);
+    const onEnded = () => setPlaying(false);
+    video.addEventListener('timeupdate', onTime);
+    video.addEventListener('loadedmetadata', onTime);
+    video.addEventListener('play', onPlay);
+    video.addEventListener('pause', onPause);
+    video.addEventListener('ended', onEnded);
+    return () => {
+      video.removeEventListener('timeupdate', onTime);
+      video.removeEventListener('loadedmetadata', onTime);
+      video.removeEventListener('play', onPlay);
+      video.removeEventListener('pause', onPause);
+      video.removeEventListener('ended', onEnded);
+    };
+  }, []);
+
+  const togglePlay = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.paused) { video.play(); }
+    else { video.pause(); }
+  };
+
+  const seekTo = (e: React.MouseEvent<HTMLDivElement>) => {
+    const video = videoRef.current;
+    const bar = progressRef.current;
+    if (!video || !bar || !video.duration) return;
+    const rect = bar.getBoundingClientRect();
+    const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    video.currentTime = ratio * video.duration;
+  };
 
   // Only render if video URL exists and is NOT a YouTube URL
   if (!videoUrl || videoUrl.includes("youtube.com") || videoUrl.includes("youtu.be")) return null;
@@ -1111,7 +1160,7 @@ function VideoOverviewSection() {
             <div className="absolute -inset-4 bg-gradient-to-r from-gray-200/50 via-gray-100 to-gray-200/50 rounded-3xl blur-2xl opacity-60 group-hover:opacity-80 transition-opacity duration-700" />
 
             {/* Video container */}
-            <div className="relative rounded-2xl overflow-hidden border border-gray-200 shadow-xl shadow-gray-200/50 bg-black">
+            <div className="relative rounded-2xl overflow-hidden border border-gray-200 shadow-xl shadow-gray-200/50 bg-black group">
               <video
                 ref={videoRef}
                 src={videoUrl}
@@ -1121,32 +1170,87 @@ function VideoOverviewSection() {
                 playsInline
                 preload="auto"
                 className="w-full aspect-video object-cover"
+                onClick={togglePlay}
               />
 
-              {/* Mute/Unmute toggle */}
-              <button
-                type="button"
-                onClick={() => {
-                  const next = !muted;
-                  setMuted(next);
-                  if (videoRef.current) {
-                    videoRef.current.muted = next;
-                  }
-                }}
-                className="absolute bottom-4 right-4 z-10 w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm text-white flex items-center justify-center hover:bg-black/70 transition-colors"
-                title={muted ? "Nyalakan suara" : "Matikan suara"}
-              >
-                {muted ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707A1 1 0 0112 5v14a1 1 0 01-1.707.707L5.586 15z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
-                  </svg>
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072M17.95 6.05a8 8 0 010 11.9M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707A1 1 0 0112 5v14a1 1 0 01-1.707.707L5.586 15z" />
-                  </svg>
-                )}
-              </button>
+              {/* Big center play/pause overlay */}
+              {!playing && (
+                <button
+                  type="button"
+                  onClick={togglePlay}
+                  className="absolute inset-0 z-10 flex items-center justify-center bg-black/20 transition-opacity"
+                >
+                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg hover:scale-105 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 md:w-8 md:h-8 text-gray-800 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  </div>
+                </button>
+              )}
+
+              {/* Controls bar */}
+              <div className="absolute bottom-0 left-0 right-0 z-10 bg-gradient-to-t from-black/70 via-black/30 to-transparent px-3 pb-3 pt-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                {/* Progress bar */}
+                <div
+                  ref={progressRef}
+                  onClick={seekTo}
+                  className="w-full h-1.5 bg-white/30 rounded-full cursor-pointer mb-2.5 group/bar hover:h-2.5 transition-all"
+                >
+                  <div
+                    className="h-full bg-white rounded-full relative transition-[width] duration-100"
+                    style={{ width: `${progress}%` }}
+                  >
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow opacity-0 group-hover/bar:opacity-100 transition-opacity" />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between gap-2">
+                  {/* Left: play + time */}
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={togglePlay}
+                      className="w-9 h-9 rounded-full bg-white/15 backdrop-blur-sm text-white flex items-center justify-center hover:bg-white/30 transition-colors"
+                    >
+                      {playing ? (
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+                        </svg>
+                      ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      )}
+                    </button>
+                    <span className="text-white/90 text-xs font-mono tabular-nums">
+                      {fmt(currentTime)} / {fmt(duration)}
+                    </span>
+                  </div>
+
+                  {/* Right: mute */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const next = !muted;
+                      setMuted(next);
+                      if (videoRef.current) videoRef.current.muted = next;
+                    }}
+                    className="w-9 h-9 rounded-full bg-white/15 backdrop-blur-sm text-white flex items-center justify-center hover:bg-white/30 transition-colors"
+                    title={muted ? "Nyalakan suara" : "Matikan suara"}
+                  >
+                    {muted ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707A1 1 0 0112 5v14a1 1 0 01-1.707.707L5.586 15z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+                      </svg>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072M17.95 6.05a8 8 0 010 11.9M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707A1 1 0 0112 5v14a1 1 0 01-1.707.707L5.586 15z" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </FadeIn>
