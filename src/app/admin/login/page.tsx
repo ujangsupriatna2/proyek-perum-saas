@@ -10,7 +10,502 @@ import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, Lock, Mail, ArrowLeft, LogIn, Shield, RefreshCw } from "lucide-react";
 import { useSettingsStore } from "@/lib/settings-store";
 
-/* ── Simple Math Captcha ── */
+/* ══════════════════════════════════════════════════════════
+   SPACE BATTLE — Canvas Game Background
+   ══════════════════════════════════════════════════════════ */
+
+interface Star {
+  x: number; y: number; size: number; speed: number; brightness: number;
+}
+
+interface Bullet {
+  x: number; y: number; speed: number; length: number; opacity: number;
+}
+
+interface Meteor {
+  x: number; y: number; size: number; speed: number; rotation: number;
+  rotSpeed: number; vertices: { angle: number; dist: number }[];
+  color: string; craterColor: string; hp: number;
+}
+
+interface Particle {
+  x: number; y: number; vx: number; vy: number;
+  life: number; maxLife: number; size: number; color: string;
+}
+
+interface Explosion {
+  x: number; y: number; particles: Particle[]; ring: { radius: number; opacity: number };
+}
+
+function SpaceBattleCanvas() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const mouseRef = useRef({ x: 0, y: 0 });
+  const shipRef = useRef({ x: 0, y: 0 });
+  const starsRef = useRef<Star[]>([]);
+  const bulletsRef = useRef<Bullet[]>([]);
+  const meteorsRef = useRef<Meteor[]>([]);
+  const explosionsRef = useRef<Explosion[]>([]);
+  const scoreRef = useRef(0);
+  const lastShotRef = useRef(0);
+  const animFrameRef = useRef(0);
+  const meteorsDestroyedRef = useRef(0);
+
+  // Generate asteroid-like vertices
+  const generateMeteorVertices = (size: number) => {
+    const count = 8 + Math.floor(Math.random() * 5);
+    return Array.from({ length: count }, (_, i) => ({
+      angle: (i / count) * Math.PI * 2,
+      dist: size * (0.7 + Math.random() * 0.3),
+    }));
+  };
+
+  // Create explosion
+  const createExplosion = (x: number, y: number, size: number) => {
+    const colors = ["#ff6b35", "#ffa62b", "#ff4757", "#ffffff", "#ffd93d", "#ff8c00"];
+    const particles: Particle[] = [];
+    const count = 15 + Math.floor(size);
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 1 + Math.random() * 4;
+      particles.push({
+        x, y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        life: 1,
+        maxLife: 30 + Math.random() * 30,
+        size: 1 + Math.random() * 3,
+        color: colors[Math.floor(Math.random() * colors.length)],
+      });
+    }
+    explosionsRef.current.push({
+      x, y, particles,
+      ring: { radius: 0, opacity: 0.8 },
+    });
+  };
+
+  // Spawn meteor
+  const spawnMeteor = (canvasW: number) => {
+    const size = 15 + Math.random() * 35;
+    const grays = ["#4a4a5a", "#5a5a6a", "#3d3d4d", "#6b6b7b", "#555568"];
+    const craterGrays = ["#333340", "#2a2a38", "#3a3a45"];
+    meteorsRef.current.push({
+      x: Math.random() * canvasW,
+      y: -size * 2,
+      size,
+      speed: 1 + Math.random() * 2.5,
+      rotation: Math.random() * Math.PI * 2,
+      rotSpeed: (Math.random() - 0.5) * 0.04,
+      vertices: generateMeteorVertices(size),
+      color: grays[Math.floor(Math.random() * grays.length)],
+      craterColor: craterGrays[Math.floor(Math.random() * craterGrays.length)],
+      hp: Math.ceil(size / 15),
+    });
+  };
+
+  // Draw spaceship
+  const drawShip = (ctx: CanvasRenderingContext2D, x: number, y: number, tilt: number) => {
+    ctx.save();
+    ctx.translate(x, y);
+
+    // Engine glow
+    const engineGlow = ctx.createRadialGradient(0, 18, 0, 0, 18, 25);
+    engineGlow.addColorStop(0, "rgba(255, 107, 53, 0.6)");
+    engineGlow.addColorStop(0.5, "rgba(255, 107, 53, 0.15)");
+    engineGlow.addColorStop(1, "transparent");
+    ctx.fillStyle = engineGlow;
+    ctx.beginPath();
+    ctx.arc(0, 18, 25, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Flame trail
+    const flameLen = 12 + Math.random() * 10;
+    ctx.beginPath();
+    ctx.moveTo(-6, 16);
+    ctx.quadraticCurveTo(-3, 16 + flameLen * 0.6, 0, 16 + flameLen);
+    ctx.quadraticCurveTo(3, 16 + flameLen * 0.6, 6, 16);
+    const flameGrad = ctx.createLinearGradient(0, 16, 0, 16 + flameLen);
+    flameGrad.addColorStop(0, "#ffa62b");
+    flameGrad.addColorStop(0.4, "#ff6b35");
+    flameGrad.addColorStop(1, "transparent");
+    ctx.fillStyle = flameGrad;
+    ctx.fill();
+
+    // Ship body - sleek design
+    ctx.beginPath();
+    // Nose
+    ctx.moveTo(0, -24);
+    // Right side
+    ctx.quadraticCurveTo(5, -18, 8, -8);
+    ctx.lineTo(14, 8);
+    ctx.lineTo(12, 14);
+    ctx.lineTo(6, 16);
+    // Bottom
+    ctx.lineTo(0, 12);
+    // Left side (mirror)
+    ctx.lineTo(-6, 16);
+    ctx.lineTo(-12, 14);
+    ctx.lineTo(-14, 8);
+    ctx.lineTo(-8, -8);
+    ctx.quadraticCurveTo(-5, -18, 0, -24);
+    ctx.closePath();
+
+    // Ship gradient
+    const shipGrad = ctx.createLinearGradient(-14, 0, 14, 0);
+    shipGrad.addColorStop(0, "#3a3a4a");
+    shipGrad.addColorStop(0.3, "#7a7a8a");
+    shipGrad.addColorStop(0.5, "#9a9aaa");
+    shipGrad.addColorStop(0.7, "#7a7a8a");
+    shipGrad.addColorStop(1, "#3a3a4a");
+    ctx.fillStyle = shipGrad;
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.15)";
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+
+    // Cockpit
+    ctx.beginPath();
+    ctx.ellipse(0, -8, 3, 7, 0, 0, Math.PI * 2);
+    const cockpitGrad = ctx.createRadialGradient(0, -10, 0, 0, -8, 7);
+    cockpitGrad.addColorStop(0, "rgba(140, 200, 255, 0.9)");
+    cockpitGrad.addColorStop(0.6, "rgba(60, 120, 200, 0.6)");
+    cockpitGrad.addColorStop(1, "rgba(30, 60, 100, 0.4)");
+    ctx.fillStyle = cockpitGrad;
+    ctx.fill();
+
+    // Wing accents
+    ctx.beginPath();
+    ctx.moveTo(8, -4);
+    ctx.lineTo(14, 8);
+    ctx.lineTo(10, 6);
+    ctx.closePath();
+    ctx.fillStyle = "rgba(255, 107, 53, 0.3)";
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(-8, -4);
+    ctx.lineTo(-14, 8);
+    ctx.lineTo(-10, 6);
+    ctx.closePath();
+    ctx.fillStyle = "rgba(255, 107, 53, 0.3)";
+    ctx.fill();
+
+    ctx.restore();
+  };
+
+  // Draw meteor
+  const drawMeteor = (ctx: CanvasRenderingContext2D, m: Meteor) => {
+    ctx.save();
+    ctx.translate(m.x, m.y);
+    ctx.rotate(m.rotation);
+
+    // Meteor body
+    ctx.beginPath();
+    m.vertices.forEach((v, i) => {
+      const px = Math.cos(v.angle) * v.dist;
+      const py = Math.sin(v.angle) * v.dist;
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    });
+    ctx.closePath();
+    ctx.fillStyle = m.color;
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.08)";
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+
+    // Craters
+    const craterCount = Math.floor(m.size / 10);
+    for (let i = 0; i < craterCount; i++) {
+      const cx = (Math.sin(i * 3.7) * m.size * 0.3);
+      const cy = (Math.cos(i * 2.3) * m.size * 0.3);
+      const cr = 2 + (i % 3) * 1.5;
+      ctx.beginPath();
+      ctx.arc(cx, cy, cr, 0, Math.PI * 2);
+      ctx.fillStyle = m.craterColor;
+      ctx.fill();
+    }
+
+    // Damage indicator
+    if (m.hp <= 1 && m.size > 20) {
+      ctx.beginPath();
+      ctx.moveTo(-m.size * 0.3, -m.size * 0.1);
+      ctx.lineTo(m.size * 0.2, m.size * 0.3);
+      ctx.strokeStyle = "rgba(255, 107, 53, 0.5)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  };
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let W = 0, H = 0;
+    const resize = () => {
+      W = window.innerWidth;
+      H = window.innerHeight;
+      canvas.width = W;
+      canvas.height = H;
+      // Reinit stars on resize
+      starsRef.current = Array.from({ length: 200 }, () => ({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        size: Math.random() * 2 + 0.3,
+        speed: 0.2 + Math.random() * 1.5,
+        brightness: 0.3 + Math.random() * 0.7,
+      }));
+      shipRef.current.x = W / 2;
+      shipRef.current.y = H * 0.75;
+      mouseRef.current.x = W / 2;
+      mouseRef.current.y = H * 0.75;
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    const onMouseMove = (e: MouseEvent) => {
+      mouseRef.current.x = e.clientX;
+      mouseRef.current.y = e.clientY;
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      mouseRef.current.x = e.touches[0].clientX;
+      mouseRef.current.y = e.touches[0].clientY;
+    };
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("touchmove", onTouchMove, { passive: true });
+
+    let lastMeteorSpawn = 0;
+    let frameCount = 0;
+
+    const gameLoop = (time: number) => {
+      frameCount++;
+      ctx.clearRect(0, 0, W, H);
+
+      // ── Background gradient ──
+      const bgGrad = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, Math.max(W, H) * 0.8);
+      bgGrad.addColorStop(0, "#0d0d1a");
+      bgGrad.addColorStop(0.5, "#080812");
+      bgGrad.addColorStop(1, "#050508");
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, W, H);
+
+      // ── Stars ──
+      for (const star of starsRef.current) {
+        star.y += star.speed;
+        if (star.y > H) { star.y = -2; star.x = Math.random() * W; }
+        const twinkle = star.brightness + Math.sin(time * 0.002 + star.x) * 0.2;
+        ctx.fillStyle = `rgba(255, 255, 255, ${Math.max(0.1, Math.min(1, twinkle))})`;
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // ── Ship follows mouse with easing ──
+      const ship = shipRef.current;
+      const mouse = mouseRef.current;
+      const ease = 0.08;
+      ship.x += (mouse.x - ship.x) * ease;
+      ship.y += (mouse.y - ship.y) * ease;
+      // Clamp to screen
+      ship.x = Math.max(20, Math.min(W - 20, ship.x));
+      ship.y = Math.max(30, Math.min(H - 30, ship.y));
+
+      // Calculate tilt based on horizontal velocity
+      const tilt = (mouse.x - ship.x) * 0.02;
+
+      // ── Auto-shoot bullets ──
+      const shootInterval = 150; // ms
+      if (time - lastShotRef.current > shootInterval) {
+        lastShotRef.current = time;
+        // Double bullets from wing positions
+        bulletsRef.current.push(
+          { x: ship.x - 10, y: ship.y - 20, speed: 8, length: 12, opacity: 1 },
+          { x: ship.x + 10, y: ship.y - 20, speed: 8, length: 12, opacity: 1 },
+        );
+      }
+
+      // ── Update & Draw Bullets ──
+      for (let i = bulletsRef.current.length - 1; i >= 0; i--) {
+        const b = bulletsRef.current[i];
+        b.y -= b.speed;
+        if (b.y < -20) { bulletsRef.current.splice(i, 1); continue; }
+
+        // Bullet glow
+        const bulletGlow = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, 6);
+        bulletGlow.addColorStop(0, "rgba(100, 200, 255, 0.4)");
+        bulletGlow.addColorStop(1, "transparent");
+        ctx.fillStyle = bulletGlow;
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, 6, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Bullet line
+        const grad = ctx.createLinearGradient(b.x, b.y + b.length, b.x, b.y);
+        grad.addColorStop(0, "transparent");
+        grad.addColorStop(0.5, "rgba(100, 200, 255, 0.8)");
+        grad.addColorStop(1, "#ffffff");
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(b.x, b.y + b.length);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+
+        // Bright tip
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // ── Spawn Meteors ──
+      const spawnInterval = Math.max(400, 1200 - meteorsDestroyedRef.current * 2);
+      if (time - lastMeteorSpawn > spawnInterval) {
+        lastMeteorSpawn = time;
+        spawnMeteor(W);
+      }
+
+      // ── Update & Draw Meteors ──
+      for (let i = meteorsRef.current.length - 1; i >= 0; i--) {
+        const m = meteorsRef.current[i];
+        m.y += m.speed;
+        m.rotation += m.rotSpeed;
+
+        // Remove if off screen
+        if (m.y > H + m.size * 2) { meteorsRef.current.splice(i, 1); continue; }
+
+        drawMeteor(ctx, m);
+
+        // ── Collision: bullet vs meteor ──
+        for (let j = bulletsRef.current.length - 1; j >= 0; j--) {
+          const b = bulletsRef.current[j];
+          const dx = b.x - m.x;
+          const dy = b.y - m.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < m.size) {
+            m.hp--;
+            bulletsRef.current.splice(j, 1);
+            if (m.hp <= 0) {
+              createExplosion(m.x, m.y, m.size);
+              scoreRef.current += Math.floor(m.size);
+              meteorsDestroyedRef.current++;
+              meteorsRef.current.splice(i, 1);
+            } else {
+              // Small spark on hit
+              for (let k = 0; k < 5; k++) {
+                const a = Math.random() * Math.PI * 2;
+                explosionsRef.current.push({
+                  x: b.x, y: b.y,
+                  particles: [{
+                    x: b.x, y: b.y,
+                    vx: Math.cos(a) * (1 + Math.random() * 2),
+                    vy: Math.sin(a) * (1 + Math.random() * 2),
+                    life: 1, maxLife: 10 + Math.random() * 10,
+                    size: 1 + Math.random(), color: "#ffa62b",
+                  }],
+                  ring: { radius: 0, opacity: 0 },
+                });
+              }
+            }
+            break;
+          }
+        }
+      }
+
+      // ── Update & Draw Explosions ──
+      for (let i = explosionsRef.current.length - 1; i >= 0; i--) {
+        const exp = explosionsRef.current[i];
+        let alive = false;
+
+        // Ring
+        if (exp.ring.opacity > 0.01) {
+          exp.ring.radius += 3;
+          exp.ring.opacity *= 0.92;
+          ctx.beginPath();
+          ctx.arc(exp.x, exp.y, exp.ring.radius, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(255, 166, 43, ${exp.ring.opacity * 0.5})`;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          alive = true;
+        }
+
+        // Particles
+        for (let j = exp.particles.length - 1; j >= 0; j--) {
+          const p = exp.particles[j];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.05; // gravity
+          p.life -= 1 / p.maxLife;
+          if (p.life <= 0) { exp.particles.splice(j, 1); continue; }
+          alive = true;
+          ctx.globalAlpha = p.life;
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.globalAlpha = 1;
+        }
+
+        if (!alive || exp.particles.length === 0) {
+          explosionsRef.current.splice(i, 1);
+        }
+      }
+
+      // ── Draw Ship ──
+      drawShip(ctx, ship.x, ship.y, tilt);
+
+      // ── Ship shield glow (subtle) ──
+      const shieldPulse = 0.08 + Math.sin(time * 0.003) * 0.03;
+      const shieldGrad = ctx.createRadialGradient(ship.x, ship.y, 10, ship.x, ship.y, 40);
+      shieldGrad.addColorStop(0, `rgba(100, 200, 255, ${shieldPulse})`);
+      shieldGrad.addColorStop(1, "transparent");
+      ctx.fillStyle = shieldGrad;
+      ctx.beginPath();
+      ctx.arc(ship.x, ship.y, 40, 0, Math.PI * 2);
+      ctx.fill();
+
+      // ── HUD: Score ──
+      ctx.fillStyle = "rgba(255, 255, 255, 0.12)";
+      ctx.font = "bold 11px monospace";
+      ctx.textAlign = "left";
+      ctx.fillText(`SCORE: ${scoreRef.current}`, 16, 28);
+      ctx.fillText(`DESTROYED: ${meteorsDestroyedRef.current}`, 16, 44);
+
+      // ── Vignette overlay ──
+      const vignette = ctx.createRadialGradient(W / 2, H / 2, W * 0.25, W / 2, H / 2, W * 0.75);
+      vignette.addColorStop(0, "transparent");
+      vignette.addColorStop(1, "rgba(0, 0, 0, 0.5)");
+      ctx.fillStyle = vignette;
+      ctx.fillRect(0, 0, W, H);
+
+      animFrameRef.current = requestAnimationFrame(gameLoop);
+    };
+
+    animFrameRef.current = requestAnimationFrame(gameLoop);
+
+    return () => {
+      cancelAnimationFrame(animFrameRef.current);
+      window.removeEventListener("resize", resize);
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("touchmove", onTouchMove);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 w-full h-full"
+      style={{ zIndex: 0 }}
+    />
+  );
+}
+
+/* ══════════════════════════════════════════════════════════
+   MATH CAPTCHA
+   ══════════════════════════════════════════════════════════ */
 function generateCaptcha() {
   const ops = ["+", "-", "×"] as const;
   const op = ops[Math.floor(Math.random() * ops.length)];
@@ -98,171 +593,25 @@ function CaptchaCanvas({ text }: { text: string }) {
   );
 }
 
-/* ── Floating Particles ── */
-function FloatingParticles() {
-  const particles = Array.from({ length: 30 }, (_, i) => ({
-    id: i,
-    x: `${(i * 3.33) % 100}%`,
-    y: `${(i * 7.7 + 10) % 100}%`,
-    size: 1 + (i % 3),
-    duration: 8 + (i % 5) * 3,
-    delay: i * 0.4,
-    opacity: 0.1 + (i % 4) * 0.08,
-  }));
-
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {particles.map((p) => (
-        <motion.div
-          key={p.id}
-          animate={{
-            y: [0, -60 - p.size * 15, -20, 0],
-            x: [0, 15 + p.size * 5, -10, 0],
-            opacity: [p.opacity, p.opacity * 2.5, p.opacity * 1.2, p.opacity],
-          }}
-          transition={{
-            duration: p.duration,
-            repeat: Infinity,
-            delay: p.delay,
-            ease: "easeInOut",
-          }}
-          className="absolute rounded-full bg-white"
-          style={{
-            width: p.size,
-            height: p.size,
-            left: p.x,
-            top: p.y,
-          }}
-        />
-      ))}
-    </div>
-  );
-}
-
-/* ── Animated Grid Lines ── */
-function AnimatedGrid() {
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.04]">
-      {/* Horizontal lines */}
-      {Array.from({ length: 15 }).map((_, i) => (
-        <motion.div
-          key={`h-${i}`}
-          className="absolute left-0 right-0 h-px bg-white"
-          style={{ top: `${(i + 1) * 6.67}%` }}
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: 1 }}
-          transition={{
-            duration: 1.5,
-            delay: i * 0.08,
-            ease: [0.16, 1, 0.3, 1],
-          }}
-        />
-      ))}
-      {/* Vertical lines */}
-      {Array.from({ length: 15 }).map((_, i) => (
-        <motion.div
-          key={`v-${i}`}
-          className="absolute top-0 bottom-0 w-px bg-white"
-          style={{ left: `${(i + 1) * 6.67}%` }}
-          initial={{ scaleY: 0 }}
-          animate={{ scaleY: 1 }}
-          transition={{
-            duration: 1.5,
-            delay: i * 0.08,
-            ease: [0.16, 1, 0.3, 1],
-          }}
-        />
-      ))}
-    </div>
-  );
-}
-
-/* ── Geometric Shapes ── */
-function GeometricShapes() {
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Top-left rotating ring */}
-      <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-        className="absolute top-[10%] left-[5%] w-24 h-24 border border-white/[0.04] rounded-full"
-      />
-      <motion.div
-        animate={{ rotate: -360 }}
-        transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-        className="absolute top-[12%] left-[7%] w-16 h-16 border border-white/[0.06] rounded-full"
-      />
-
-      {/* Bottom-right rotating squares */}
-      <motion.div
-        animate={{ rotate: 45 }}
-        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        className="absolute bottom-[15%] right-[8%] w-20 h-20 border border-white/[0.04]"
-      />
-      <motion.div
-        animate={{ rotate: -45 }}
-        transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-        className="absolute bottom-[18%] right-[11%] w-12 h-12 border border-white/[0.06]"
-      />
-
-      {/* Top-right triangle */}
-      <motion.div
-        animate={{ y: [0, -15, 0], rotate: [0, 5, 0] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-[20%] right-[15%] w-0 h-0"
-        style={{
-          borderLeft: "15px solid transparent",
-          borderRight: "15px solid transparent",
-          borderBottom: "26px solid rgba(255,255,255,0.03)",
-        }}
-      />
-
-      {/* Bottom-left dot cluster */}
-      {[0, 1, 2].map((i) => (
-        <motion.div
-          key={i}
-          animate={{ y: [0, -8, 0], opacity: [0.03, 0.08, 0.03] }}
-          transition={{ duration: 4, repeat: Infinity, delay: i * 0.5, ease: "easeInOut" }}
-          className="absolute rounded-full bg-white"
-          style={{
-            bottom: `${25 + i * 4}%`,
-            left: `${12 + i * 3}%`,
-            width: 3 + i * 2,
-            height: 3 + i * 2,
-          }}
-        />
-      ))}
-
-      {/* Center cross */}
-      <motion.div
-        animate={{ rotate: 90 }}
-        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8"
-      >
-        <div className="absolute top-1/2 left-0 right-0 h-px bg-white/[0.03]" />
-        <div className="absolute left-1/2 top-0 bottom-0 w-px bg-white/[0.03]" />
-      </motion.div>
-    </div>
-  );
-}
-
-/* ── Animated Border ── */
+/* ══════════════════════════════════════════════════════════
+   ANIMATED CARD BORDER
+   ══════════════════════════════════════════════════════════ */
 function AnimatedBorder() {
   return (
-    <>
-      {/* Rotating conic gradient border */}
-      <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-        className="absolute -inset-[1px] rounded-3xl overflow-hidden opacity-50"
-        style={{
-          background: "conic-gradient(from 0deg, transparent 0%, rgba(255,255,255,0.1) 25%, transparent 50%, rgba(255,255,255,0.05) 75%, transparent 100%)",
-        }}
-      />
-    </>
+    <motion.div
+      animate={{ rotate: 360 }}
+      transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+      className="absolute -inset-[1px] rounded-2xl overflow-hidden opacity-50"
+      style={{
+        background: "conic-gradient(from 0deg, transparent 0%, rgba(100, 200, 255, 0.15) 25%, transparent 50%, rgba(255, 166, 43, 0.08) 75%, transparent 100%)",
+      }}
+    />
   );
 }
 
+/* ══════════════════════════════════════════════════════════
+   STAGGER ANIMATION
+   ══════════════════════════════════════════════════════════ */
 const stagger = {
   container: { show: { transition: { staggerChildren: 0.08 } } },
   item: {
@@ -271,6 +620,9 @@ const stagger = {
   },
 };
 
+/* ══════════════════════════════════════════════════════════
+   MAIN LOGIN PAGE
+   ══════════════════════════════════════════════════════════ */
 export default function AdminLoginPage() {
   const { settings: S } = useSettingsStore();
   const [email, setEmail] = useState("");
@@ -319,61 +671,11 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-950 relative overflow-hidden">
-      {/* ═══ Layer 1: Base gradient ═══ */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950" />
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-[#050508]">
+      {/* ═══ SPACE BATTLE CANVAS ═══ */}
+      <SpaceBattleCanvas />
 
-      {/* ═══ Layer 2: Animated Grid ═══ */}
-      <AnimatedGrid />
-
-      {/* ═══ Layer 3: Floating Orbs ═══ */}
-      <motion.div
-        animate={{ x: [0, 40, -20, 0], y: [0, -30, 20, 0], scale: [1, 1.1, 0.95, 1] }}
-        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-[-15%] right-[-10%] w-[500px] h-[500px] rounded-full bg-gradient-to-br from-gray-700/10 to-gray-800/10 blur-3xl"
-      />
-      <motion.div
-        animate={{ x: [0, -30, 20, 0], y: [0, 20, -30, 0], scale: [1, 0.9, 1.1, 1] }}
-        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute bottom-[-15%] left-[-10%] w-[400px] h-[400px] rounded-full bg-gradient-to-br from-gray-600/10 to-gray-700/10 blur-3xl"
-      />
-      <motion.div
-        animate={{ x: [0, 25, -15, 0], y: [0, -15, 25, 0] }}
-        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-[40%] left-[60%] w-[300px] h-[300px] rounded-full bg-gradient-to-br from-gray-500/8 to-transparent blur-3xl"
-      />
-
-      {/* ═══ Layer 4: Geometric Shapes ═══ */}
-      <GeometricShapes />
-
-      {/* ═══ Layer 5: Floating Particles ═══ */}
-      <FloatingParticles />
-
-      {/* ═══ Layer 6: Scanning line ═══ */}
-      <motion.div
-        animate={{ top: ["-2%", "102%"] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "linear", delay: 2 }}
-        className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent pointer-events-none"
-      />
-
-      {/* ═══ Layer 7: Pulsing rings from center ═══ */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-        {[0, 1, 2].map((i) => (
-          <motion.div
-            key={i}
-            animate={{ scale: [0.5, 2.5], opacity: [0.06, 0] }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              delay: i * 1.3,
-              ease: "easeOut",
-            }}
-            className="absolute inset-0 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full border border-white"
-          />
-        ))}
-      </div>
-
-      {/* ═══ Content ═══ */}
+      {/* ═══ LOGIN CARD ═══ */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -386,7 +688,7 @@ export default function AdminLoginPage() {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-300 transition-colors mb-10 group"
+          className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-gray-200 transition-colors mb-8 group"
         >
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
           Kembali ke Website
@@ -407,7 +709,7 @@ export default function AdminLoginPage() {
             variants={stagger.container}
             initial="hidden"
             animate="show"
-            className="relative bg-white/[0.03] backdrop-blur-2xl border border-white/[0.08] rounded-3xl p-8 md:p-10 overflow-hidden"
+            className="relative bg-black/60 backdrop-blur-2xl border border-white/[0.08] rounded-2xl p-8 md:p-10 overflow-hidden"
           >
             {/* Shimmer sweep on card */}
             <motion.div
@@ -421,7 +723,7 @@ export default function AdminLoginPage() {
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute top-0 left-1/2 -translate-x-1/2 w-[60%] h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"
+              className="absolute top-0 left-1/2 -translate-x-1/2 w-[60%] h-px bg-gradient-to-r from-transparent via-cyan-400/30 to-transparent"
             />
 
             {/* Icon */}
@@ -431,19 +733,19 @@ export default function AdminLoginPage() {
                 <motion.div
                   animate={{ scale: [1, 1.3, 1], opacity: [0.15, 0, 0.15] }}
                   transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute inset-0 w-16 h-16 rounded-2xl bg-white/10"
+                  className="absolute inset-0 w-16 h-16 rounded-2xl bg-cyan-500/10"
                 />
                 <motion.div
                   animate={{ scale: [1, 1.15, 1], opacity: [0.1, 0, 0.1] }}
                   transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.4 }}
-                  className="absolute -inset-2 rounded-3xl border border-white/[0.05]"
+                  className="absolute -inset-2 rounded-3xl border border-cyan-500/[0.05]"
                 />
-                <div className="relative w-16 h-16 bg-gradient-to-br from-gray-600 via-gray-800 to-gray-900 rounded-2xl flex items-center justify-center shadow-lg shadow-black/40">
+                <div className="relative w-16 h-16 bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900 rounded-2xl flex items-center justify-center shadow-lg shadow-black/40 border border-white/[0.06]">
                   <motion.div
                     animate={{ rotate: [0, 5, -5, 0] }}
                     transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
                   >
-                    <Shield className="w-8 h-8 text-white" />
+                    <Shield className="w-8 h-8 text-cyan-400" />
                   </motion.div>
                 </div>
                 <motion.div
@@ -481,14 +783,14 @@ export default function AdminLoginPage() {
               <motion.div variants={stagger.item} className="space-y-2">
                 <Label htmlFor="email" className="text-gray-400 text-sm font-medium">Email</Label>
                 <div className="relative group">
-                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600 group-focus-within:text-gray-300 transition-colors duration-300" />
+                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600 group-focus-within:text-cyan-400 transition-colors duration-300" />
                   <Input
                     id="email"
                     type="email"
                     placeholder="admin@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-11 h-12 bg-white/[0.05] border-white/[0.08] text-white placeholder:text-gray-600 focus:border-white/20 focus:ring-white/10 rounded-xl transition-all duration-300"
+                    className="pl-11 h-12 bg-white/[0.04] border-white/[0.08] text-white placeholder:text-gray-600 focus:border-cyan-400/30 focus:ring-cyan-400/10 rounded-xl transition-all duration-300"
                     required
                   />
                 </div>
@@ -497,14 +799,14 @@ export default function AdminLoginPage() {
               <motion.div variants={stagger.item} className="space-y-2">
                 <Label htmlFor="password" className="text-gray-400 text-sm font-medium">Password</Label>
                 <div className="relative group">
-                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600 group-focus-within:text-gray-300 transition-colors duration-300" />
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600 group-focus-within:text-cyan-400 transition-colors duration-300" />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-11 pr-11 h-12 bg-white/[0.05] border-white/[0.08] text-white placeholder:text-gray-600 focus:border-white/20 focus:ring-white/10 rounded-xl transition-all duration-300"
+                    className="pl-11 pr-11 h-12 bg-white/[0.04] border-white/[0.08] text-white placeholder:text-gray-600 focus:border-cyan-400/30 focus:ring-cyan-400/10 rounded-xl transition-all duration-300"
                     required
                   />
                   <button
@@ -530,7 +832,7 @@ export default function AdminLoginPage() {
                     whileHover={{ scale: 1.05, rotate: 180 }}
                     whileTap={{ scale: 0.95 }}
                     transition={{ duration: 0.3 }}
-                    className="w-12 h-12 flex items-center justify-center rounded-xl bg-white/[0.05] border border-white/[0.08] text-gray-500 hover:text-gray-300 hover:border-gray-600 transition-all shrink-0"
+                    className="w-12 h-12 flex items-center justify-center rounded-xl bg-white/[0.04] border border-white/[0.08] text-gray-500 hover:text-gray-300 hover:border-gray-600 transition-all shrink-0"
                     title="Ganti captcha"
                   >
                     <RefreshCw className="w-4 h-4" />
@@ -541,7 +843,7 @@ export default function AdminLoginPage() {
                     placeholder="= ?"
                     value={captchaInput}
                     onChange={(e) => setCaptchaInput(e.target.value)}
-                    className="h-12 flex-1 bg-white/[0.05] border-white/[0.08] text-white placeholder:text-gray-600 focus:border-white/20 focus:ring-white/10 rounded-xl text-center font-mono text-lg tracking-wider transition-all duration-300"
+                    className="h-12 flex-1 bg-white/[0.04] border-white/[0.08] text-white placeholder:text-gray-600 focus:border-cyan-400/30 focus:ring-cyan-400/10 rounded-xl text-center font-mono text-lg tracking-wider transition-all duration-300"
                     required
                     autoComplete="off"
                   />
@@ -622,14 +924,6 @@ export default function AdminLoginPage() {
             </motion.div>
           </motion.div>
         </motion.div>
-
-        {/* Bottom decorative line */}
-        <motion.div
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: 1 }}
-          transition={{ duration: 1.2, delay: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-10 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent origin-center"
-        />
       </motion.div>
     </div>
   );
