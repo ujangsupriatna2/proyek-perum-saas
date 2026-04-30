@@ -336,6 +336,67 @@ section, header, footer, nav, main {
 .animate-orbit { animation: orbit 20s linear infinite; }
 
 /* ═══════════════════════════════════════ */
+/*  SILVER SHIMMER TEXT                        */
+/* ═══════════════════════════════════════ */
+
+@keyframes silver-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.text-shimmer-silver {
+  background: linear-gradient(
+    90deg,
+    #111827 0%,
+    #1f2937 20%,
+    #6b7280 40%,
+    #d1d5db 48%,
+    #f9fafb 50%,
+    #d1d5db 52%,
+    #6b7280 60%,
+    #1f2937 80%,
+    #111827 100%
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: silver-shimmer 4s ease-in-out infinite;
+  position: relative;
+}
+
+/* Glow layer — silver flame shadow */
+.text-shimmer-silver-glow {
+  text-shadow: 0 0 20px rgba(156, 163, 175, 0.15), 0 0 40px rgba(209, 213, 219, 0.1);
+}
+
+/* Dark variant — for white headings on dark bg */
+@keyframes silver-shimmer-dark {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.text-shimmer-silver-dark {
+  background: linear-gradient(
+    90deg,
+    #ffffff 0%,
+    #e5e7eb 20%,
+    #9ca3af 40%,
+    #ffffff 48%,
+    #f9fafb 50%,
+    #ffffff 52%,
+    #9ca3af 60%,
+    #e5e7eb 80%,
+    #ffffff 100%
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: silver-shimmer-dark 4s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════ */
 /*  SECTION BACKGROUNDS                        */
 /* ═══════════════════════════════════════ */
 
