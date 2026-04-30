@@ -703,7 +703,7 @@ function VideoOverviewSection() {
 
       <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-12">
-          <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Kenali Kami</span>
+          <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Kenali Kami</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-4 mb-5 tracking-tight">
             Lebih Dekat dengan <span className="text-gradient-gray">{S.company_name}</span>
           </h2>
@@ -789,7 +789,7 @@ function WhyChooseSection() {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-20">
-          <span className="text-gray-500 text-xs font-bold uppercase tracking-[0.3em]">Mengapa Kami</span>
+          <span className="block text-gray-500 text-xs font-bold uppercase tracking-[0.3em]">Mengapa Kami</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver-dark mt-4 mb-5 tracking-tight">
             Keunggulan {S.company_name}
           </h2>
@@ -847,7 +847,7 @@ function TentangKamiKeunggulanSection() {
       <FloatingParticles count={4} dark={false} />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-16">
-          <span className="text-gray-500 text-xs font-bold uppercase tracking-[0.3em]">Keunggulan Kami</span>
+          <span className="block text-gray-500 text-xs font-bold uppercase tracking-[0.3em]">Keunggulan Kami</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
             Mengapa Berpercaya pada Kami?
           </h2>
@@ -1110,7 +1110,7 @@ function PropertyShowcaseSection() {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-10">
-          <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Proyek Unggulan</span>
+          <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Proyek Unggulan</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-3 tracking-tight">
             Pilih Hunian <span className="text-gradient-gray">Idaman Anda</span>
           </h2>
@@ -1186,7 +1186,7 @@ function HowToBuySection() {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-20">
-          <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Cara Memiliki Rumah</span>
+          <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Cara Memiliki Rumah</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
             Proses Mudah &amp; <span className="text-gradient-gray">Transparan</span>
           </h2>
@@ -1334,7 +1334,7 @@ function TestimonialsCarousel({ limit }: { limit?: number }) {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-16">
-          <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Testimoni</span>
+          <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Testimoni</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
             Apa Kata <span className="text-gradient-gray">Pembeli Kami</span>
           </h2>
@@ -1429,7 +1429,7 @@ function FAQSection() {
 
       <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-12">
-          <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">FAQ</span>
+          <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">FAQ</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">Pertanyaan Umum</h2>
           <p className="text-gray-500">Jawaban atas pertanyaan yang sering ditanyakan calon pembeli.</p>
         </FadeIn>
@@ -1483,7 +1483,7 @@ function GalleryPreviewSection() {
     <section className="py-20 md:py-28 bg-section-gray">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-12">
-          <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Gallery</span>
+          <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Gallery</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
             Galeri <span className="text-gradient-gray">Proyek</span>
           </h2>
@@ -1626,7 +1626,7 @@ function CTASection() {
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
               className="h-px w-12 bg-gray-500"
             />
-            <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Jangan Tunda Lagi</span>
+            <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Jangan Tunda Lagi</span>
             <motion.div
               animate={{ scaleX: [0, 1, 0] }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
@@ -1694,7 +1694,7 @@ function ServicePreviewSection() {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-12">
-          <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Jasa Kami</span>
+          <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Jasa Kami</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
             Layanan <span className="text-gradient-gray">Profesional</span>
           </h2>
@@ -1832,7 +1832,7 @@ function BlogPreviewSection() {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-12">
-          <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Blog & Artikel</span>
+          <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Blog & Artikel</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
             Informasi <span className="text-gradient-gray">Terbaru</span>
           </h2>
@@ -2225,7 +2225,7 @@ function PropertiesSection() {
       <FloatingParticles count={4} dark={false} />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-12">
-          <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Katalog Properti</span>
+          <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Katalog Properti</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
             Pilih Rumah <span className="text-gradient-gray">Idaman</span> Anda
           </h2>
@@ -3351,7 +3351,7 @@ function CalculatorSection() {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-8">
-          <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Simulasi Cicilan</span>
+          <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Simulasi Cicilan</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
             Hitung <span className="text-gradient-gray">Cicilan</span> Anda
           </h2>
@@ -3692,7 +3692,7 @@ function LocationSection() {
 
       <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-14">
-          <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Lokasi Strategis</span>
+          <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Lokasi Strategis</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
             Berlokasi di <span className="text-gradient-gray">Berbagai Kota Strategis</span>
           </h2>
@@ -3874,7 +3874,7 @@ function ContactSection() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Heading */}
         <FadeIn className="text-center mb-14">
-          <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Hubungi Kami</span>
+          <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Hubungi Kami</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
             Tim Marketing Kami Siap <span className="text-gradient-gray">Melayani</span> Anda
           </h2>
@@ -4092,7 +4092,7 @@ function ProyekGallery() {
       <section className="py-20 md:py-28 bg-section-gray">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-12">
-            <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Gallery</span>
+            <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Gallery</span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
               Dokumentasi <span className="text-gradient-gray">Proyek</span> Kami
             </h2>
@@ -4116,7 +4116,7 @@ function ProyekGallery() {
       <FloatingParticles count={3} dark={false} />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-12">
-          <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Gallery</span>
+          <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Gallery</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
             Dokumentasi <span className="text-gradient-gray">Proyek</span> Kami
           </h2>
@@ -4307,7 +4307,7 @@ function TentangKamiPage() {
               </div>
             </FadeIn>
             <FadeIn direction="right">
-              <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Profil Perusahaan</span>
+              <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Profil Perusahaan</span>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-6 tracking-tight">
                 Platform Perumahan <span className="text-gradient-gray">Terpercaya</span> di Indonesia
               </h2>
@@ -4329,7 +4329,7 @@ function TentangKamiPage() {
       <section className="py-20 md:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-12">
-            <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Visi &amp; Misi</span>
+            <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Visi &amp; Misi</span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
               Arah &amp; <span className="text-gradient-gray">Tujuan</span> Kami
             </h2>
@@ -4391,7 +4391,7 @@ function TentangKamiPage() {
         <FloatingParticles count={4} dark={false} />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-16">
-            <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Nilai-Nilai Kami</span>
+            <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Nilai-Nilai Kami</span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
               Prinsip yang <span className="text-gradient-gray">Kami Pegang</span>
             </h2>
@@ -4436,7 +4436,7 @@ function TentangKamiPage() {
         <div className="absolute bottom-0 left-0 w-72 h-72 bg-gray-500/5 rounded-full blur-3xl" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-16">
-            <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Perjalanan Kami</span>
+            <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Perjalanan Kami</span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver-dark mt-3 mb-4">
               Milestone Bisnis
             </h2>
@@ -4508,7 +4508,7 @@ function TentangKamiPage() {
       <section className="py-20 md:py-28 bg-section-gray">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-12">
-            <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Legalitas Perusahaan</span>
+            <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Legalitas Perusahaan</span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
               Dokumen <span className="text-gradient-gray">Lengkap &amp; Terverifikasi</span>
             </h2>
@@ -4565,7 +4565,7 @@ function TentangKamiPage() {
       <section className="py-16 md:py-20 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-10">
-            <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Mitra Perbankan</span>
+            <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Mitra Perbankan</span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
               Didukung <span className="text-gradient-gray">Bank &amp; Lembaga Keuangan</span> Terpercaya
             </h2>
@@ -4623,7 +4623,7 @@ function TentangKamiPage() {
       <section className="py-20 md:py-28 bg-section-gray">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-12">
-            <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Dokumentasi</span>
+            <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Dokumentasi</span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
               Galeri <span className="text-gradient-gray">Foto</span>
             </h2>
@@ -5665,7 +5665,7 @@ function JasaListingSection() {
       <FloatingParticles count={3} dark={false} />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-10">
-          <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Layanan Jasa Kami</span>
+          <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Layanan Jasa Kami</span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
             Solusi Bangunan <span className="text-gradient-gray">Profesional</span>
           </h2>
@@ -5772,7 +5772,7 @@ function JasaListingSection() {
         {/* How it works */}
         <FadeIn delay={0.1} className="mt-20">
           <div className="text-center mb-12">
-            <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Proses Kerja</span>
+            <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Proses Kerja</span>
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-black text-shimmer-silver mt-3 mb-3 tracking-tight">
               Bagaimana Cara <span className="text-gradient-gray">Bekerja</span> dengan Kami
             </h2>
@@ -5876,7 +5876,7 @@ function MitraPage() {
         />
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-12">
-            <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Mitra Kami</span>
+            <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Mitra Kami</span>
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-black text-shimmer-silver mt-3 mb-3 tracking-tight">
               Platform Perumahan <span className="text-gradient-gray">Terpercaya</span>
             </h2>
@@ -5907,7 +5907,7 @@ function MitraPage() {
       <section className="py-20 md:py-28 bg-gray-50 relative overflow-hidden">
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-14">
-            <span className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Mitra Terpercaya</span>
+            <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Mitra Terpercaya</span>
             <h2 className="text-3xl md:text-4xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
               Developer <span className="text-gradient-gray">Terpilih</span> &amp; Terverifikasi
             </h2>
@@ -6016,7 +6016,7 @@ function MitraPage() {
         />
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-14">
-            <span className="text-gray-500 text-xs font-bold uppercase tracking-[0.3em]">Bergabunglah</span>
+            <span className="block text-gray-500 text-xs font-bold uppercase tracking-[0.3em]">Bergabunglah</span>
             <h2 className="text-3xl md:text-4xl font-black text-shimmer-silver-dark mt-3 mb-4">
               Cara Menjadi <span className="text-gray-400">Mitra Developer</span>
             </h2>
