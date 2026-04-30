@@ -1,13 +1,106 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Eye, EyeOff, Lock, Mail, ArrowLeft, LogIn, Shield } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail, ArrowLeft, LogIn, Shield, RefreshCw } from "lucide-react";
 import { useSettingsStore } from "@/lib/settings-store";
+
+/* ── Simple Math Captcha ── */
+function generateCaptcha() {
+  const ops = ["+", "-", "×"] as const;
+  const op = ops[Math.floor(Math.random() * ops.length)];
+  let a: number, b: number, answer: number;
+
+  switch (op) {
+    case "+":
+      a = Math.floor(Math.random() * 50) + 1;
+      b = Math.floor(Math.random() * 50) + 1;
+      answer = a + b;
+      break;
+    case "-":
+      a = Math.floor(Math.random() * 50) + 10;
+      b = Math.floor(Math.random() * a) + 1;
+      answer = a - b;
+      break;
+    case "×":
+      a = Math.floor(Math.random() * 9) + 2;
+      b = Math.floor(Math.random() * 9) + 2;
+      answer = a * b;
+      break;
+  }
+  return { question: `${a} ${op} ${b}`, answer };
+}
+
+function CaptchaCanvas({ text }: { text: string }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const w = 160, h = 48;
+    canvas.width = w;
+    canvas.height = h;
+
+    // Background
+    ctx.fillStyle = "rgba(17, 24, 39, 0.9)";
+    ctx.fillRect(0, 0, w, h);
+
+    // Noise dots
+    for (let i = 0; i < 50; i++) {
+      ctx.fillStyle = `rgba(${Math.random() * 100 + 60}, ${Math.random() * 100 + 60}, ${Math.random() * 100 + 60}, ${Math.random() * 0.4 + 0.1})`;
+      ctx.beginPath();
+      ctx.arc(Math.random() * w, Math.random() * h, Math.random() * 1.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Noise lines
+    for (let i = 0; i < 4; i++) {
+      ctx.strokeStyle = `rgba(${Math.random() * 120 + 80}, ${Math.random() * 120 + 80}, ${Math.random() * 120 + 80}, 0.15)`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(Math.random() * w, Math.random() * h);
+      ctx.bezierCurveTo(Math.random() * w, Math.random() * h, Math.random() * w, Math.random() * h, Math.random() * w, Math.random() * h);
+      ctx.stroke();
+    }
+
+    // Text
+    ctx.font = "bold 22px monospace";
+    ctx.textBaseline = "middle";
+
+    const chars = text.split("");
+    const totalWidth = chars.reduce((sum, c) => sum + ctx.measureText(c).width, 0);
+    let x = (w - totalWidth) / 2;
+
+    chars.forEach((char) => {
+      const y = h / 2 + (Math.random() - 0.5) * 10;
+      const rot = (Math.random() - 0.5) * 0.3;
+      ctx.save();
+      ctx.translate(x + ctx.measureText(char).width / 2, y);
+      ctx.rotate(rot);
+      // Slight color variation per char
+      const brightness = Math.floor(Math.random() * 60 + 180);
+      ctx.fillStyle = `rgb(${brightness}, ${brightness}, ${brightness})`;
+      ctx.fillText(char, -ctx.measureText(char).width / 2, 0);
+      ctx.restore();
+      x += ctx.measureText(char).width + 2;
+    });
+  }, [text]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="rounded-lg border border-white/[0.08] h-12 w-40"
+      style={{ imageRendering: "auto" }}
+    />
+  );
+}
 
 export default function AdminLoginPage() {
   const { settings: S } = useSettingsStore();
@@ -16,11 +109,29 @@ export default function AdminLoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [captchaInput, setCaptchaInput] = useState("");
+  const [captchaError, setCaptchaError] = useState("");
+  const [captcha, setCaptcha] = useState(() => generateCaptcha());
   const router = useRouter();
+
+  const refreshCaptcha = useCallback(() => {
+    setCaptcha(generateCaptcha());
+    setCaptchaInput("");
+    setCaptchaError("");
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setCaptchaError("");
+
+    // Verify captcha first
+    if (captchaInput.trim() !== String(captcha.answer)) {
+      setCaptchaError("Jawaban captcha salah");
+      refreshCaptcha();
+      return;
+    }
+
     setLoading(true);
 
     const res = await signIn("credentials", {
@@ -33,6 +144,7 @@ export default function AdminLoginPage() {
 
     if (res?.error) {
       setError("Email atau password salah");
+      refreshCaptcha();
     } else {
       router.push("/admin/dashboard");
     }
@@ -128,6 +240,38 @@ export default function AdminLoginPage() {
                     )}
                   </button>
                 </div>
+              </div>
+
+              {/* Captcha */}
+              <div className="space-y-2">
+                <Label htmlFor="captcha" className="text-gray-400 text-sm font-medium">Verifikasi Keamanan</Label>
+                <div className="flex items-center gap-2.5">
+                  <CaptchaCanvas text={captcha.question} />
+                  <button
+                    type="button"
+                    onClick={refreshCaptcha}
+                    className="w-12 h-12 flex items-center justify-center rounded-xl bg-white/[0.05] border border-white/[0.08] text-gray-500 hover:text-gray-300 hover:border-gray-600 transition-all shrink-0"
+                    title="Ganti captcha"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                  </button>
+                  <Input
+                    id="captcha"
+                    type="text"
+                    placeholder="= ?"
+                    value={captchaInput}
+                    onChange={(e) => setCaptchaInput(e.target.value)}
+                    className="h-12 flex-1 bg-white/[0.05] border-white/[0.08] text-white placeholder:text-gray-600 focus:border-gray-500 focus:ring-gray-500/20 rounded-xl text-center font-mono text-lg tracking-wider"
+                    required
+                    autoComplete="off"
+                  />
+                </div>
+                {captchaError && (
+                  <p className="text-xs text-red-400 flex items-center gap-1.5">
+                    <div className="w-1 h-1 rounded-full bg-red-400 shrink-0" />
+                    {captchaError}
+                  </p>
+                )}
               </div>
 
               {error && (
