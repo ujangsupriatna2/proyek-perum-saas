@@ -711,9 +711,11 @@ function Hero() {
           <span className="block text-hero-glossy">Temukan Hunian</span>
           <span className="block mt-1 sm:mt-1 text-hero-glossy-accent">Idaman Anda <motion.span
             initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 0.8, x: 0 }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 1.0 }}
-            className="text-white/80">di Sini</motion.span></span>
+            className="inline-block -webkit-text-fill-color-transparent bg-clip-text"
+            style={{ WebkitTextFillColor: 'transparent' }}
+          >di Sini</motion.span></span>
         </motion.h1>
 
         {/* Divider */}

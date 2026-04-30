@@ -408,13 +408,13 @@ section, header, footer, nav, main {
   background: linear-gradient(
     90deg,
     #ffffff 0%,
-    #ffffff 35%,
-    #ffffff 42%,
-    #f0f0f5 46%,
+    #ffffff 20%,
+    #d1d5db 40%,
+    #f9fafb 48%,
     #ffffff 50%,
-    #f0f0f5 54%,
-    #ffffff 58%,
-    #ffffff 65%,
+    #f9fafb 52%,
+    #d1d5db 60%,
+    #ffffff 80%,
     #ffffff 100%
   );
   background-size: 300% 100%;
@@ -423,21 +423,22 @@ section, header, footer, nav, main {
   -webkit-text-fill-color: transparent;
   animation: hero-glossy 4s ease-in-out infinite;
   display: inline-block;
-  filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.25))
-          drop-shadow(0 0 40px rgba(255, 255, 255, 0.1));
+  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.5))
+          drop-shadow(0 0 30px rgba(255, 255, 255, 0.2))
+          drop-shadow(0 0 60px rgba(255, 255, 255, 0.08));
 }
 
 .text-hero-glossy-accent {
   background: linear-gradient(
     90deg,
     #ffffff 0%,
-    #ffffff 35%,
-    #ffffff 42%,
-    #e8e8ed 46%,
-    #ffffff 50%,
-    #e8e8ed 54%,
-    #ffffff 58%,
-    #ffffff 65%,
+    #ffffff 20%,
+    #e5e7eb 40%,
+    #ffffff 48%,
+    #f9fafb 50%,
+    #ffffff 52%,
+    #e5e7eb 60%,
+    #ffffff 80%,
     #ffffff 100%
   );
   background-size: 300% 100%;
@@ -446,8 +447,9 @@ section, header, footer, nav, main {
   -webkit-text-fill-color: transparent;
   animation: hero-glossy 5s ease-in-out infinite reverse;
   display: inline-block;
-  filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.3))
-          drop-shadow(0 0 50px rgba(255, 255, 255, 0.12));
+  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.55))
+          drop-shadow(0 0 35px rgba(255, 255, 255, 0.25))
+          drop-shadow(0 0 70px rgba(255, 255, 255, 0.1));
 }
 
 /* ═══════════════════════════════════════ */
