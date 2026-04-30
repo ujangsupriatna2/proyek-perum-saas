@@ -408,46 +408,46 @@ section, header, footer, nav, main {
   background: linear-gradient(
     90deg,
     #ffffff 0%,
-    #f0f0f0 10%,
-    #ffffff 20%,
-    #d4d4d8 30%,
-    #ffffff 40%,
-    #e4e4e7 45%,
-    #fafafa 50%,
-    #ffffff 55%,
-    #d4d4d8 60%,
-    #ffffff 70%,
-    #e4e4e7 80%,
-    #ffffff 90%,
-    #f0f0f0 100%
+    #ffffff 35%,
+    #ffffff 42%,
+    #f0f0f5 46%,
+    #ffffff 50%,
+    #f0f0f5 54%,
+    #ffffff 58%,
+    #ffffff 65%,
+    #ffffff 100%
   );
-  background-size: 250% 100%;
+  background-size: 300% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: hero-glossy 5s ease-in-out infinite;
+  animation: hero-glossy 4s ease-in-out infinite;
   display: inline-block;
-  filter: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.15));
+  filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.25))
+          drop-shadow(0 0 40px rgba(255, 255, 255, 0.1));
 }
 
 .text-hero-glossy-accent {
   background: linear-gradient(
     90deg,
-    #a1a1aa 0%,
-    #d4d4d8 15%,
-    #fafafa 30%,
+    #ffffff 0%,
+    #ffffff 35%,
+    #ffffff 42%,
+    #e8e8ed 46%,
     #ffffff 50%,
-    #fafafa 70%,
-    #d4d4d8 85%,
-    #a1a1aa 100%
+    #e8e8ed 54%,
+    #ffffff 58%,
+    #ffffff 65%,
+    #ffffff 100%
   );
-  background-size: 200% 100%;
+  background-size: 300% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: hero-glossy 6s ease-in-out infinite reverse;
+  animation: hero-glossy 5s ease-in-out infinite reverse;
   display: inline-block;
-  filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.2));
+  filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.3))
+          drop-shadow(0 0 50px rgba(255, 255, 255, 0.12));
 }
 
 /* ═══════════════════════════════════════ */
