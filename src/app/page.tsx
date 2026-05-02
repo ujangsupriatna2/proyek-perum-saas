@@ -2315,7 +2315,7 @@ function ServicePreviewSection() {
                   </h3>
                   {/* Features as spec pills — same as Proyek specs */}
                   {service.features.length > 0 && (
-                    <div className="flex flex-wrap items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2 mb-4">
                       {service.features.slice(0, 3).map((f, i) => (
                         <span key={i} className="flex items-center gap-1.5 text-xs text-gray-500 bg-gray-50 px-2.5 py-1.5 rounded-lg font-medium">
                           <Wrench className="w-3.5 h-3.5 text-gray-400" />
@@ -2329,6 +2329,13 @@ function ServicePreviewSection() {
                       )}
                     </div>
                   )}
+                  {/* Detail button — same as Proyek */}
+                  <button
+                    onClick={(e) => { e.stopPropagation(); router.push(`/?tab=jasa/${service.slug}`); }}
+                    className="w-full text-center text-sm font-semibold text-gray-500 hover:text-gray-900 py-2 border border-gray-200 rounded-xl hover:border-gray-400 transition-colors"
+                  >
+                    Detail <ChevronRight className="w-4 h-4 ml-1 inline -mt-0.5" />
+                  </button>
                 </div>
               </div>
             </FadeIn>
