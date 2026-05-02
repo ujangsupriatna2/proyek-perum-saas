@@ -651,6 +651,68 @@ function FloatingParticles({ count = 6, dark = false }: { count?: number; dark?:
 
 /* removed */
 
+/* ── Constellation-style particles: diamonds, rings, small crosses ── */
+function ConstellationParticles({ count = 10, dark = false }: { count?: number; dark?: boolean }) {
+  const particles = Array.from({ length: count }, (_, i) => ({
+    id: i,
+    size: 4 + (i * 5) % 10,
+    left: `${(i * 11 + 3) % 95}%`,
+    top: `${(i * 17 + 7) % 90}%`,
+    delay: i * 0.7,
+    duration: 10 + (i % 4) * 3,
+    rotation: i * 30,
+    shape: i % 4, // 0: diamond, 1: ring, 2: cross/plus, 3: small line
+  }));
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {particles.map((p) => (
+        <motion.div
+          key={p.id}
+          animate={{
+            y: [0, -18 - p.size * 1.5, 8, 0],
+            x: [0, -12 + p.size * 0.5, 6, 0],
+            opacity: [0.1, 0.3, 0.15, 0.1],
+            rotate: [p.rotation, p.rotation + 90, p.rotation + 180, p.rotation],
+          }}
+          transition={{ duration: p.duration, repeat: Infinity, delay: p.delay, ease: "easeInOut" }}
+          className={`absolute ${dark ? "border-white/20" : "border-gray-500/20"}`}
+          style={{
+            width: p.size,
+            height: p.size,
+            left: p.left,
+            top: p.top,
+            borderRadius: p.shape === 0 ? "1px" : p.shape === 1 ? "50%" : "0",
+            borderWidth: p.shape === 3 ? "0" : "1px",
+            borderStyle: p.shape === 2 ? "dashed" : "solid",
+            backgroundColor: p.shape === 1 ? "transparent" : (dark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)"),
+            ...(p.shape === 3 ? {
+              backgroundImage: dark
+                ? "linear-gradient(45deg, rgba(255,255,255,0.25) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.25) 75%)"
+                : "linear-gradient(45deg, rgba(0,0,0,0.2) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.2) 75%)",
+              backgroundSize: "2px 2px",
+            } : {}),
+          }}
+        />
+      ))}
+      {/* Constellation connecting lines */}
+      <svg className="absolute inset-0 w-full h-full" style={{ opacity: dark ? 0.06 : 0.04 }}>
+        {particles.slice(0, Math.min(count, 5)).map((p, i) => {
+          if (i === 0) return null;
+          const prev = particles[i - 1];
+          const x1 = parseFloat(prev.left) / 100 * 100 + prev.size / 2;
+          const y1 = parseFloat(prev.top) / 100 * 100 + prev.size / 2;
+          const x2 = parseFloat(p.left) / 100 * 100 + p.size / 2;
+          const y2 = parseFloat(p.top) / 100 * 100 + p.size / 2;
+          return (
+            <line key={`line-${p.id}`} x1={`${x1}%`} y1={`${y1}%`} x2={`${x2}%`} y2={`${y2}%`}
+              stroke={dark ? "white" : "#6b7280"} strokeWidth="0.5" strokeDasharray="4 4" />
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+
 function FadeIn({
   children,
   delay = 0,
@@ -1318,64 +1380,58 @@ function WhyChooseSection() {
   );
 }
 
-/* ─────────────────────────── TENTANG KAMI KEUNGGULAN (Detail) ─────────────────────────── */
+/* ─────────────────────────── TENTANG KAMI KEUNGGULAN (Redesigned) ─────────────────────────── */
 
 function TentangKamiKeunggulanSection() {
   const { settings: S } = useSettingsStore();
   return (
-    <section className="py-24 md:py-32 bg-section-gray relative overflow-hidden">
-      {/* Ambient floating orb */}
-      <motion.div
-        animate={{ y: [0, -15, 10, 0], x: [0, 12, -8, 0] }}
-        transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-[15%] right-[-5%] w-[300px] h-[300px] rounded-full bg-gray-200/30 blur-3xl"
-      />
-      <FloatingParticles count={4} dark={false} />
+    <section className="py-24 md:py-32 bg-gray-50 relative overflow-hidden">
+      <ConstellationParticles count={7} dark={false} />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FadeIn className="text-center mb-16">
-          <span className="block text-gray-500 text-xs font-bold uppercase tracking-[0.3em]">Keunggulan Kami</span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
+          <span className="inline-block px-3 py-1 bg-white text-gray-500 text-[10px] font-bold uppercase tracking-[0.25em] rounded-full mb-4">Keunggulan Kami</span>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 tracking-tight">
             Mengapa Berpercaya pada Kami?
           </h2>
-          <p className="text-gray-500 max-w-2xl mx-auto text-lg">
+          <p className="text-gray-500 max-w-2xl mx-auto text-lg mt-4">
             Bukan sekadar janji, tapi bukti nyata dari ratusan keluarga yang sudah mempercayai {S.company_name}.
           </p>
         </FadeIn>
 
-        <div className="space-y-5">
+        {/* Vertical cards with alternating icon sides */}
+        <div className="grid md:grid-cols-2 gap-5">
           {FEATURES_TENTANG.map((feat, i) => {
             const Icon = feat.icon;
+            const isEven = i % 2 === 0;
             return (
-              <FadeIn key={feat.title} delay={i * 0.08}>
-                <Card className="border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
-                  <div className="grid md:grid-cols-[240px_1fr]">
-                    {/* Left: icon + title */}
-                    <div className="bg-gray-900 p-8 flex flex-col items-center justify-center text-center">
-                      <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center mb-4">
+              <FadeIn key={feat.title} delay={i * 0.07}>
+                <Card className="h-full border border-gray-100 hover:border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
+                  <CardContent className="p-6 md:p-8">
+                    <div className="flex items-start gap-5">
+                      {/* Icon on alternating side */}
+                      <div className={`shrink-0 w-14 h-14 bg-gray-900 rounded-2xl flex items-center justify-center shadow-lg ${isEven ? 'order-0' : 'order-0 md:order-last'}`}>
                         <Icon className="w-7 h-7 text-white" />
                       </div>
-                      <h3 className="text-xl font-extrabold text-white leading-tight">{feat.title}</h3>
-                      <p className="text-gray-400 text-sm mt-1.5">{feat.subtitle}</p>
-                    </div>
-
-                    {/* Right: detail points + proof */}
-                    <CardContent className="p-6 md:p-8">
-                      <ul className="space-y-3 mb-5">
-                        {feat.points.map((point, j) => (
-                          <li key={j} className="flex items-start gap-2.5">
-                            <CheckCircle2 className="w-5 h-5 text-gray-400 mt-0.5 shrink-0" />
-                            <span className="text-gray-700 text-sm leading-relaxed">{point.replace("{{UNITS}}", S.total_units_sold)}</span>
-                          </li>
-                        ))}
-                      </ul>
-                      <div className="bg-gray-50 border border-gray-100 rounded-xl p-3.5">
-                        <p className="text-sm text-gray-600 flex items-start gap-2">
-                          <Award className="w-4 h-4 mt-0.5 shrink-0" />
-                          <span><strong className="font-semibold">Bukti:</strong> {feat.proof}</span>
-                        </p>
+                      <div className={`flex-1 min-w-0 ${isEven ? '' : 'md:text-right'}`}>
+                        <h3 className="text-lg font-extrabold text-gray-900 leading-tight">{feat.title}</h3>
+                        <p className="text-gray-400 text-sm mt-1 mb-4">{feat.subtitle}</p>
+                        <ul className={`space-y-2 mb-4 ${isEven ? '' : 'md:[&>li]:flex-row-reverse'}`}>
+                          {feat.points.map((point, j) => (
+                            <li key={j} className={`flex items-start gap-2 ${isEven ? '' : 'md:flex-row-reverse'}`}>
+                              <CheckCircle2 className="w-4 h-4 text-gray-400 mt-0.5 shrink-0" />
+                              <span className="text-gray-600 text-sm leading-relaxed">{point.replace("{{UNITS}}", S.total_units_sold)}</span>
+                            </li>
+                          ))}
+                        </ul>
+                        <div className="bg-gray-50 border border-gray-100 rounded-xl p-3">
+                          <p className={`text-sm text-gray-600 flex items-start gap-2 ${isEven ? '' : 'md:flex-row-reverse'}`}>
+                            <Award className="w-4 h-4 mt-0.5 shrink-0" />
+                            <span><strong className="font-semibold">Bukti:</strong> {feat.proof}</span>
+                          </p>
+                        </div>
                       </div>
-                    </CardContent>
-                  </div>
+                    </div>
+                  </CardContent>
                 </Card>
               </FadeIn>
             );
@@ -4746,7 +4802,7 @@ function ProyekGallery() {
   );
 }
 
-/* ─────────────────────────── TENTANG KAMI PAGE ─────────────────────────── */
+/* ─────────────────────────── TENTANG KAMI PAGE (Redesigned) ─────────────────────────── */
 
 function TentangKamiPage() {
   const { galleryItems, fetchGalleryItems } = useGalleryStore();
@@ -4763,144 +4819,174 @@ function TentangKamiPage() {
       {/* Banner */}
       <PageBanner title="Tentang Kami" subtitle={`Mengenal lebih dekat ${S.company_name}`} />
 
-      {/* ═══════ PROFIL PERUSAHAAN ═══════ */}
-      <section className="py-20 md:py-28 bg-section-gray relative overflow-hidden">
-        {/* Ambient floating orb */}
-        <motion.div
-          animate={{ y: [0, -15, 10, 0], x: [0, 12, -8, 0] }}
-          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[20%] left-[-5%] w-[300px] h-[300px] rounded-full bg-gray-200/30 blur-3xl"
-        />
-        <FloatingParticles count={3} dark={false} />
+      {/* ═══════ PROFIL PERUSAHAAN — Redesigned: Text left, image right, diagonal bg ═══════ */}
+      <section className="py-24 md:py-32 bg-white relative overflow-hidden">
+        {/* Diagonal subtle lines background */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{
+          backgroundImage: `repeating-linear-gradient(135deg, #000 0px, #000 1px, transparent 1px, transparent 40px)`,
+        }} />
+        <ConstellationParticles count={8} dark={false} />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <FadeIn direction="left">
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-                {S.tentangkami_image ? (
-                  <img
-                    src={S.tentangkami_image}
-                    alt={S.company_name}
-                    className="w-full h-[400px] object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-[400px] bg-gradient-to-br from-gray-800 via-gray-900 to-black flex items-center justify-center">
-                    <Building2 className="w-16 h-16 text-gray-600" />
-                  </div>
-                )}
-                <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 to-transparent p-6">
-                  <p className="text-white font-bold text-lg">{S.company_legal_name}</p>
-                </div>
-              </div>
-            </FadeIn>
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Text — now on LEFT */}
             <FadeIn direction="right">
-              <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Profil Perusahaan</span>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-6 tracking-tight">
-                Platform Perumahan <span className="text-gradient-gray">Terpercaya</span> di Indonesia
+              <span className="inline-block px-3 py-1 bg-gray-100 text-gray-500 text-[10px] font-bold uppercase tracking-[0.25em] rounded-full mb-5">Profil Perusahaan</span>
+              <h2 className="text-3xl md:text-4xl lg:text-[2.75rem] font-black text-gray-900 mt-2 mb-6 tracking-tight leading-[1.15]">
+                Platform Perumahan <span className="bg-gradient-to-r from-gray-800 to-gray-500 bg-clip-text text-transparent">Terpercaya</span> di Indonesia
               </h2>
-              <p className="text-gray-600 text-lg leading-relaxed mb-4">
-                {S.company_name} adalah platform perumahan yang menghimpun developer-developer perumahan terpilih di bawah naungan {S.company_legal_name}. Kami berperan sebagai jembatan antara pengembang properti berkualitas dan calon pembeli rumah yang mencari hunian terbaik.
-              </p>
-              <p className="text-gray-600 text-lg leading-relaxed mb-4">
-                Setiap mitra developer yang bergabung telah melalui proses kurasi ketat — dari legalitas, kualitas bangunan, hingga track record. Tujuan kami: memudahkan Anda menemukan rumah idaman dengan pilihan terluas dari developer terpercaya.
-              </p>
-              <p className="text-gray-600 text-lg leading-relaxed">
-                Dengan skema pembayaran fleksibel mulai dari Syariah hingga KPR Bank, {S.company_name} memastikan setiap keluarga Indonesia punya akses ke hunian berkualitas.
-              </p>
-            </FadeIn>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════ VISI & MISI ═══════ */}
-      <section className="py-20 md:py-28 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <FadeIn className="text-center mb-12">
-            <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Visi &amp; Misi</span>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
-              Arah &amp; <span className="text-gradient-gray">Tujuan</span> Kami
-            </h2>
-          </FadeIn>
-          <div className="grid md:grid-cols-2 gap-8">
-            <FadeIn>
-              <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 md:p-10 text-white h-full shadow-xl">
-                <div className="w-16 h-16 bg-white/15 rounded-2xl flex items-center justify-center mb-6">
-                  <Eye className="w-8 h-8 text-gray-400" />
-                </div>
-                <h3 className="text-2xl font-extrabold mb-4">Visi</h3>
-                <p className="text-gray-400 text-lg leading-relaxed">
-                  Menjadi platform perumahan terdepan di Indonesia yang menyatukan developer terbaik dan memberikan hunian berkualitas, terjangkau, serta penuh keberkahan bagi seluruh keluarga Indonesia.
+              <div className="space-y-4">
+                <p className="text-gray-600 text-lg leading-relaxed">
+                  {S.company_name} adalah platform perumahan yang menghimpun developer-developer perumahan terpilih di bawah naungan {S.company_legal_name}. Kami berperan sebagai jembatan antara pengembang properti berkualitas dan calon pembeli rumah yang mencari hunian terbaik.
+                </p>
+                <p className="text-gray-600 text-lg leading-relaxed">
+                  Setiap mitra developer yang bergabung telah melalui proses kurasi ketat — dari legalitas, kualitas bangunan, hingga track record. Tujuan kami: memudahkan Anda menemukan rumah idaman dengan pilihan terluas dari developer terpercaya.
+                </p>
+                <p className="text-gray-600 text-lg leading-relaxed">
+                  Dengan skema pembayaran fleksibel mulai dari Syariah hingga KPR Bank, {S.company_name} memastikan setiap keluarga Indonesia punya akses ke hunian berkualitas.
                 </p>
               </div>
             </FadeIn>
-            <FadeIn delay={0.15}>
-              <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 md:p-10 text-white h-full shadow-xl">
-                <div className="w-16 h-16 bg-white/15 rounded-2xl flex items-center justify-center mb-6">
-                  <BookOpen className="w-8 h-8 text-gray-400" />
+            {/* Image — now on RIGHT with offset frame */}
+            <FadeIn direction="left">
+              <div className="relative">
+                {/* Offset decorative frame */}
+                <div className="absolute -top-4 -right-4 w-full h-full border-2 border-gray-200 rounded-2xl" />
+                <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                  {S.tentangkami_image ? (
+                    <img
+                      src={S.tentangkami_image}
+                      alt={S.company_name}
+                      className="w-full h-[420px] object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-[420px] bg-gradient-to-br from-gray-800 via-gray-900 to-black flex items-center justify-center">
+                      <Building2 className="w-16 h-16 text-gray-600" />
+                    </div>
+                  )}
                 </div>
-                <h3 className="text-2xl font-extrabold mb-4">Misi</h3>
-                <ul className="text-gray-300 text-lg leading-relaxed space-y-3">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-5 h-5 text-green-400 mt-1 shrink-0" />
-                    <span>Mengkurasi developer perumahan berkualitas dan berintegritas tinggi</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-5 h-5 text-green-400 mt-1 shrink-0" />
-                    <span>Menyediakan pilihan hunian terluas dari berbagai mitra developer</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-5 h-5 text-green-400 mt-1 shrink-0" />
-                    <span>Menjamin transparansi harga, legalitas, dan kualitas setiap properti</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-5 h-5 text-green-400 mt-1 shrink-0" />
-                    <span>Memberikan pendampingan penuh dari konsultasi hingga serah terima kunci</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="w-5 h-5 text-green-400 mt-1 shrink-0" />
-                    <span>Menghadirkan skema pembayaran Syariah & KPR yang mudah dan aman</span>
-                  </li>
-                </ul>
+                {/* Company name badge */}
+                <div className="absolute -bottom-5 -left-5 bg-gray-900 text-white px-6 py-3 rounded-xl shadow-xl">
+                  <p className="font-bold text-sm">{S.company_legal_name}</p>
+                </div>
               </div>
             </FadeIn>
           </div>
         </div>
       </section>
 
-      {/* ═══════ NILAI PERUSAHAAN ═══════ */}
-      <section className="py-20 md:py-28 bg-section-gray relative overflow-hidden">
-        {/* Ambient floating orb */}
-        <motion.div
-          animate={{ y: [0, -12, 8, 0], x: [0, 10, -6, 0] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-[10%] right-[-5%] w-[280px] h-[280px] rounded-full bg-gray-200/30 blur-3xl"
-        />
-        <FloatingParticles count={4} dark={false} />
+      {/* ═══════ VISI & MISI — Redesigned: Visi hero statement, Misi below ═══════ */}
+      <section className="py-24 md:py-32 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
+        <ConstellationParticles count={6} dark={false} />
+        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeIn className="text-center mb-14">
+            <span className="inline-block px-3 py-1 bg-gray-100 text-gray-500 text-[10px] font-bold uppercase tracking-[0.25em] rounded-full mb-4">Visi &amp; Misi</span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 tracking-tight">
+              Arah &amp; <span className="bg-gradient-to-r from-gray-800 to-gray-500 bg-clip-text text-transparent">Tujuan</span> Kami
+            </h2>
+          </FadeIn>
+
+          {/* VISI — full-width featured statement */}
+          <FadeIn className="mb-10">
+            <div className="relative bg-gray-900 rounded-3xl p-10 md:p-14 text-center overflow-hidden">
+              {/* Decorative corner elements */}
+              <div className="absolute top-6 left-6 w-12 h-12 border-t-2 border-l-2 border-white/20 rounded-tl-lg" />
+              <div className="absolute bottom-6 right-6 w-12 h-12 border-b-2 border-r-2 border-white/20 rounded-br-lg" />
+              <div className="absolute top-4 right-8">
+                <Eye className="w-10 h-10 text-white/10" />
+              </div>
+              <div className="relative">
+                <p className="text-gray-400 text-xs font-bold uppercase tracking-[0.3em] mb-5">Visi Kami</p>
+                <blockquote className="text-white text-xl md:text-2xl lg:text-3xl font-bold leading-relaxed max-w-3xl mx-auto">
+                  &ldquo;Menjadi platform perumahan terdepan di Indonesia yang menyatukan developer terbaik dan memberikan hunian berkualitas, terjangkau, serta penuh keberkahan bagi seluruh keluarga Indonesia.&rdquo;
+                </blockquote>
+              </div>
+            </div>
+          </FadeIn>
+
+          {/* MISI — grid of 5 items */}
+          <FadeIn delay={0.1}>
+            <div className="bg-white border border-gray-200 rounded-2xl p-8 md:p-10 shadow-sm">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center">
+                  <BookOpen className="w-5 h-5 text-white" />
+                </div>
+                <h3 className="text-xl font-extrabold text-gray-900">Misi Kami</h3>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-x-8 gap-y-5">
+                {[
+                  "Mengkurasi developer perumahan berkualitas dan berintegritas tinggi",
+                  "Menyediakan pilihan hunian terluas dari berbagai mitra developer",
+                  "Menjamin transparansi harga, legalitas, dan kualitas setiap properti",
+                  "Memberikan pendampingan penuh dari konsultasi hingga serah terima kunci",
+                  "Menghadirkan skema pembayaran Syariah & KPR yang mudah dan aman",
+                ].map((misi, i) => (
+                  <FadeIn key={i} delay={0.05 * i}>
+                    <div className="flex items-start gap-3 group">
+                      <span className="shrink-0 w-7 h-7 bg-gray-100 group-hover:bg-gray-900 group-hover:text-white text-gray-500 rounded-lg flex items-center justify-center font-bold text-xs transition-colors mt-0.5">
+                        {i + 1}
+                      </span>
+                      <p className="text-gray-700 text-sm leading-relaxed pt-1">{misi}</p>
+                    </div>
+                  </FadeIn>
+                ))}
+              </div>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      {/* ═══════ NILAI PERUSAHAAN — Redesigned: Bento grid layout ═══════ */}
+      <section className="py-24 md:py-32 bg-white relative overflow-hidden">
+        {/* Subtle grid background */}
+        <div className="absolute inset-0 opacity-[0.025]" style={{
+          backgroundImage: `radial-gradient(circle, #000 1px, transparent 1px)`,
+          backgroundSize: "24px 24px",
+        }} />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-16">
-            <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Nilai-Nilai Kami</span>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
-              Prinsip yang <span className="text-gradient-gray">Kami Pegang</span>
+            <span className="inline-block px-3 py-1 bg-gray-100 text-gray-500 text-[10px] font-bold uppercase tracking-[0.25em] rounded-full mb-4">Nilai-Nilai Kami</span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 tracking-tight">
+              Prinsip yang <span className="bg-gradient-to-r from-gray-800 to-gray-500 bg-clip-text text-transparent">Kami Pegang</span>
             </h2>
-            <p className="text-gray-500 max-w-2xl mx-auto text-lg">
+            <p className="text-gray-500 max-w-2xl mx-auto text-lg mt-4">
               Setiap keputusan yang kami ambil berlandaskan pada nilai-nilai inti yang memastikan kepercayaan dan kenyamanan Anda.
             </p>
           </FadeIn>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+          {/* Bento grid: first item large, rest smaller */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* Featured large card — spans 2 cols */}
+            <FadeIn className="md:col-span-2 lg:col-span-2">
+              <Card className="h-full border border-gray-100 hover:border-gray-200 transition-all duration-300 hover:shadow-lg overflow-hidden group">
+                <CardContent className="p-8">
+                  <div className="flex items-start gap-6">
+                    <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center shrink-0 shadow-lg group-hover:scale-110 transition-transform">
+                      <Shield className="w-8 h-8 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">Profesional</h3>
+                      <p className="text-gray-500 leading-relaxed">Tim berpengalaman dengan standar layanan tertinggi. Setiap proses dijalankan secara sistematis dan terstruktur untuk memberikan hasil terbaik bagi setiap klien.</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </FadeIn>
+
+            {/* Smaller value cards */}
             {[
-              { icon: Shield, title: "Profesional", desc: "Tim berpengalaman dengan standar layanan tertinggi. Setiap proses dijalankan secara sistematis dan terstruktur.", gradient: "from-gray-800 to-gray-900" },
-              { icon: Eye, title: "Transparan", desc: "Harga jelas, legalitas terbuka, progres proyek bisa dipantau. Tidak ada biaya tersembunyi.", gradient: "from-blue-500 to-blue-600" },
-              { icon: CheckCircle2, title: "Terpercaya", desc: "Setiap mitra developer telah melalui proses verifikasi ketat. Reputasi adalah fondasi bisnis kami.", gradient: "from-gray-600 to-gray-700" },
-              { icon: HeartHandshake, title: "Kolaboratif", desc: "Sinergi antara platform, developer, dan pembeli. Semua pihak mendapatkan manfaat.", gradient: "from-gray-500 to-gray-600" },
-              { icon: Sparkles, title: "Inovatif", desc: "Terus beradaptasi dengan teknologi dan tren properti terbaru untuk pengalaman yang lebih baik.", gradient: "from-purple-500 to-purple-600" },
-              { icon: Users, title: "Berorientasi Keluarga", desc: "Setiap rumah yang kami tawarkan dirancang untuk kenyamanan dan kebahagiaan keluarga.", gradient: "from-pink-500 to-pink-600" },
+              { icon: Eye, title: "Transparan", desc: "Harga jelas, legalitas terbuka, progres proyek bisa dipantau. Tidak ada biaya tersembunyi." },
+              { icon: CheckCircle2, title: "Terpercaya", desc: "Setiap mitra developer telah melalui proses verifikasi ketat. Reputasi adalah fondasi bisnis kami." },
+              { icon: HeartHandshake, title: "Kolaboratif", desc: "Sinergi antara platform, developer, dan pembeli. Semua pihak mendapatkan manfaat." },
+              { icon: Sparkles, title: "Inovatif", desc: "Terus beradaptasi dengan teknologi dan tren properti terbaru untuk pengalaman yang lebih baik." },
+              { icon: Users, title: "Berorientasi Keluarga", desc: "Setiap rumah yang kami tawarkan dirancang untuk kenyamanan dan kebahagiaan keluarga." },
             ].map((val, i) => {
               const Icon = val.icon;
               return (
-                <FadeIn key={val.title} delay={i * 0.08}>
-                  <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
+                <FadeIn key={val.title} delay={0.06 * i}>
+                  <Card className="h-full border border-gray-100 hover:border-gray-200 transition-all duration-300 hover:shadow-lg group">
                     <CardContent className="p-6">
-                      <div className={`w-14 h-14 bg-gradient-to-br ${val.gradient} rounded-2xl flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform`}>
-                        <Icon className="w-7 h-7 text-white" />
+                      <div className="w-12 h-12 bg-gray-100 group-hover:bg-gray-900 rounded-xl flex items-center justify-center mb-4 transition-colors">
+                        <Icon className="w-6 h-6 text-gray-600 group-hover:text-white transition-colors" />
                       </div>
                       <h3 className="text-lg font-bold text-gray-900 mb-2">{val.title}</h3>
                       <p className="text-gray-500 leading-relaxed text-sm">{val.desc}</p>
@@ -4916,14 +5002,13 @@ function TentangKamiPage() {
       {/* ═══════ KEUNGGULAN PLATFORM ═══════ */}
       <TentangKamiKeunggulanSection />
 
-      {/* ═══════ TIMELINE / PERJALANAN BISNIS ═══════ */}
-      <section className="py-20 md:py-28 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gray-1000/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-72 h-72 bg-gray-500/5 rounded-full blur-3xl" />
+      {/* ═══════ TIMELINE — Redesigned: Horizontal scroll ═══════ */}
+      <section className="py-24 md:py-32 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
+        <ConstellationParticles count={12} dark={true} />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <FadeIn className="text-center mb-16">
-            <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Perjalanan Kami</span>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver-dark mt-3 mb-4">
+          <FadeIn className="text-center mb-14">
+            <span className="block text-gray-500 text-[10px] font-bold uppercase tracking-[0.3em]">Perjalanan Kami</span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-white mt-3 mb-4">
               Milestone Bisnis
             </h2>
             <p className="text-gray-400 max-w-2xl mx-auto text-lg">
@@ -4931,111 +5016,122 @@ function TentangKamiPage() {
             </p>
           </FadeIn>
 
-          {/* Stats row */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
-            {[
-              { value: `${S.total_units_sold}+`, label: "Unit Terjual", icon: Home },
-              { value: "3+", label: "Mitra Developer", icon: Building2 },
-              { value: "10+", label: "Proyek Perumahan", icon: LandPlot },
-              { value: "98%", label: "Kepuasan Klien", icon: ThumbsUp },
-            ].map((stat, i) => {
-              const Icon = stat.icon;
-              return (
-                <FadeIn key={stat.label} delay={i * 0.1}>
-                  <div className="text-center bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
-                    <Icon className="w-6 h-6 text-gray-400 mx-auto mb-2" />
-                    <p className="text-3xl md:text-4xl font-extrabold text-white">{stat.value}</p>
-                    <p className="text-gray-400 text-sm mt-1">{stat.label}</p>
-                  </div>
-                </FadeIn>
-              );
-            })}
-          </div>
-
-          {/* Timeline */}
+          {/* Stats row — redesigned with border-top accent */}
           <FadeIn>
-            <div className="max-w-3xl mx-auto space-y-0">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
               {[
-                { year: "2018", title: "Awal Mula", desc: `${S.company_legal_name} didirikan. Memulai proyek perumahan pertama dengan fokus hunian syariah.`, color: "bg-gray-1000" },
-                { year: "2020", title: "Ekspansi Proyek", desc: "Membuka proyek kedua di kawasan Sentul. Memperluas portofolio dengan klaster baru dan konsep modern.", color: "bg-gray-500" },
-                { year: "2022", title: "Mitra Pertama Bergabung", desc: `Developer mitra pertama resmi bergabung. ${S.company_name} mulai bertransformasi dari single developer menjadi platform.`, color: "bg-gray-500" },
-                { year: "2023", title: `${S.total_units_sold} Unit Terjual`, desc: `Milestone ${S.total_units_sold} unit rumah terjual dari seluruh mitra developer. Platform terus berkembang.`, color: "bg-gray-500" },
-                { year: "2024", title: "Digital Platform Launch", desc: "Peluncuran platform digital untuk memudahkan calon pembeli menemukan dan membandingkan proyek dari berbagai mitra.", color: "bg-gray-500" },
-                { year: "2025", title: "Skalabilitas & Ekosistem", desc: "Memperkuat ekosistem mitra developer dan meluncurkan layanan jasa konstruksi terintegrasi. Basis klien terus meluas ke berbagai kota.", color: "bg-gray-500" },
-                { year: "2026", title: "Era Baru Hunian Digital", desc: `Memasuki fase baru dengan puluhan proyek aktif dan 3+ mitra developer terpilih. Platform ${S.company_name} kini menjadi destinasi utama pencari hunian syariah di Indonesia.`, color: "bg-white", highlight: true },
-              ].map((item, i) => (
-                <div key={item.year} className="flex gap-6 group">
-                  <div className="flex flex-col items-center">
-                    <div className={`w-14 h-14 ${item.color} ${item.highlight ? 'ring-2 ring-white/30 ring-offset-2 ring-offset-gray-900' : ''} rounded-full flex items-center justify-center ${item.highlight ? 'text-gray-900' : 'text-white'} font-extrabold text-sm shrink-0 shadow-lg group-hover:scale-110 transition-transform`}>
+                { value: `${S.total_units_sold}+`, label: "Unit Terjual", icon: Home },
+                { value: "3+", label: "Mitra Developer", icon: Building2 },
+                { value: "10+", label: "Proyek Perumahan", icon: LandPlot },
+                { value: "98%", label: "Kepuasan Klien", icon: ThumbsUp },
+              ].map((stat, i) => {
+                const Icon = stat.icon;
+                return (
+                  <FadeIn key={stat.label} delay={i * 0.08}>
+                    <div className="text-center relative group">
+                      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-white/30 group-hover:w-12 group-hover:bg-white/60 transition-all" />
+                      <Icon className="w-5 h-5 text-gray-500 mx-auto mb-3 mt-4" />
+                      <p className="text-3xl md:text-4xl font-extrabold text-white">{stat.value}</p>
+                      <p className="text-gray-500 text-xs mt-1 uppercase tracking-wider">{stat.label}</p>
+                    </div>
+                  </FadeIn>
+                );
+              })}
+            </div>
+          </FadeIn>
+
+          {/* Horizontal timeline — scrollable */}
+          <FadeIn>
+            <div className="relative overflow-x-auto pb-4 -mx-4 px-4">
+              <div className="flex gap-0 min-w-max">
+                {[
+                  { year: "2018", title: "Awal Mula", desc: `${S.company_legal_name} didirikan. Memulai proyek perumahan pertama dengan fokus hunian syariah.` },
+                  { year: "2020", title: "Ekspansi Proyek", desc: "Membuka proyek kedua di kawasan Sentul. Memperluas portofolio dengan klaster baru dan konsep modern." },
+                  { year: "2022", title: "Mitra Pertama Bergabung", desc: `Developer mitra pertama resmi bergabung. ${S.company_name} mulai bertransformasi dari single developer menjadi platform.` },
+                  { year: "2023", title: `${S.total_units_sold} Unit Terjual`, desc: `Milestone ${S.total_units_sold} unit rumah terjual dari seluruh mitra developer. Platform terus berkembang.` },
+                  { year: "2024", title: "Digital Platform Launch", desc: "Peluncuran platform digital untuk memudahkan calon pembeli menemukan dan membandingkan proyek dari berbagai mitra." },
+                  { year: "2025", title: "Skalabilitas & Ekosistem", desc: "Memperkuat ekosistem mitra developer dan meluncurkan layanan jasa konstruksi terintegrasi. Basis klien terus meluas ke berbagai kota." },
+                  { year: "2026", title: "Era Baru Hunian Digital", desc: `Memasuki fase baru dengan puluhan proyek aktif dan 3+ mitra developer terpilih. Platform ${S.company_name} kini menjadi destinasi utama pencari hunian syariah di Indonesia.`, highlight: true },
+                ].map((item, i) => (
+                  <div key={item.year} className="relative flex flex-col items-center w-52 shrink-0 group">
+                    {/* Connector line */}
+                    {i < 6 && <div className="absolute top-6 left-[calc(50%+20px)] w-[calc(100%-40px)] h-px bg-white/10" />}
+                    {/* Node */}
+                    <div className={`w-12 h-12 ${item.highlight ? 'bg-white text-gray-900 ring-2 ring-white/20' : 'bg-gray-800 text-gray-300 border border-white/10'} rounded-xl flex items-center justify-center font-extrabold text-xs shrink-0 shadow-lg group-hover:scale-110 transition-transform z-10`}>
                       {item.year}
                     </div>
-                    {i < 6 && <div className="w-0.5 h-full bg-white/10 mt-2" />}
-                  </div>
-                  <div className="pb-10">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h4 className="text-lg font-bold text-white">{item.title}</h4>
-                      {item.highlight && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-white/10 backdrop-blur-sm rounded-full text-[10px] font-bold uppercase tracking-wider text-gray-300 border border-white/10">
-                          <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                          Sekarang
-                        </span>
-                      )}
+                    {item.highlight && (
+                      <span className="mt-2 inline-flex items-center gap-1 px-2 py-0.5 bg-white/10 rounded-full text-[9px] font-bold uppercase tracking-wider text-gray-300 z-10">
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                        Sekarang
+                      </span>
+                    )}
+                    {/* Content card */}
+                    <div className={`mt-4 p-4 rounded-xl w-full ${item.highlight ? 'bg-white/10 border border-white/10' : 'bg-white/[0.03]'} text-center transition-all group-hover:bg-white/[0.08]`}>
+                      <h4 className={`text-sm font-bold ${item.highlight ? 'text-white' : 'text-gray-300'} mb-1`}>{item.title}</h4>
+                      <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
                     </div>
-                    <p className={`text-sm leading-relaxed ${item.highlight ? 'text-gray-300' : 'text-gray-400'}`}>{item.desc}</p>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </FadeIn>
         </div>
       </section>
 
-      {/* ═══════ LEGALITAS ═══════ */}
-      <section className="py-20 md:py-28 bg-section-gray">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <FadeIn className="text-center mb-12">
-            <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Legalitas Perusahaan</span>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
-              Dokumen <span className="text-gradient-gray">Lengkap &amp; Terverifikasi</span>
+      {/* ═══════ LEGALITAS — Redesigned: Horizontal feature list ═══════ */}
+      <section className="py-24 md:py-32 bg-gray-50 relative overflow-hidden">
+        <ConstellationParticles count={5} dark={false} />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeIn className="text-center mb-14">
+            <span className="inline-block px-3 py-1 bg-white text-gray-500 text-[10px] font-bold uppercase tracking-[0.25em] rounded-full mb-4">Legalitas Perusahaan</span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 tracking-tight">
+              Dokumen <span className="bg-gradient-to-r from-gray-800 to-gray-500 bg-clip-text text-transparent">Lengkap &amp; Terverifikasi</span>
             </h2>
-            <p className="text-gray-500 max-w-2xl mx-auto text-lg">
+            <p className="text-gray-500 max-w-2xl mx-auto text-lg mt-4">
               {S.company_legal_name} beroperasi secara legal dengan seluruh dokumen perizinan lengkap.
             </p>
           </FadeIn>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-5 mb-12">
-            {[
-              { title: "Akta Pendirian", desc: "Akta Notaris pendirian perusahaan", icon: FileText },
-              { title: "NIB / OSS", desc: "Nomor Induk Berusaha terdaftar", icon: FileText },
-              { title: "SIUP / IUJK", desc: "Izin usaha jasa konstruksi", icon: Building2 },
-              { title: "NPWP Badan", desc: "Terdaftar di Direktorat Pajak", icon: FileText },
-              { title: "SK Kemenkumham", desc: "Pengesahan badan hukum", icon: Shield },
-              { title: "Rekening Bank", desc: "Rekening perusahaan resmi", icon: LandPlot },
-            ].map((item, i) => {
-              const Icon = item.icon;
-              return (
-                <FadeIn key={item.title} delay={i * 0.08}>
-                  <Card className="h-full border-0 shadow-md hover:shadow-lg transition-shadow text-center">
-                    <CardContent className="p-5">
-                      <div className="w-12 h-12 mx-auto bg-gray-100 rounded-xl flex items-center justify-center mb-3">
-                        <Icon className="w-6 h-6 text-gray-600" />
-                      </div>
-                      <h4 className="font-bold text-gray-900 text-sm mb-1">{item.title}</h4>
-                      <p className="text-xs text-gray-500">{item.desc}</p>
-                    </CardContent>
-                  </Card>
-                </FadeIn>
-              );
-            })}
-          </div>
+
+          {/* Legal items — horizontal row with dividers */}
           <FadeIn>
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 md:p-8">
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-10">
+              <div className="grid grid-cols-2 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-100">
+                {[
+                  { title: "Akta Pendirian", desc: "Akta Notaris pendirian perusahaan", icon: FileText },
+                  { title: "NIB / OSS", desc: "Nomor Induk Berusaha terdaftar", icon: FileText },
+                  { title: "SIUP / IUJK", desc: "Izin usaha jasa konstruksi", icon: Building2 },
+                  { title: "NPWP Badan", desc: "Terdaftar di Direktorat Pajak", icon: FileText },
+                  { title: "SK Kemenkumham", desc: "Pengesahan badan hukum", icon: Shield },
+                  { title: "Rekening Bank", desc: "Rekening perusahaan resmi", icon: LandPlot },
+                ].map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <div key={item.title} className="flex items-center gap-4 p-5 hover:bg-gray-50 transition-colors">
+                      <div className="w-10 h-10 bg-gray-900 rounded-lg flex items-center justify-center shrink-0">
+                        <Icon className="w-5 h-5 text-white" />
+                      </div>
+                      <div className="min-w-0">
+                        <h4 className="font-bold text-gray-900 text-sm truncate">{item.title}</h4>
+                        <p className="text-xs text-gray-400 truncate">{item.desc}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </FadeIn>
+
+          {/* Guarantee statement */}
+          <FadeIn>
+            <div className="bg-gray-900 rounded-2xl p-6 md:p-8 text-white">
               <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-                <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center shrink-0">
-                  <CheckCircle2 className="w-7 h-7 text-gray-600" />
+                <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center shrink-0">
+                  <CheckCircle2 className="w-6 h-6 text-gray-300" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-gray-900 text-lg mb-1">Jaminan Legalitas Setiap Proyek Mitra</h4>
-                  <p className="text-gray-600 text-sm leading-relaxed">
+                  <h4 className="font-bold text-lg mb-1">Jaminan Legalitas Setiap Proyek Mitra</h4>
+                  <p className="text-gray-400 text-sm leading-relaxed">
                     Setiap developer mitra yang bergabung dengan {S.company_name} wajib memenuhi standar legalitas minimum:
                     Sertifikat SHM, IMB/PBG, perizinan lingkungan, dan dokumen perjanjian pengembang. Kami melakukan audit berkala
                     untuk memastikan semua dokumen tetap valid dan up-to-date.
@@ -5047,71 +5143,65 @@ function TentangKamiPage() {
         </div>
       </section>
 
-      {/* ═══════ MITRA PERBANKAN ═══════ */}
-      <section className="py-16 md:py-20 bg-white overflow-hidden">
+      {/* ═══════ MITRA PERBANKAN — Redesigned: Grid instead of scroll ═══════ */}
+      <section className="py-24 md:py-32 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <FadeIn className="text-center mb-10">
-            <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Mitra Perbankan</span>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
-              Didukung <span className="text-gradient-gray">Bank &amp; Lembaga Keuangan</span> Terpercaya
+          <FadeIn className="text-center mb-14">
+            <span className="inline-block px-3 py-1 bg-gray-100 text-gray-500 text-[10px] font-bold uppercase tracking-[0.25em] rounded-full mb-4">Mitra Perbankan</span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 tracking-tight">
+              Didukung <span className="bg-gradient-to-r from-gray-800 to-gray-500 bg-clip-text text-transparent">Bank &amp; Lembaga Keuangan</span> Terpercaya
             </h2>
           </FadeIn>
           {bankLoading ? (
-            <div className="flex gap-6 justify-center">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="w-28 h-12 bg-gray-100 rounded-lg animate-pulse shrink-0" />
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="h-20 bg-gray-100 rounded-xl animate-pulse" />
               ))}
             </div>
           ) : bankItems.length === 0 ? (
             <p className="text-center text-gray-400 py-8">Belum ada data mitra bank</p>
           ) : (
-            <>
-              <div className="relative">
-                <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
-                <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
-                <div
-                  className="flex gap-8 w-max hover:[animation-play-state:paused]"
-                  style={{ animation: "bank-slide 25s linear infinite" }}
-                >
-                  {[...bankItems, ...bankItems].map((bank, i) => (
-                    <div
-                      key={`${bank.id}-${i}`}
-                      className="flex flex-col items-center justify-center w-28 h-20 shrink-0 bg-gray-50 rounded-xl border border-gray-100 hover:border-gray-200 hover:shadow-md transition-all"
-                    >
-                      {bank.image ? (
-                        <img
-                          src={bank.image}
-                          alt={bank.name}
-                          className="w-20 h-10 object-contain"
-                          onError={(e) => {
-                            const img = e.currentTarget;
-                            img.style.display = "none";
-                            const fb = img.nextElementSibling as HTMLElement;
-                            if (fb) fb.style.display = "flex";
-                          }}
-                        />
-                      ) : (
-                        <div className="w-8 h-8 bg-gray-900 text-gray-300 rounded-lg flex items-center justify-center">
-                          <LandPlot className="w-4 h-4 text-white" />
-                        </div>
-                      )}
-                      <span className="text-[10px] text-gray-500 mt-1 truncate max-w-full px-1">{bank.name}</span>
-                    </div>
-                  ))}
-                </div>
+            <FadeIn>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 max-w-4xl mx-auto">
+                {bankItems.map((bank) => (
+                  <div
+                    key={bank.id}
+                    className="flex flex-col items-center justify-center h-20 bg-gray-50 rounded-xl border border-gray-100 hover:border-gray-300 hover:shadow-md transition-all group"
+                  >
+                    {bank.image ? (
+                      <img
+                        src={bank.image}
+                        alt={bank.name}
+                        className="w-16 h-8 object-contain"
+                        onError={(e) => {
+                          const img = e.currentTarget;
+                          img.style.display = "none";
+                          const fb = img.nextElementSibling as HTMLElement;
+                          if (fb) fb.style.display = "flex";
+                        }}
+                      />
+                    ) : (
+                      <div className="w-8 h-8 bg-gray-900 text-gray-300 rounded-lg flex items-center justify-center">
+                        <LandPlot className="w-4 h-4 text-white" />
+                      </div>
+                    )}
+                    <span className="text-[10px] text-gray-400 mt-1.5 truncate max-w-full px-1 font-medium">{bank.name}</span>
+                  </div>
+                ))}
               </div>
-            </>
+            </FadeIn>
           )}
         </div>
       </section>
 
-      {/* ═══════ GALERI ═══════ */}
-      <section className="py-20 md:py-28 bg-section-gray">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <FadeIn className="text-center mb-12">
-            <span className="block text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">Dokumentasi</span>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-shimmer-silver mt-3 mb-4 tracking-tight">
-              Galeri <span className="text-gradient-gray">Foto</span>
+      {/* ═══════ GALERI — Redesigned: Grid layout instead of masonry ═══════ */}
+      <section className="py-24 md:py-32 bg-gray-50 relative overflow-hidden">
+        <ConstellationParticles count={6} dark={false} />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeIn className="text-center mb-14">
+            <span className="inline-block px-3 py-1 bg-white text-gray-500 text-[10px] font-bold uppercase tracking-[0.25em] rounded-full mb-4">Dokumentasi</span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 tracking-tight">
+              Galeri <span className="bg-gradient-to-r from-gray-800 to-gray-500 bg-clip-text text-transparent">Foto</span>
             </h2>
           </FadeIn>
 
@@ -5121,20 +5211,21 @@ function TentangKamiPage() {
               <p className="text-gray-400 text-lg">Belum ada foto dokumentasi.</p>
             </div>
           ) : (
-            <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
               {homeGalleryItems.slice(0, 8).map((img, i) => (
                 <FadeIn key={img.id} delay={i * 0.05}>
-                  <div className="break-inside-avoid mb-3 cursor-pointer group" onClick={() => { setLightboxIndex(i); setLightboxOpen(true); }}>
-                    <div className="relative rounded-xl overflow-hidden bg-gray-100">
-                      <img
-                        src={img.image}
-                        alt={img.title}
-                        className="w-full h-auto object-cover group-hover:scale-[1.03] transition-transform duration-500"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                        <p className="text-white font-semibold text-sm truncate">{img.title}</p>
-                      </div>
+                  <div
+                    className={`relative rounded-xl overflow-hidden bg-gray-100 cursor-pointer group ${i === 0 ? 'md:col-span-2 md:row-span-2' : ''}`}
+                    onClick={() => { setLightboxIndex(i); setLightboxOpen(true); }}
+                  >
+                    <img
+                      src={img.image}
+                      alt={img.title}
+                      className={`w-full object-cover group-hover:scale-105 transition-transform duration-500 ${i === 0 ? 'h-full min-h-[200px] md:min-h-[340px]' : 'h-40 md:h-48'}`}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                      <p className="text-white font-semibold text-sm truncate">{img.title}</p>
                     </div>
                   </div>
                 </FadeIn>
@@ -5145,7 +5236,7 @@ function TentangKamiPage() {
           <FadeIn className="text-center mt-10">
             <button
               onClick={() => (typeof window !== "undefined") && window.location.assign("/?tab=gallery")}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gray-100 text-gray-600 font-semibold rounded-xl hover:bg-gray-200 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors"
             >
               Lihat Semua Foto
               <ArrowRight className="w-4 h-4" />
