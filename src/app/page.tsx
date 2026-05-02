@@ -5945,9 +5945,12 @@ function ServiceCard({
                   <Clock className="w-3 h-3" /> {service.duration}
                 </span>
               )}
-              <span className="w-9 h-9 rounded-xl bg-gray-900 flex items-center justify-center text-white group-hover:bg-gray-800 group-hover:scale-105 transition-all duration-300">
-                <ArrowRight className="w-4 h-4" />
-              </span>
+              <button
+                onClick={(e) => { e.stopPropagation(); handleClick(); }}
+                className="text-sm font-semibold text-gray-500 hover:text-gray-900 py-1.5 px-3 border border-gray-200 rounded-xl hover:border-gray-400 transition-colors"
+              >
+                Detail <ChevronRight className="w-4 h-4 ml-1 inline -mt-0.5" />
+              </button>
             </div>
           </div>
         </div>
