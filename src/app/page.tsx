@@ -5002,7 +5002,7 @@ function TentangKamiPage() {
       {/* ═══════ KEUNGGULAN PLATFORM ═══════ */}
       <TentangKamiKeunggulanSection />
 
-      {/* ═══════ TIMELINE — Redesigned: Horizontal scroll ═══════ */}
+      {/* ═══════ TIMELINE — Redesigned: Zigzag alternating ═══════ */}
       <section className="py-24 md:py-32 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
         <ConstellationParticles count={12} dark={true} />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -5040,42 +5040,53 @@ function TentangKamiPage() {
             </div>
           </FadeIn>
 
-          {/* Horizontal timeline — scrollable */}
-          <FadeIn>
-            <div className="relative overflow-x-auto pb-4 -mx-4 px-4">
-              <div className="flex gap-0 min-w-max">
-                {[
-                  { year: "2018", title: "Awal Mula", desc: `${S.company_legal_name} didirikan. Memulai proyek perumahan pertama dengan fokus hunian syariah.` },
-                  { year: "2020", title: "Ekspansi Proyek", desc: "Membuka proyek kedua di kawasan Sentul. Memperluas portofolio dengan klaster baru dan konsep modern." },
-                  { year: "2022", title: "Mitra Pertama Bergabung", desc: `Developer mitra pertama resmi bergabung. ${S.company_name} mulai bertransformasi dari single developer menjadi platform.` },
-                  { year: "2023", title: `${S.total_units_sold} Unit Terjual`, desc: `Milestone ${S.total_units_sold} unit rumah terjual dari seluruh mitra developer. Platform terus berkembang.` },
-                  { year: "2024", title: "Digital Platform Launch", desc: "Peluncuran platform digital untuk memudahkan calon pembeli menemukan dan membandingkan proyek dari berbagai mitra." },
-                  { year: "2025", title: "Skalabilitas & Ekosistem", desc: "Memperkuat ekosistem mitra developer dan meluncurkan layanan jasa konstruksi terintegrasi. Basis klien terus meluas ke berbagai kota." },
-                  { year: "2026", title: "Era Baru Hunian Digital", desc: `Memasuki fase baru dengan puluhan proyek aktif dan 3+ mitra developer terpilih. Platform ${S.company_name} kini menjadi destinasi utama pencari hunian syariah di Indonesia.`, highlight: true },
-                ].map((item, i) => (
-                  <div key={item.year} className="relative flex flex-col items-center w-52 shrink-0 group">
-                    {/* Connector line */}
-                    {i < 6 && <div className="absolute top-6 left-[calc(50%+20px)] w-[calc(100%-40px)] h-px bg-white/10" />}
-                    {/* Node */}
-                    <div className={`w-12 h-12 ${item.highlight ? 'bg-white text-gray-900 ring-2 ring-white/20' : 'bg-gray-800 text-gray-300 border border-white/10'} rounded-xl flex items-center justify-center font-extrabold text-xs shrink-0 shadow-lg group-hover:scale-110 transition-transform z-10`}>
-                      {item.year}
+          {/* Zigzag timeline — alternating left/right */}
+          <div className="relative max-w-4xl mx-auto">
+            {/* Center vertical line */}
+            <div className="absolute left-6 md:left-1/2 md:-translate-x-px top-0 bottom-0 w-0.5 bg-white/10" />
+
+            {[
+              { year: "2018", title: "Awal Mula", desc: `${S.company_legal_name} didirikan. Memulai proyek perumahan pertama dengan fokus hunian syariah.` },
+              { year: "2020", title: "Ekspansi Proyek", desc: "Membuka proyek kedua di kawasan Sentul. Memperluas portofolio dengan klaster baru dan konsep modern." },
+              { year: "2022", title: "Mitra Pertama Bergabung", desc: `Developer mitra pertama resmi bergabung. ${S.company_name} mulai bertransformasi dari single developer menjadi platform.` },
+              { year: "2023", title: `${S.total_units_sold} Unit Terjual`, desc: `Milestone ${S.total_units_sold} unit rumah terjual dari seluruh mitra developer. Platform terus berkembang.` },
+              { year: "2024", title: "Digital Platform Launch", desc: "Peluncuran platform digital untuk memudahkan calon pembeli menemukan dan membandingkan proyek dari berbagai mitra." },
+              { year: "2025", title: "Skalabilitas & Ekosistem", desc: "Memperkuat ekosistem mitra developer dan meluncurkan layanan jasa konstruksi terintegrasi. Basis klien terus meluas ke berbagai kota." },
+              { year: "2026", title: "Era Baru Hunian Digital", desc: `Memasuki fase baru dengan puluhan proyek aktif dan 3+ mitra developer terpilih. Platform ${S.company_name} kini menjadi destinasi utama pencari hunian syariah di Indonesia.`, highlight: true },
+            ].map((item, i) => {
+              const isLeft = i % 2 === 0;
+              return (
+                <FadeIn key={item.year} delay={i * 0.06}>
+                  <div className={`relative flex items-start mb-10 md:mb-14 group ${isLeft ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
+                    {/* Node on the center line */}
+                    <div className="absolute left-6 md:left-1/2 -translate-x-1/2 z-10">
+                      <div className={`w-12 h-12 ${item.highlight ? 'bg-white text-gray-900 ring-2 ring-white/20' : 'bg-gray-800 text-gray-300 border border-white/10'} rounded-xl flex items-center justify-center font-extrabold text-xs shadow-lg group-hover:scale-110 transition-transform`}>
+                        {item.year}
+                      </div>
+                      {item.highlight && (
+                        <div className="mt-2 flex justify-center">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-white/10 rounded-full text-[9px] font-bold uppercase tracking-wider text-gray-300">
+                            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                            Sekarang
+                          </span>
+                        </div>
+                      )}
                     </div>
-                    {item.highlight && (
-                      <span className="mt-2 inline-flex items-center gap-1 px-2 py-0.5 bg-white/10 rounded-full text-[9px] font-bold uppercase tracking-wider text-gray-300 z-10">
-                        <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                        Sekarang
-                      </span>
-                    )}
-                    {/* Content card */}
-                    <div className={`mt-4 p-4 rounded-xl w-full ${item.highlight ? 'bg-white/10 border border-white/10' : 'bg-white/[0.03]'} text-center transition-all group-hover:bg-white/[0.08]`}>
-                      <h4 className={`text-sm font-bold ${item.highlight ? 'text-white' : 'text-gray-300'} mb-1`}>{item.title}</h4>
-                      <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
+
+                    {/* Content card — zigzag alternating */}
+                    <div className={`ml-20 md:ml-0 md:w-[calc(50%-3rem)] ${isLeft ? 'md:mr-auto md:pr-0' : 'md:ml-auto md:pl-0'}`}>
+                      {/* Connector from line to card */}
+                      <div className={`hidden md:block absolute top-6 ${isLeft ? 'left-[calc(50%-3rem)] w-12' : 'left-[calc(50%+0.75rem)] w-12'} h-px bg-white/10`} />
+                      <div className={`${isLeft ? 'md:text-right' : 'md:text-left'} ${item.highlight ? 'bg-white/10 border border-white/10' : 'bg-white/[0.03]'} p-5 rounded-xl group-hover:bg-white/[0.08] transition-all`}>
+                        <h4 className={`text-sm font-bold ${item.highlight ? 'text-white' : 'text-gray-300'} mb-2`}>{item.title}</h4>
+                        <p className={`text-xs text-gray-500 leading-relaxed ${isLeft ? '' : ''}`}>{item.desc}</p>
+                      </div>
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-          </FadeIn>
+                </FadeIn>
+              );
+            })}
+          </div>
         </div>
       </section>
 
