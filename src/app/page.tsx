@@ -2248,80 +2248,89 @@ function ServicePreviewSection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {display.map((service) => (
             <FadeIn key={service.id} className="h-full">
-              <Card
-                className="group h-full overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+              <div
+                className="group h-full bg-white rounded-2xl border border-gray-200/80 hover:border-gray-300 hover:shadow-2xl transition-all duration-500 overflow-hidden cursor-pointer"
                 onClick={() => router.push(`/?tab=jasa/${service.slug}`)}
               >
-                <div className="relative h-44 overflow-hidden bg-gray-200">
+                {/* Image with overlay — same style as Proyek */}
+                <div className="relative h-64 overflow-hidden bg-gray-100">
                   {service.image ? (
                     <img
                       src={service.image}
                       alt={service.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                     />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center">
-                      <Wrench className="w-14 h-14 text-white/30" />
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-700 to-gray-900">
+                      <Wrench className="w-16 h-16 text-white/30" />
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-                  <div className="absolute top-3 left-3 flex gap-1.5">
-                    <Badge className="bg-white/90 text-gray-700 border-0 shadow-lg text-[10px] font-semibold backdrop-blur-sm">
+                  {/* Top gradient */}
+                  <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/40 to-transparent" />
+                  {/* Bottom gradient */}
+                  <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 to-transparent" />
+                  {/* Category badge — top left like Proyek */}
+                  <div className="absolute top-4 left-4">
+                    <span className="text-[10px] font-bold px-3 py-1 rounded-full bg-white/90 backdrop-blur-sm text-gray-700 uppercase tracking-wider">
                       {SERVICE_CATEGORY_LABELS[service.category] || service.category}
-                    </Badge>
-                    {service.isFeatured && (
-                      <Badge className="bg-gray-500 text-gray-900 border-0 shadow-lg text-[10px] font-bold">
-                        <Star className="w-2.5 h-2.5 mr-0.5" /> Unggulan
-                      </Badge>
-                    )}
+                    </span>
                   </div>
-                  {service.videoUrl && (
-                    <div className="absolute top-3 right-3">
-                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-lg bg-gray-900/90 text-white backdrop-blur-sm flex items-center gap-0.5">
+                  {/* Top right badges */}
+                  <div className="absolute top-4 right-4 flex gap-1.5">
+                    {service.isFeatured && (
+                      <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-gray-900/80 backdrop-blur-sm text-white flex items-center gap-0.5">
+                        <Star className="w-2.5 h-2.5" /> Unggulan
+                      </span>
+                    )}
+                    {service.videoUrl && (
+                      <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-white/80 backdrop-blur-sm text-gray-800 flex items-center gap-0.5">
                         <Camera className="w-2.5 h-2.5" /> Video
                       </span>
-                    </div>
-                  )}
-                  <div className="absolute bottom-3 left-3 right-3">
-                    <h3 className="font-bold text-white text-sm leading-tight drop-shadow-lg">
-                      {service.title}
-                    </h3>
+                    )}
                   </div>
-                </div>
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
+                  {/* Price — bottom left inside image like Proyek */}
+                  <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between">
                     <div>
-                      <span className="text-base font-extrabold text-gray-900">
+                      <p className="text-white font-black text-xl leading-none">
                         {service.price > 0 ? `Rp ${new Intl.NumberFormat("id-ID").format(service.price)}` : "Hubungi Kami"}
-                      </span>
+                      </p>
                       {service.price > 0 && (
-                        <span className="text-[10px] text-gray-400 ml-1">
+                        <p className="text-white/60 text-[11px] font-medium mt-0.5">
                           / {SERVICE_PRICE_UNIT_MAP[service.priceUnit] || ""}
-                        </span>
+                        </p>
                       )}
                     </div>
                     {service.duration && (
-                      <span className="text-[10px] font-medium text-gray-400 flex items-center gap-1">
-                        <Clock className="w-3 h-3" /> {service.duration}
-                      </span>
+                      <div className="bg-white/90 backdrop-blur-sm rounded-lg px-3 py-1.5">
+                        <p className="text-[10px] text-gray-500 font-medium">Durasi</p>
+                        <p className="text-xs font-black text-gray-900">{service.duration}</p>
+                      </div>
                     )}
                   </div>
+                </div>
+                {/* Content below image — same layout as Proyek */}
+                <div className="p-5">
+                  <h3 className="font-bold text-gray-900 text-base mb-3 line-clamp-1 group-hover:text-gray-600 transition-colors">
+                    {service.title}
+                  </h3>
+                  {/* Features as spec pills — same as Proyek specs */}
                   {service.features.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mt-2.5">
-                      {service.features.slice(0, 2).map((f, i) => (
-                        <span key={i} className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-500">
+                    <div className="flex flex-wrap items-center gap-2">
+                      {service.features.slice(0, 3).map((f, i) => (
+                        <span key={i} className="flex items-center gap-1.5 text-xs text-gray-500 bg-gray-50 px-2.5 py-1.5 rounded-lg font-medium">
+                          <Wrench className="w-3.5 h-3.5 text-gray-400" />
                           {f}
                         </span>
                       ))}
-                      {service.features.length > 2 && (
-                        <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-400">
-                          +{service.features.length - 2}
+                      {service.features.length > 3 && (
+                        <span className="text-xs text-gray-400 font-medium px-2.5 py-1.5">
+                          +{service.features.length - 3}
                         </span>
                       )}
                     </div>
                   )}
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </FadeIn>
           ))}
         </div>
